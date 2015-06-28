@@ -63,12 +63,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\CutLine.cs" />
-    <Compile Include="Assets\Scripts\DisplayCutLine.cs" />
     <Compile Include="Assets\Scripts\Enums\TableSawState.cs" />
-    <Compile Include="Assets\Scripts\LineGenerator.cs" />
-    <Compile Include="Assets\Scripts\Rotate.cs" />
-    <Compile Include="Assets\Scripts\TableSawCutting.cs" />
+    <Compile Include="Assets\Scripts\TableSaw\BoardController.cs" />
+    <Compile Include="Assets\Scripts\TableSaw\Checkpoint.cs" />
+    <Compile Include="Assets\Scripts\TableSaw\CutLine.cs" />
+    <Compile Include="Assets\Scripts\TableSaw\DisplayCutLine.cs" />
+    <Compile Include="Assets\Scripts\TableSaw\Rotate.cs" />
+    <Compile Include="Assets\Scripts\TableSaw\TableSaw.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2012\UnityVS.CSharp.targets" />
 </Project>

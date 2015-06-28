@@ -46,12 +46,13 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\CutLine.cs" />
-     <Compile Include="Assets\Scripts\DisplayCutLine.cs" />
      <Compile Include="Assets\Scripts\Enums\TableSawState.cs" />
-     <Compile Include="Assets\Scripts\LineGenerator.cs" />
-     <Compile Include="Assets\Scripts\Rotate.cs" />
-     <Compile Include="Assets\Scripts\TableSawCutting.cs" />
+     <Compile Include="Assets\Scripts\TableSaw\BoardController.cs" />
+     <Compile Include="Assets\Scripts\TableSaw\Checkpoint.cs" />
+     <Compile Include="Assets\Scripts\TableSaw\CutLine.cs" />
+     <Compile Include="Assets\Scripts\TableSaw\DisplayCutLine.cs" />
+     <Compile Include="Assets\Scripts\TableSaw\Rotate.cs" />
+     <Compile Include="Assets\Scripts\TableSaw\TableSaw.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Unity/Unity5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
