@@ -5,6 +5,7 @@ public class Checkpoint : MonoBehaviour
 {
     public Checkpoint nextCheckpoint;
     public Checkpoint previousCheckpoint;
+    public LinePointType type;
 
     private Transform objectTransform;
 

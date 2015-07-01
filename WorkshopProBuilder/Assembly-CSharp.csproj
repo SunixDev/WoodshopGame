@@ -46,10 +46,14 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Checkpoint.cs" />
+     <Compile Include="Assets\Scripts\ChopSaw\ChopSaw.cs" />
+     <Compile Include="Assets\Scripts\ChopSaw\ChopSawController.cs" />
+     <Compile Include="Assets\Scripts\ChopSaw\Line.cs" />
+     <Compile Include="Assets\Scripts\Enums\LinePointType.cs" />
      <Compile Include="Assets\Scripts\Enums\TableSawState.cs" />
      <Compile Include="Assets\Scripts\Rotate.cs" />
      <Compile Include="Assets\Scripts\TableSaw\BoardController.cs" />
-     <Compile Include="Assets\Scripts\TableSaw\Checkpoint.cs" />
      <Compile Include="Assets\Scripts\TableSaw\CutLine.cs" />
      <Compile Include="Assets\Scripts\TableSaw\DisplayCutLine.cs" />
      <Compile Include="Assets\Scripts\TableSaw\TableSaw.cs" />
