@@ -14,9 +14,9 @@ public class BoardController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButton(0))
+        RaycastHit hit;
+        if (Input.GetMouseButtonDown(0))
         {
-            RaycastHit hit;
             Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(cursorRay, out hit))
             {
@@ -24,16 +24,22 @@ public class BoardController : MonoBehaviour
                 if (!movingBoard && (hitTag == "Piece" || hitTag == "Leftover"))
                 {
                     movingBoard = true;
+                    cursorZ_Position = hit.point.z;
                 }
-
-                if ((hitTag == "Piece" || hitTag == "Leftover") || movingBoard)
+            }
+        }
+        else if (Input.GetMouseButton(0))
+        {
+            Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(cursorRay, out hit))
+            {
+                string hitTag = hit.collider.tag;
+                if (movingBoard)
                 {
                     moveBoard(hit.point.z);
                 }
             }
-        }
-
-        if (Input.GetMouseButtonUp(0))
+        }else if (Input.GetMouseButtonUp(0))
         {
             movingBoard = false;
         }
@@ -41,20 +47,13 @@ public class BoardController : MonoBehaviour
 
     private void moveBoard(float hitPosition)
     {
-        if (Input.GetMouseButtonDown(0))
+        float cursorZ_DeltaPosition = hitPosition;
+        float delta = cursorZ_Position - cursorZ_DeltaPosition;
+        if (delta != 0.0f)
         {
-            cursorZ_Position = hitPosition;
+            transform.position += new Vector3(0.0f, 0.0f, -delta);
         }
-        else if (Input.GetMouseButton(0))
-        {
-            float cursorZ_DeltaPosition = hitPosition;
-            float delta = cursorZ_Position - cursorZ_DeltaPosition;
-            if (delta != 0.0f)
-            {
-                transform.position += new Vector3(0.0f, 0.0f, -delta);
-            }
-            cursorZ_Position = cursorZ_DeltaPosition;
-        }
+        cursorZ_Position = cursorZ_DeltaPosition;
     }
 
     public bool isBoardMoving()

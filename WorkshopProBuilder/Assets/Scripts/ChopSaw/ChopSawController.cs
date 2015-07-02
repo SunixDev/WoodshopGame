@@ -48,7 +48,6 @@ public class ChopSawController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
-            //offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
         }
         else if (Input.GetMouseButton(0))
         {

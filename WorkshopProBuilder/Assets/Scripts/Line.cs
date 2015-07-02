@@ -5,6 +5,7 @@ public class Line : MonoBehaviour
 {
     public Checkpoint startPoint;
     public GameObject[] pieces;
+    public LineCutType cutType;
 
     private Checkpoint currentPoint;
 
@@ -22,9 +23,4 @@ public class Line : MonoBehaviour
     {
         return currentPoint;
     }
-	
-    //void Update () 
-    //{
-	
-    //}
 }
