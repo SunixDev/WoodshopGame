@@ -1,27 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Checkpoint : MonoBehaviour 
 {
-    public Checkpoint nextCheckpoint;
-    public Checkpoint previousCheckpoint;
-    public LinePointType type;
+    public float DebugRadius = 0.02f;
 
     private Transform objectTransform;
 
-    void Awake()
+	void Start() 
     {
         objectTransform = transform;
-        GetComponent<Renderer>().enabled = false;
-    }
+	}
 
-    public Vector3 getPosition()
+    public Vector3 GetPosition()
     {
         return objectTransform.position;
     }
 
-    public string getTag()
+    void OnDrawGizmos()
     {
-        return tag;
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawSphere(transform.position, DebugRadius);
     }
+
+    //void Update() {}
 }

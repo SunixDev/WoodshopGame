@@ -64,16 +64,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Checkpoint.cs" />
-    <Compile Include="Assets\Scripts\ChopSaw\ChopSaw.cs" />
     <Compile Include="Assets\Scripts\ChopSaw\ChopSawController.cs" />
+    <Compile Include="Assets\Scripts\CutLine.cs" />
+    <Compile Include="Assets\Scripts\Enums\CutState.cs" />
     <Compile Include="Assets\Scripts\Enums\LineCutType.cs" />
-    <Compile Include="Assets\Scripts\Enums\LinePointType.cs" />
-    <Compile Include="Assets\Scripts\Line.cs" />
-    <Compile Include="Assets\Scripts\Rotate.cs" />
+    <Compile Include="Assets\Scripts\GlueAndGlamp\Positional.cs" />
+    <Compile Include="Assets\Scripts\Misc\DisplayCutLine.cs" />
+    <Compile Include="Assets\Scripts\Misc\Rotate.cs" />
+    <Compile Include="Assets\Scripts\ObjectController.cs" />
+    <Compile Include="Assets\Scripts\TableSaw\BladeCollision.cs" />
     <Compile Include="Assets\Scripts\TableSaw\BoardController.cs" />
-    <Compile Include="Assets\Scripts\TableSaw\CutLine.cs" />
-    <Compile Include="Assets\Scripts\TableSaw\DisplayCutLine.cs" />
-    <Compile Include="Assets\Scripts\TableSaw\TableSaw.cs" />
+    <Compile Include="Assets\Scripts\TableSaw\TableSawCut.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2012\UnityVS.CSharp.targets" />
 </Project>

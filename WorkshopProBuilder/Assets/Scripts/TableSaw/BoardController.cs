@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class BoardController : MonoBehaviour
 {
-    private float cursorZ_Position;
+    private Vector3 cursor_Position;
     private bool movingBoard;
 
     void Start()
@@ -14,46 +14,52 @@ public class BoardController : MonoBehaviour
 
     void Update()
     {
-        RaycastHit hit;
         if (Input.GetMouseButtonDown(0))
         {
+            RaycastHit hit;
             Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(cursorRay, out hit))
             {
                 string hitTag = hit.collider.tag;
-                if (!movingBoard && (hitTag == "Piece" || hitTag == "Leftover"))
+                if (!movingBoard && (hitTag == "Piece" || hitTag == "Leftover" || hitTag == "ProjectMaterial"))
                 {
                     movingBoard = true;
-                    cursorZ_Position = hit.point.z;
+                    cursor_Position = hit.point;
+                }
+                else
+                {
+                    Debug.Log("BoardController Error - Object Hit Tag: " + hitTag);
                 }
             }
         }
         else if (Input.GetMouseButton(0))
         {
+            RaycastHit hit;
             Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(cursorRay, out hit))
             {
-                string hitTag = hit.collider.tag;
                 if (movingBoard)
                 {
-                    moveBoard(hit.point.z);
+                    moveBoard(hit.point);
                 }
             }
-        }else if (Input.GetMouseButtonUp(0))
+        }
+        else if (Input.GetMouseButtonUp(0))
         {
             movingBoard = false;
         }
     }
 
-    private void moveBoard(float hitPosition)
+    private void moveBoard(Vector3 hitPosition)
     {
-        float cursorZ_DeltaPosition = hitPosition;
-        float delta = cursorZ_Position - cursorZ_DeltaPosition;
+        Vector3 cursorDeltaPosition = hitPosition;
+        float delta = Vector3.Distance(cursor_Position, cursorDeltaPosition);
         if (delta != 0.0f)
         {
-            transform.position += new Vector3(0.0f, 0.0f, -delta);
+            Vector3 deltaVector = cursorDeltaPosition - cursor_Position;
+            transform.position += new Vector3(deltaVector.x, 0.0f, deltaVector.z);
         }
-        cursorZ_Position = cursorZ_DeltaPosition;
+        cursor_Position = cursorDeltaPosition;
     }
 
     public bool isBoardMoving()
@@ -64,11 +70,10 @@ public class BoardController : MonoBehaviour
 
 
 /*Movement that includes side to side control*/
-//Vector3 cursorDeltaPosition = hitPosition;
-//float delta = Vector3.Distance(cursorPosition, cursorDeltaPosition);
+//float cursor_DeltaPosition = hitPosition;
+//float delta = cursor_Position - cursor_DeltaPosition;
 //if (delta != 0.0f)
 //{
-//    Vector3 deltaVector = cursorDeltaPosition - cursorPosition;
-//    transform.position += new Vector3(deltaVector.x, 0.0f, deltaVector.z);
+//    transform.position += new Vector3(0.0f, 0.0f, -delta);
 //}
-//cursorPosition = cursorDeltaPosition;
+//cursor_Position = cursor_DeltaPosition;
