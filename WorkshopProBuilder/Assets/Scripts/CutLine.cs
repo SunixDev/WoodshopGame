@@ -6,22 +6,14 @@ public class CutLine : MonoBehaviour
 {
     public LineCutType CutType;
     public List<Checkpoint> Checkpoints;
-    public List<GameObject> AttachedPieces;
+    public List<GameObject> AttachedPiecesSideOne;
+    public List<GameObject> AttachedPiecesSideTwo;
 
-    private bool[] CheckpointTraversed;
     private int CheckpointIndex = 0;
 
 	void Start () 
     {
-        if (Checkpoints.Count > 1)
-        {
-            CheckpointTraversed = new bool[Checkpoints.Count];
-            for (int i = 0; i < CheckpointTraversed.Length; i++)
-            {
-                CheckpointTraversed[i] = false;
-            }
-        }
-        else
+        if (Checkpoints.Count <= 1)
         {
             Debug.LogWarning("Not enough points to make a line");
         }
@@ -43,7 +35,7 @@ public class CutLine : MonoBehaviour
 
     public bool ContainsPiece(GameObject piece)
     {
-        return AttachedPieces.Contains(piece);
+        return AttachedPiecesSideOne.Contains(piece) || AttachedPiecesSideTwo.Contains(piece);
     }
 
     void OnDrawGizmos()

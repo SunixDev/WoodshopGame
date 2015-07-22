@@ -6,13 +6,27 @@ public class ObjectController : MonoBehaviour
     public bool ConstrainX;
     public bool ConstrainY;
     public bool ConstrainZ;
+    public bool Draggable { get; set; }
 
     private Vector3 ScreenPoint;
     private bool BeingDragged;
 
+    void Start()
+    {
+        Draggable = true;
+    }
+
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !BeingDragged)
+        if (Draggable)
+        {
+            DragObject();
+        }
+    }
+
+    private void DragObject()
+    {
+        if (!BeingDragged && Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
             Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -22,7 +36,7 @@ public class ObjectController : MonoBehaviour
                 BeingDragged = true;
             }
         }
-        else if(BeingDragged && Input.GetMouseButton(0))
+        else if (BeingDragged && Input.GetMouseButton(0))
         {
             Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, ScreenPoint.z);
             Vector3 position = Camera.main.ScreenToWorldPoint(curScreenPoint);

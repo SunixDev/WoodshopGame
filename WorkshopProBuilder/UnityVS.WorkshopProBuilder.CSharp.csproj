@@ -68,6 +68,7 @@
     <Compile Include="Assets\Scripts\CutLine.cs" />
     <Compile Include="Assets\Scripts\Enums\CutState.cs" />
     <Compile Include="Assets\Scripts\Enums\LineCutType.cs" />
+    <Compile Include="Assets\Scripts\GlueAndGlamp\PositionSnap.cs" />
     <Compile Include="Assets\Scripts\GlueAndGlamp\Positional.cs" />
     <Compile Include="Assets\Scripts\Misc\DisplayCutLine.cs" />
     <Compile Include="Assets\Scripts\Misc\Rotate.cs" />
