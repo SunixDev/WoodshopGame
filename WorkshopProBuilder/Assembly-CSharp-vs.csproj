@@ -46,8 +46,10 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\BandSaw\FullBoardController.cs" />
      <Compile Include="Assets\Scripts\Checkpoint.cs" />
      <Compile Include="Assets\Scripts\ChopSaw\ChopSawController.cs" />
+     <Compile Include="Assets\Scripts\Connection.cs" />
      <Compile Include="Assets\Scripts\CutLine.cs" />
      <Compile Include="Assets\Scripts\Enums\CutState.cs" />
      <Compile Include="Assets\Scripts\Enums\LineCutType.cs" />
@@ -55,9 +57,11 @@
      <Compile Include="Assets\Scripts\GlueAndGlamp\Positional.cs" />
      <Compile Include="Assets\Scripts\Misc\DisplayCutLine.cs" />
      <Compile Include="Assets\Scripts\Misc\Rotate.cs" />
+     <Compile Include="Assets\Scripts\Node.cs" />
      <Compile Include="Assets\Scripts\ObjectController.cs" />
      <Compile Include="Assets\Scripts\TableSaw\BladeCollision.cs" />
      <Compile Include="Assets\Scripts\TableSaw\BoardController.cs" />
+     <Compile Include="Assets\Scripts\TableSaw\DadoCutPractice.cs" />
      <Compile Include="Assets\Scripts\TableSaw\TableSawCut.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Unity/Unity5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

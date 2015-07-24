@@ -6,8 +6,7 @@ public class CutLine : MonoBehaviour
 {
     public LineCutType CutType;
     public List<Checkpoint> Checkpoints;
-    public List<GameObject> AttachedPiecesSideOne;
-    public List<GameObject> AttachedPiecesSideTwo;
+    public List<Connection> Connections;
 
     private int CheckpointIndex = 0;
 
@@ -33,10 +32,10 @@ public class CutLine : MonoBehaviour
         CheckpointIndex++;
     }
 
-    public bool ContainsPiece(GameObject piece)
-    {
-        return AttachedPiecesSideOne.Contains(piece) || AttachedPiecesSideTwo.Contains(piece);
-    }
+    //public bool ContainsPiece(GameObject piece)
+    //{
+    //    return AttachedPiecesSideOne.Contains(piece) || AttachedPiecesSideTwo.Contains(piece);
+    //}
 
     void OnDrawGizmos()
     {

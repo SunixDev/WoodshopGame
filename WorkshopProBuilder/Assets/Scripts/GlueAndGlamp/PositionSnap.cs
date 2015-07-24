@@ -24,7 +24,6 @@ public class PositionSnap : MonoBehaviour
             if (distance <= SnapOffset)
             {
                 controller.Draggable = false;
-                Vector3 between = transform.position - AnchorPoint.position;
                 Vector3 nextPosition = Vector3.MoveTowards(AnchorPoint.position, ConnectingAnchorPoint.position, 1.0f);
                 float magnitude = Vector3.Magnitude(nextPosition - AnchorPoint.position);
                 Vector3 direction = Vector3.Normalize(nextPosition - AnchorPoint.position);
