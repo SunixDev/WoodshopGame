@@ -4,23 +4,39 @@ using System.Collections.Generic;
 
 public class TableSawCut : MonoBehaviour 
 {
+    public WoodMaterialManager WoodManager;
     public List<CutLine> LinesToCut;
-    public GameObject WoodPiece;
     public Transform BladeEdge;
     public CutState state { get; set; }
 
     private CutLine CurrentLine;
-    private int NearestLineIndex;
-    //private float CutOffset = 0.01f;
 
 	void Start () 
     {
         state = CutState.ReadyToCut;
-        CurrentLine = null;
+        CurrentLine = LinesToCut[0];
 	}
-	
-	void Update () 
+
+    void Update() 
     {
+        if (Input.GetMouseButtonDown(0) && LinesToCut.Count > 0)
+        {
+            RaycastHit hit;
+            Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(mouseRay, out hit) && (hit.collider.tag == "Piece" || hit.collider.tag == "Leftover"))
+            {
+                Node baseNode = CurrentLine.Connections[0].FirstPiece;
+                Node baseNode2 = CurrentLine.Connections[0].SecondPiece;
+                WoodMaterialObject board = hit.transform.GetComponent<WoodMaterialObject>();
+
+                LinesToCut.Remove(CurrentLine);
+                WoodManager.SplitBoard(baseNode, baseNode2, board, CurrentLine);
+                Destroy(board.gameObject);
+                CurrentLine = (LinesToCut.Count > 0) ? LinesToCut[0] : null;
+            }
+        }
+
+        #region CuttingCode
         if (state == CutState.ReadyToCut)
         {
             //CutLine line = GetNearestLine();
@@ -56,58 +72,12 @@ public class TableSawCut : MonoBehaviour
         {
             //Debug.LogError("Issue with line cutting");
         }
-	}
+        #endregion
 
-    public void SeparatePieces()
-    {
-        //List<GameObject> freeObjects = new List<GameObject>();
-        //foreach (GameObject piece in CurrentLine.AttachedPieces)
-        //{
-        //    bool isSeparated = true;
-        //    for (int i = 0; i < LinesToCut.Count && isSeparated && i != NearestLineIndex; i++)
-        //    {
-        //        if (LinesToCut[i].AttachedPieces.Contains(piece))
-        //        {
-        //            isSeparated = false;
-        //        }
-        //    }
-        //    if (isSeparated)
-        //    {
-        //        freeObjects.Add(piece);
-        //    }
-        //}
-        //GameObject newPiece = new GameObject();
-        //newPiece.AddComponent<Rigidbody>();
-        //foreach (GameObject piece in freeObjects)
-        //{
-        //    piece.transform.parent = null;
-        //    piece.transform.parent = newPiece.transform;
-        //}
     }
 
     private CutLine GetNearestLine()
     {
-        //float nearestDistance = 0;
-        //int nearestLineIndex = 0;
-        //for (int i = 0; i < LinesToCut.Count; i++)
-        //{
-        //    if (i == 0)
-        //    {
-        //        nearestDistance = Vector3.Distance(LinesToCut[i].GetCurrentCheckpoint().GetPosition(), BladeEdge.position);
-        //        nearestLineIndex = 0;
-        //    }
-        //    else
-        //    {
-        //        float distance = Vector3.Distance(LinesToCut[i].GetCurrentCheckpoint().GetPosition(), BladeEdge.position);
-        //        if (distance < nearestDistance)
-        //        {
-        //            nearestDistance = distance;
-        //            nearestLineIndex = i;
-        //        }
-        //    }
-        //}
-        //NearestLineIndex = nearestLineIndex;
-        //return LinesToCut[nearestLineIndex];
         return null;
     }
 }

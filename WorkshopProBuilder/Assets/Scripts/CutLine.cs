@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class CutLine : MonoBehaviour 
 {
-    public LineCutType CutType;
+    public CutLineType CutType;
     public List<Checkpoint> Checkpoints;
     public List<Connection> Connections;
 
@@ -30,6 +30,25 @@ public class CutLine : MonoBehaviour
     public void UpdateToNextCheckpoint()
     {
         CheckpointIndex++;
+    }
+
+    public void SeverConnections()
+    {
+        foreach (Connection c in Connections)
+        {
+            c.Disconnect();
+        }
+    }
+
+    public bool ContainsPiece(Node node)
+    {
+        bool HasPiece = false;
+        for (int i = 0; i < Connections.Count && !HasPiece; i++ )
+        {
+            Connection c = Connections[i];
+            HasPiece = (c.FirstPiece == node || c.SecondPiece == node);
+        }
+        return HasPiece;
     }
 
     //public bool ContainsPiece(GameObject piece)

@@ -51,8 +51,8 @@
      <Compile Include="Assets\Scripts\ChopSaw\ChopSawController.cs" />
      <Compile Include="Assets\Scripts\Connection.cs" />
      <Compile Include="Assets\Scripts\CutLine.cs" />
+     <Compile Include="Assets\Scripts\Enums\CutLineType.cs" />
      <Compile Include="Assets\Scripts\Enums\CutState.cs" />
-     <Compile Include="Assets\Scripts\Enums\LineCutType.cs" />
      <Compile Include="Assets\Scripts\GlueAndGlamp\PositionSnap.cs" />
      <Compile Include="Assets\Scripts\GlueAndGlamp\Positional.cs" />
      <Compile Include="Assets\Scripts\Misc\DisplayCutLine.cs" />
@@ -63,6 +63,8 @@
      <Compile Include="Assets\Scripts\TableSaw\BoardController.cs" />
      <Compile Include="Assets\Scripts\TableSaw\DadoCutPractice.cs" />
      <Compile Include="Assets\Scripts\TableSaw\TableSawCut.cs" />
+     <Compile Include="Assets\Scripts\WoodMaterials\WoodMaterialManager.cs" />
+     <Compile Include="Assets\Scripts\WoodMaterials\WoodMaterialObject.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Unity/Unity5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

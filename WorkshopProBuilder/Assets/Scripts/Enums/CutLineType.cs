@@ -1,4 +1,5 @@
-﻿public enum LineCutType
+﻿
+public enum CutLineType
 {
     RipCut, //Cut to Width
     CrossCut, //Cut to length
