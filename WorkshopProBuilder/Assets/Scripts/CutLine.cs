@@ -32,6 +32,24 @@ public class CutLine : MonoBehaviour
         CheckpointIndex++;
     }
 
+    public Checkpoint GetNextCheckpoint()
+    {
+        if ((CheckpointIndex + 1) >= Checkpoints.Count)
+        {
+            return null;
+        }
+        return Checkpoints[CheckpointIndex + 1];
+    }
+
+    public Checkpoint GetPreviousCheckpoint()
+    {
+        if ((CheckpointIndex - 1) < 0)
+        {
+            return null;
+        }
+        return Checkpoints[CheckpointIndex - 1];
+    }
+
     public void SeverConnections()
     {
         foreach (Connection c in Connections)
@@ -51,10 +69,15 @@ public class CutLine : MonoBehaviour
         return HasPiece;
     }
 
-    //public bool ContainsPiece(GameObject piece)
-    //{
-    //    return AttachedPiecesSideOne.Contains(piece) || AttachedPiecesSideTwo.Contains(piece);
-    //}
+    public Node GetFirstBaseNode()
+    {
+        return Connections[0].FirstPiece;
+    }
+
+    public Node GetSecondBaseNode()
+    {
+        return Connections[0].SecondPiece;
+    }
 
     void OnDrawGizmos()
     {

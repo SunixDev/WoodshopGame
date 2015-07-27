@@ -12,6 +12,7 @@ public class WoodMaterialManager : MonoBehaviour
         RemoveLine(boardToSplit, detachedLine);
         CreateSeparateBoard(baseNode, ref boardToSplit.LinesToCut);
         CreateSeparateBoard(baseNode2, ref boardToSplit.LinesToCut);
+        Destroy(boardToSplit.gameObject);
     }
 
     private void CreateSeparateBoard(Node baseNode, ref List<CutLine> AvailableLines)
