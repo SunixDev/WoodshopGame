@@ -20,27 +20,27 @@ public class WoodMaterialManager : MonoBehaviour
         List<Node> nodes = new List<Node>();
         RetrieveNodes(ref nodes, baseNode);
 
-        GameObject go = new GameObject();
-        go.name = "WoodMaterial";
-        go.AddComponent<Rigidbody>();
-        WoodMaterialObject wood = go.AddComponent<WoodMaterialObject>();
-
+        GameObject board = new GameObject("WoodBoardMaterial");
+        BoardController controller = board.AddComponent<BoardController>();
+        controller.objRigidbody = board.GetComponent<Rigidbody>();
+        controller.Moveable = true;
+        WoodMaterialObject wood = board.AddComponent<WoodMaterialObject>();
         foreach (Node n in nodes)
         {
-            n.gameObject.transform.parent = go.transform;
+            n.gameObject.transform.parent = board.transform;
             wood.WoodPieces.Add(n.gameObject);
             for (int i = 0; i < AvailableLines.Count; i++)
             {
                 if (AvailableLines[i].ContainsPiece(n))
                 {
-                    AvailableLines[i].gameObject.transform.parent = go.transform;
+                    AvailableLines[i].gameObject.transform.parent = board.transform;
                     wood.LinesToCut.Add(AvailableLines[i]);
                     AvailableLines.RemoveAt(i--);
                 }
             }
         }
-
-        WoodMaterials.Add(go);
+        controller.Manager = wood;
+        WoodMaterials.Add(board);
     }
 
     //Recursive call to get all connected nodes

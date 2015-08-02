@@ -7,6 +7,8 @@ public class WoodMaterialObject : MonoBehaviour
     public List<GameObject> WoodPieces;
     public List<CutLine> LinesToCut;
 
+    private Transform objTransform;
+
     void Awake()
     {
         if (WoodPieces == null)
@@ -18,6 +20,22 @@ public class WoodMaterialObject : MonoBehaviour
         {
             LinesToCut = new List<CutLine>();
         }
+
+        objTransform = transform;
+    }
+
+    public Vector3 GetPosition()
+    {
+        if(objTransform == null)
+        {
+            objTransform = transform;
+        }
+        return objTransform.position;
+    }
+
+    public bool ContainsPiece(GameObject piece)
+    {
+        return WoodPieces.Contains(piece);
     }
 
     public List<CutLine> RetrieveLinesByType(CutLineType cutType)

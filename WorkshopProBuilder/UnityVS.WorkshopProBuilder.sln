@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityVS.WorkshopProBuilder.CSharp", "UnityVS.WorkshopProBuilder.CSharp.csproj", "{FEB10B72-EA16-6FC7-5790-377E1EBA9F22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityVS.WorkshopProBuilder.CSharp.Editor", "UnityVS.WorkshopProBuilder.CSharp.Editor.csproj", "{DA736681-B3B8-D498-5C50-0DFB06FD60B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{FEB10B72-EA16-6FC7-5790-377E1EBA9F22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEB10B72-EA16-6FC7-5790-377E1EBA9F22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEB10B72-EA16-6FC7-5790-377E1EBA9F22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA736681-B3B8-D498-5C50-0DFB06FD60B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA736681-B3B8-D498-5C50-0DFB06FD60B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA736681-B3B8-D498-5C50-0DFB06FD60B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA736681-B3B8-D498-5C50-0DFB06FD60B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

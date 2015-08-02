@@ -46,25 +46,41 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\BandSaw\FullBoardController.cs" />
+     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\BaseFinger.cs" />
+     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Component\EasyTouchTrigger.cs" />
+     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\ECamera.cs" />
+     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\EasyTouch.cs" />
+     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\EasyTouchInput.cs" />
+     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Finger.cs" />
+     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Gesture.cs" />
+     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\TwoFingerGesture.cs" />
+     <Compile Include="Assets\Scripts\BandSaw\BandSawCutting.cs" />
+     <Compile Include="Assets\Scripts\Camera\CameraControl.cs" />
      <Compile Include="Assets\Scripts\Checkpoint.cs" />
      <Compile Include="Assets\Scripts\ChopSaw\ChopSawController.cs" />
+     <Compile Include="Assets\Scripts\ChopSaw\ChopSawCut.cs" />
      <Compile Include="Assets\Scripts\Connection.cs" />
      <Compile Include="Assets\Scripts\CutLine.cs" />
+     <Compile Include="Assets\Scripts\DadoCutTableSaw\DadoCutPractice.cs" />
      <Compile Include="Assets\Scripts\Enums\CutLineType.cs" />
      <Compile Include="Assets\Scripts\Enums\CutState.cs" />
+     <Compile Include="Assets\Scripts\GlueAndGlamp\PieceController.cs" />
      <Compile Include="Assets\Scripts\GlueAndGlamp\PositionSnap.cs" />
-     <Compile Include="Assets\Scripts\GlueAndGlamp\Positional.cs" />
      <Compile Include="Assets\Scripts\Misc\DisplayCutLine.cs" />
      <Compile Include="Assets\Scripts\Misc\Rotate.cs" />
      <Compile Include="Assets\Scripts\Node.cs" />
      <Compile Include="Assets\Scripts\ObjectController.cs" />
-     <Compile Include="Assets\Scripts\TableSaw\BladeCollision.cs" />
-     <Compile Include="Assets\Scripts\TableSaw\BoardController.cs" />
-     <Compile Include="Assets\Scripts\TableSaw\DadoCutPractice.cs" />
+     <Compile Include="Assets\Scripts\SwipingGameplay\SwipeManager.cs" />
+     <Compile Include="Assets\Scripts\TableSaw\TableSawBlade.cs" />
      <Compile Include="Assets\Scripts\TableSaw\TableSawCut.cs" />
+     <Compile Include="Assets\Scripts\WoodMaterials\BoardController.cs" />
      <Compile Include="Assets\Scripts\WoodMaterials\WoodMaterialManager.cs" />
      <Compile Include="Assets\Scripts\WoodMaterials\WoodMaterialObject.cs" />
+     <None Include="Assets\Shaders\ShiningShader.shader" />
+     <None Include="Assets\Shaders\SandingShader.shader" />
+     <None Include="Assets\EasyTouchBundle\Readme.txt" />
+     <None Include="Assets\Shaders\PaintingShader.shader" />
+     <None Include="Assets\EasyTouchBundle\EasyTouch\RealseNotes.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Unity/Unity5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
