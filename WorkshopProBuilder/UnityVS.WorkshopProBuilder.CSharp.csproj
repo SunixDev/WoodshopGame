@@ -81,6 +81,10 @@
     <Compile Include="Assets\Scripts\DadoCutTableSaw\DadoCutPractice.cs" />
     <Compile Include="Assets\Scripts\Enums\CutLineType.cs" />
     <Compile Include="Assets\Scripts\Enums\CutState.cs" />
+    <Compile Include="Assets\Scripts\GlueAndGlamp\AnchorPoint.cs" />
+    <Compile Include="Assets\Scripts\GlueAndGlamp\GlueAndAnchorManager.cs" />
+    <Compile Include="Assets\Scripts\GlueAndGlamp\GlueBox.cs" />
+    <Compile Include="Assets\Scripts\GlueAndGlamp\GluePlane.cs" />
     <Compile Include="Assets\Scripts\GlueAndGlamp\PieceController.cs" />
     <Compile Include="Assets\Scripts\GlueAndGlamp\PositionSnap.cs" />
     <Compile Include="Assets\Scripts\Misc\DisplayCutLine.cs" />
@@ -91,8 +95,11 @@
     <Compile Include="Assets\Scripts\TableSaw\TableSawBlade.cs" />
     <Compile Include="Assets\Scripts\TableSaw\TableSawCut.cs" />
     <Compile Include="Assets\Scripts\WoodMaterials\BoardController.cs" />
+    <Compile Include="Assets\Scripts\WoodMaterials\WoodLeftover.cs" />
+    <Compile Include="Assets\Scripts\WoodMaterials\WoodManagerHelper.cs" />
     <Compile Include="Assets\Scripts\WoodMaterials\WoodMaterialManager.cs" />
     <Compile Include="Assets\Scripts\WoodMaterials\WoodMaterialObject.cs" />
+    <Compile Include="Assets\Scripts\WoodMaterials\WoodPiece.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\EasyTouchBundle\EasyTouch\RealseNotes.txt" />

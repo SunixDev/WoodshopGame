@@ -9,57 +9,41 @@ public class WoodMaterialManager : MonoBehaviour
     public void SplitBoard(Node baseNode, Node baseNode2, WoodMaterialObject boardToSplit, CutLine detachedLine)
     {
         WoodMaterials.Remove(boardToSplit.gameObject);
-        RemoveLine(boardToSplit, detachedLine);
-        CreateSeparateBoard(baseNode, ref boardToSplit.LinesToCut);
-        CreateSeparateBoard(baseNode2, ref boardToSplit.LinesToCut);
+        WoodManagerHelper.RemoveLine(boardToSplit, detachedLine);
+        DeterminePiece(baseNode, ref boardToSplit.LinesToCut);
+        DeterminePiece(baseNode2, ref boardToSplit.LinesToCut);
         Destroy(boardToSplit.gameObject);
     }
 
-    private void CreateSeparateBoard(Node baseNode, ref List<CutLine> AvailableLines)
+    private void DeterminePiece(Node node, ref List<CutLine> AvailableLines)
     {
-        List<Node> nodes = new List<Node>();
-        RetrieveNodes(ref nodes, baseNode);
-
-        GameObject board = new GameObject("WoodBoardMaterial");
-        BoardController controller = board.AddComponent<BoardController>();
-        controller.objRigidbody = board.GetComponent<Rigidbody>();
-        controller.Moveable = true;
-        WoodMaterialObject wood = board.AddComponent<WoodMaterialObject>();
-        foreach (Node n in nodes)
+        if (node.ConnectedPieces.Count <= 0)
         {
-            n.gameObject.transform.parent = board.transform;
-            wood.WoodPieces.Add(n.gameObject);
-            for (int i = 0; i < AvailableLines.Count; i++)
+            GameObject obj = node.gameObject;
+            obj.transform.parent = null;
+            if (obj.tag == "Piece")
             {
-                if (AvailableLines[i].ContainsPiece(n))
-                {
-                    AvailableLines[i].gameObject.transform.parent = board.transform;
-                    wood.LinesToCut.Add(AvailableLines[i]);
-                    AvailableLines.RemoveAt(i--);
-                }
+                PieceController controller = obj.AddComponent<PieceController>();
+                controller.Initialize();
+
+                PositionSnap snapping = obj.AddComponent<PositionSnap>();
+                snapping.Initialize(controller);
+
+                WoodMaterials.Add(obj);
+            }
+            else if (obj.tag == "Leftover")
+            {
+                Destroy(obj);
+            }
+            else
+            {
+                Debug.LogError(obj.name + " is not tag as Piece or Leftover");
             }
         }
-        controller.Manager = wood;
-        WoodMaterials.Add(board);
-    }
-
-    //Recursive call to get all connected nodes
-    private void RetrieveNodes(ref List<Node> nodes, Node baseNode)
-    {
-        nodes.Add(baseNode);
-        foreach (Node c in baseNode.ConnectedPieces)
+        else
         {
-            if (!nodes.Contains(c))
-            {
-                RetrieveNodes(ref nodes, c);
-            }
+            GameObject obj = WoodManagerHelper.CreateSeparateBoard(node, ref AvailableLines);
+            WoodMaterials.Add(obj);
         }
-    }
-
-    private void RemoveLine(WoodMaterialObject boardToSplit, CutLine detachedLine)
-    {
-        detachedLine.SeverConnections();
-        boardToSplit.LinesToCut.Remove(detachedLine);
-        Destroy(detachedLine.gameObject);
     }
 }

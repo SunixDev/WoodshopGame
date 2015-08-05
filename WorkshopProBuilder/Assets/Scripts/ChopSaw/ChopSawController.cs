@@ -3,69 +3,72 @@ using System.Collections;
 
 public class ChopSawController : MonoBehaviour 
 {
-    private float cursorPosition;
-    private bool movingSaw;
+    public bool Moveable;
 
-    private Vector3 screenPoint;
-    private Vector3 offset;
+    [Header("Rotation Limits (0 to 360)")]
+    public float UpperLimit = 345;
+    public float LowerLimit = 30;
+
+    private bool selected;
+    private Vector3 previousPosition;
 
     void Start()
     {
-        movingSaw = false;
+        Moveable = true;
+        selected = false;
     }
-	
-	void Update () 
-    {
-        if (Input.GetMouseButton(0))
-        {
-            RaycastHit hit;
-            Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(cursorRay, out hit))
-            {
-                string name = hit.collider.name;
-                if (!movingSaw && name == "SawHandle")
-                {
-                    movingSaw = true;
-                }
 
-                if (name == "SawHandle" || movingSaw)
-                {
-                    Vector3 mouse = new Vector3(Input.mousePosition.x, Input.mousePosition.y, hit.transform.position.z);
-                    Vector3 mousePosition = Camera.main.ScreenToWorldPoint(mouse);
-                    moveSaw(mousePosition.y);
-                }
+    public void OnSawArmTouch(Gesture gesture)
+    {
+        GameObject obj = gesture.pickedObject.transform.parent.gameObject;
+        if (Moveable && obj == gameObject)
+        {
+            selected = true;
+        }
+    }
+
+    public void OnSawArmRelease(Gesture gesture)
+    {
+        selected = false;
+        transform.eulerAngles = new Vector3(0.0f, transform.eulerAngles.y, transform.eulerAngles.z);
+    }
+
+    public void OnMoveSawArm(Gesture gesture)
+    {
+        if (Moveable && selected && (gesture.swipe == EasyTouch.SwipeDirection.Up || gesture.swipe == EasyTouch.SwipeDirection.Down) )
+        {
+            float direction = (gesture.swipe == EasyTouch.SwipeDirection.Up) ? -1.0f : 1.0f;
+            float deltaMagnitude = gesture.deltaPosition.magnitude;
+            transform.Rotate(Vector3.right, (deltaMagnitude * direction), Space.Self);
+            if (transform.eulerAngles.x > LowerLimit && transform.eulerAngles.x < 180)
+            {
+                transform.eulerAngles = new Vector3(LowerLimit, transform.eulerAngles.y, transform.eulerAngles.z);
+            }
+            else if (transform.eulerAngles.x < UpperLimit && transform.eulerAngles.x > 180)
+            {
+                transform.eulerAngles = new Vector3(UpperLimit, transform.eulerAngles.y, transform.eulerAngles.z);
             }
         }
+    }
 
-        if (Input.GetMouseButtonUp(0))
-        {
-            movingSaw = false;
-        }
-	}
-
-    private void moveSaw(float hitPosition)
+    void OnEnable()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
-        }
-        else if (Input.GetMouseButton(0))
-        {
-            Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
+        EasyTouch.On_TouchDown += OnSawArmTouch;
+        EasyTouch.On_TouchUp += OnSawArmRelease;
+        EasyTouch.On_Drag += OnMoveSawArm;
+    }
 
-            Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
-            transform.position = new Vector3(transform.position.x, curPosition.y, transform.position.z);
-        }
+    void OnDisable()
+    {
+        EasyTouch.On_TouchDown -= OnSawArmTouch;
+        EasyTouch.On_TouchUp -= OnSawArmRelease;
+        EasyTouch.On_Drag -= OnMoveSawArm;
+    }
+
+    void OnDestory()
+    {
+        EasyTouch.On_TouchDown -= OnSawArmTouch;
+        EasyTouch.On_TouchUp -= OnSawArmRelease;
+        EasyTouch.On_Drag -= OnMoveSawArm;
     }
 }
-
-
-
-//float cursorDeltaPosition = hitPosition;
-//float delta = cursorPosition - cursorDeltaPosition;
-//Debug.Log(delta);
-//if (delta != 0.0f)
-//{
-//    transform.position += new Vector3(0.0f, delta, 0.0f);
-//}
-//cursorPosition = cursorDeltaPosition;

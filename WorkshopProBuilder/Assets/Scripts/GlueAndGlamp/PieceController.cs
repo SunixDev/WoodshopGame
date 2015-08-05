@@ -3,65 +3,80 @@ using System.Collections;
 
 public class PieceController : MonoBehaviour 
 {
-    public bool Moveable { get; set; }
+    public bool Moveable;
+    public float RotationSpeed = 5.0f;
+    [Range(0.0f, 1.0f)]
+    public float ActionTimeToDrag = 0.2f;
 
     private Transform objTransform;
-    private Vector3 deltaPosition;
-    private Vector3 deltaPositionForRotation;
+    private bool Selected;
+    private bool Rotating;
+    private Vector3 rotationAxis;
+    private float totalRotation;
 
     void Start()
     {
+        Initialize();
+    }
+
+    public void Initialize()
+    {
         Moveable = true;
+        Selected = false;
+        Rotating = false;
         objTransform = transform;
-        deltaPosition = Vector3.zero;
+        totalRotation = 0.0f;
     }
 
     void Update()
     {
-        //objTransform.Rotate(transform.up, -10.0f);
-    }
-
-    public void MovePieceStart(Gesture gesture)
-    {
-        if (gesture.pickedObject == gameObject && Moveable && gesture.touchCount == 1)
+        float deltaTime = Time.deltaTime;
+        if (Rotating)
         {
-            Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
-            deltaPosition = position - transform.position;
+            totalRotation += RotationSpeed * deltaTime;
+            if (totalRotation >= 90.0f)
+            {
+                totalRotation -= RotationSpeed * deltaTime;
+                float remainingRotation = 90.0f - totalRotation;
+                objTransform.Rotate(rotationAxis, remainingRotation, Space.World);
+                totalRotation = 0.0f;
+                Rotating = false;
+            }
+            else
+            {
+                objTransform.Rotate(rotationAxis, RotationSpeed * Time.deltaTime, Space.World);
+            }
+
         }
     }
 
     public void MovePiece(Gesture gesture)
     {
-        if (gesture.pickedObject == gameObject && Moveable && gesture.touchCount == 1)
+        if (Moveable && Selected && !Rotating && gesture.pickedObject == gameObject && gesture.touchCount == 1 && gesture.actionTime >= ActionTimeToDrag)
         {
-            Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
-            transform.position = position - deltaPosition;
+            objTransform.position = gesture.GetTouchToWorldPoint(objTransform.position);
         }
     }
 
-    public void RotatePieceStart(Gesture gesture)
+    public void PlayerRotation(Gesture gesture)
     {
-        if (gesture.pickedObject == gameObject && Moveable && gesture.touchCount == 2)
+        if (Moveable && Selected && !Rotating && gesture.pickedObject == gameObject && gesture.touchCount == 1 && gesture.actionTime < ActionTimeToDrag)
         {
-            Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
-            deltaPositionForRotation = position - transform.position;
+            rotationAxis = GetRotationAxis(gesture.swipe);
+            Rotating = true;
         }
     }
 
-    public void RotatePiece(Gesture gesture)
+    public void OnTouch(Gesture gesture)
     {
-        if (gesture.pickedObject == gameObject && Moveable && gesture.touchCount == 2)
+        if (gesture.pickedObject == gameObject)
         {
-            Vector3 position = gesture.GetTouchToWorldPoint(objTransform.position);
-            deltaPositionForRotation = position - deltaPositionForRotation;
-            Vector3 axis = GetRotationAxis(gesture.swipe);
-            objTransform.Rotate(axis * deltaPositionForRotation.magnitude * 2.0f, Space.World);
+            Selected = true;
         }
-    }
-
-    public void TwistRotateObject(float twistAngle)
-    {
-        objTransform.Rotate(new Vector3(0.0f, 0.0f, twistAngle), Space.World);
+        else
+        {
+            Selected = false;
+        }
     }
 
     private Vector3 GetRotationAxis(EasyTouch.SwipeDirection direction)
@@ -74,7 +89,7 @@ public class PieceController : MonoBehaviour
         }
         else if (direction == EasyTouch.SwipeDirection.Down)
         {
-            axis = Vector3.right * -1;
+            axis = Vector3.left;
         }
         else if (direction == EasyTouch.SwipeDirection.Left)
         {
@@ -82,9 +97,52 @@ public class PieceController : MonoBehaviour
         }
         else if (direction == EasyTouch.SwipeDirection.Right)
         {
-            axis = Vector3.up * -1;
+            axis = Vector3.down;
         }
 
         return axis;
+    }
+
+    private float ClampAngle(float amount)
+    {
+        float fullRotation = 360.0f;
+        if (amount < 0.0f) 
+            amount += fullRotation;
+        if (amount > fullRotation) 
+            amount -= fullRotation;
+        return Mathf.Clamp(amount, 0, 360);
+    }
+
+
+
+
+
+    private void EnableTouchEvents()
+    {
+        EasyTouch.On_Drag += MovePiece;
+        EasyTouch.On_TouchStart += OnTouch;
+        EasyTouch.On_DragEnd += PlayerRotation;
+    }
+
+    private void DisableTouchEvents()
+    {
+        EasyTouch.On_Drag -= MovePiece;
+        EasyTouch.On_TouchStart -= OnTouch;
+        EasyTouch.On_DragEnd -= PlayerRotation;
+    }
+
+    void OnEnable()
+    {
+        EnableTouchEvents();
+    }
+
+    void OnDisable()
+    {
+        DisableTouchEvents();
+    }
+
+    void OnDestory()
+    {
+        DisableTouchEvents();
     }
 }
