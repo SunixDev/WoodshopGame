@@ -1,7 +1,7 @@
 ﻿
 public enum CutLineType
 {
-    RipCut, //Cut to Width
-    CrossCut, //Cut to length
+    TableSawCut, //Cut to Width
+    ChopSawCut, //Cut to length
     CurvatureCut //Band saw, Jig saw, or Scroll saw cuts
 }

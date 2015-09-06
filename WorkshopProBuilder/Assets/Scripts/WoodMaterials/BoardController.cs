@@ -5,17 +5,11 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Rigidbody))]
 public class BoardController : MonoBehaviour
 {
-    public enum ControlType
-    {
-        Freeform,
-        Slide
-    }
-
     public bool Moveable;
     public Transform RotationPoint;
     public bool RestrictX;
     public bool RestrictZ;
-    public ControlType control = ControlType.Freeform;
+    public bool PointRotation;
     public Rigidbody objRigidbody { get; set; }
     public WoodMaterialObject WoodObject { get; set; }
 
@@ -34,19 +28,20 @@ public class BoardController : MonoBehaviour
 
     void Update()
     {
-        if (control == ControlType.Freeform)
-        {
-            EasyTouch.SetStationaryTolerance(5.0f);
-        }
-        else
-        {
-            EasyTouch.SetStationaryTolerance(5.0f);
-        }
+        
     }
 
     public void OnTouchStart(Gesture gesture)
     {
-        if (Moveable && WoodObject.ContainsPiece(gesture.pickedObject))
+        if (Moveable && WoodObject.ContainsPiece(gesture.pickedObject) && gesture.touchCount == 1)
+        {
+            selected = true;
+        }
+    }
+
+    public void OnTouchStart_TwoFingers(Gesture gesture)
+    {
+        if (Moveable && WoodObject.ContainsPiece(gesture.pickedObject) && gesture.touchCount == 2)
         {
             selected = true;
         }
@@ -54,7 +49,16 @@ public class BoardController : MonoBehaviour
 
     public void OnDragStart(Gesture gesture)
     {
-        if (Moveable && selected)
+        if (Moveable && selected && gesture.touchCount == 1)
+        {
+            Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
+            deltaPosition = position - objRigidbody.position;
+        }
+    }
+
+    public void OnDragStart_TwoFingers(Gesture gesture)
+    {
+        if (Moveable && selected && gesture.touchCount == 2)
         {
             Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
             deltaPosition = position - objRigidbody.position;
@@ -67,34 +71,33 @@ public class BoardController : MonoBehaviour
         directionSelected = false;
     }
 
-    public void MoveObject(Gesture gesture)
+    public void OnDragRelease_TwoFingers(Gesture gesture)
     {
-        if (Moveable && selected)
+        if (gesture.touchCount <= 0)
         {
-            Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
-            Vector3 nextPosition = position - deltaPosition;
-            nextPosition = DetermineRestrictions(nextPosition);
-            if (control == ControlType.Freeform)
-            {
-                objRigidbody.position = new Vector3(nextPosition.x, objRigidbody.position.y, nextPosition.z);
-            }
-            else
-            {
-                if (!directionSelected)
-                {
-                    direction = GetDirectionVector(gesture.swipe);
-                }
-                float x = (direction.x > 0.0f) ? nextPosition.x : objRigidbody.position.x;
-                float y = objRigidbody.position.y;
-                float z = (direction.z > 0.0f) ? nextPosition.z : objRigidbody.position.z;
-                objRigidbody.position = new Vector3(x, y, z);
-            }
+            OnDragRelease(gesture);
+        }
+    }
+
+    public void MoveObject_SingleFingerTouch(Gesture gesture)
+    {
+        if (Moveable && selected && gesture.touchCount == 1)
+        {
+            MoveObject(gesture);            
+        }
+    }
+
+    public void MoveObject_TwoFingerTouch(Gesture gesture)
+    {
+        if (Moveable && selected && gesture.touchCount == 2)
+        {
+           MoveObject(gesture);
         }
     }
 
     public void RotateAroundPoint(Gesture gesture)
     {
-        if (Moveable && selected)
+        if (Moveable && selected && gesture.touchCount == 2)
         {
             if (RotationPoint != null)
             {
@@ -102,12 +105,14 @@ public class BoardController : MonoBehaviour
             }
             else
             {
-                transform.Rotate(Vector3.up, -gesture.twistAngle, Space.World);
+                Vector3 axis = Vector3.up;
+                Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
+                transform.RotateAround(position, axis, -gesture.twistAngle);
             }
         }
     }
 
-    private Vector3 GetDirectionVector(EasyTouch.SwipeDirection swipe)
+    private Vector3 GetSwipeDirectionVector(EasyTouch.SwipeDirection swipe)
     {
         Vector3 direction = new Vector3();
         if (swipe == EasyTouch.SwipeDirection.Up || swipe == EasyTouch.SwipeDirection.Down)
@@ -133,34 +138,66 @@ public class BoardController : MonoBehaviour
         return constrainedVector;
     }
 
+    private void MoveObject(Gesture gesture)
+    {
+        Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
+        Vector3 nextPosition = position - deltaPosition;
+        nextPosition = DetermineRestrictions(nextPosition);
+        if (!directionSelected)
+        {
+            direction = GetSwipeDirectionVector(gesture.swipe);
+        }
+        float x = (direction.x > 0.0f) ? nextPosition.x : objRigidbody.position.x;
+        float y = objRigidbody.position.y;
+        float z = (direction.z > 0.0f) ? nextPosition.z : objRigidbody.position.z;
+        objRigidbody.position = new Vector3(x, y, z);
+    }
 
-
-
-
+#region EventSubscriptions
     void OnEnable()
     {
-        EasyTouch.On_TouchDown += OnTouchStart;
-        EasyTouch.On_DragStart += OnDragStart;
-        EasyTouch.On_Drag += MoveObject;
-        EasyTouch.On_Twist += RotateAroundPoint;
-        EasyTouch.On_DragEnd += OnDragRelease;
+        SubscribeAll();
     }
 
     void OnDisable()
     {
-        EasyTouch.On_TouchDown -= OnTouchStart;
-        EasyTouch.On_DragStart -= OnDragStart;
-        EasyTouch.On_Drag -= MoveObject;
-        EasyTouch.On_Twist -= RotateAroundPoint;
-        EasyTouch.On_DragEnd -= OnDragRelease;
+        UnsubscribeAll();
     }
 
     void OnDestroy()
     {
-        EasyTouch.On_TouchDown -= OnTouchStart;
+        UnsubscribeAll();
+    }
+
+    private void SubscribeAll()
+    {
+        EasyTouch.On_TouchStart += OnTouchStart;
+        EasyTouch.On_TouchStart2Fingers += OnTouchStart_TwoFingers;
+
+        EasyTouch.On_DragStart += OnDragStart;
+        EasyTouch.On_DragStart2Fingers += OnDragStart_TwoFingers;
+
+        EasyTouch.On_Drag += MoveObject_SingleFingerTouch;
+        EasyTouch.On_Drag2Fingers += MoveObject_TwoFingerTouch;
+
+        EasyTouch.On_Twist += RotateAroundPoint;
+        EasyTouch.On_DragEnd += OnDragRelease;
+    }
+
+    private void UnsubscribeAll()
+    {
+        EasyTouch.On_TouchStart -= OnTouchStart;
+        EasyTouch.On_TouchStart2Fingers -= OnTouchStart_TwoFingers;
+
         EasyTouch.On_DragStart -= OnDragStart;
-        EasyTouch.On_Drag -= MoveObject;
+        EasyTouch.On_DragStart2Fingers -= OnDragStart_TwoFingers;
+
+        EasyTouch.On_Drag -= MoveObject_SingleFingerTouch;
+        EasyTouch.On_Drag2Fingers -= MoveObject_TwoFingerTouch;
+
         EasyTouch.On_Twist -= RotateAroundPoint;
         EasyTouch.On_DragEnd -= OnDragRelease;
     }
+#endregion
+
 }

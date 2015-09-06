@@ -2,9 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class WoodPiece : MonoBehaviour 
+public class WoodPiece : MonoBehaviour
 {
-    public List<AnchorPoint> AnchorPoints;
-    public List<GlueBox> GlueAreas;
-    public Color PaintedColor;
+    public string Name;
+    public List<SnapPoint> SnapPoints;
+    public List<ClampPoint> ClampPoints;
+    public List<GlueBox> GlueBoxes;
+    public Vector3 Position
+    {
+        get
+        {
+            return transform.position;
+        }
+    }
 }
