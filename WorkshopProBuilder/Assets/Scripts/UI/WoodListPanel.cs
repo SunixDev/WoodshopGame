@@ -17,24 +17,24 @@ public class WoodListPanel : MonoBehaviour
 
     public void AddWoodMaterialButton(string woodName)
     {
-        GameObject button = Instantiate(WoodPieceButton) as GameObject;
-        button.transform.SetParent(ButtonContainer.transform);
-        button.GetComponent<RectTransform>().localScale = new Vector3(1.0f, 1.0f, 1.0f);
+        //GameObject button = Instantiate(WoodPieceButton) as GameObject;
+        //button.transform.SetParent(ButtonContainer.transform);
+        //button.GetComponent<RectTransform>().localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
-        Button newButton = button.GetComponent<Button>();
-        newButton.GetComponentInChildren<Text>().text = woodName;
-        newButton.GetComponent<Image>().color = NonSelectedButtonColor;
+        //Button newButton = button.GetComponent<Button>();
+        //newButton.GetComponentInChildren<Text>().text = woodName;
+        //newButton.GetComponent<Image>().color = NonSelectedButtonColor;
 
-        int temp = AvailableButtonsList.Count;
-        newButton.onClick.AddListener(() => SwitchSelectedButton(temp));
-        newButton.onClick.AddListener(() => manager.SwitchPiece(temp));
-        if (AvailableButtonsList.Count == 0)
-        {
-            newButton.GetComponent<Image>().color = SelectedButtonColor;
-            newButton.GetComponent<Button>().enabled = false;
-            SelectedButtonIndex = 0;
-        }
-        AvailableButtonsList.Add(button);
+        //int temp = AvailableButtonsList.Count;
+        //newButton.onClick.AddListener(() => SwitchSelectedButton(temp));
+        //newButton.onClick.AddListener(() => manager.SwitchPiece(temp));
+        //if (AvailableButtonsList.Count == 0)
+        //{
+        //    newButton.GetComponent<Image>().color = SelectedButtonColor;
+        //    newButton.GetComponent<Button>().enabled = false;
+        //    SelectedButtonIndex = 0;
+        //}
+        //AvailableButtonsList.Add(button);
     }
 
     public void RemoveButton(int index)

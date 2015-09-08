@@ -8,9 +8,9 @@ public class TableSawCut : MonoBehaviour
     public Transform BladeEdge;
     public Blade SawBlade;
     public float ValidCutOffset = 0.005f;
+    public CutState CurrentState { get; set; }
 
     private CutLine currentLine;
-    private Vector3 originalBladeEdgePosition;
     private bool cuttingAlongLine;
     private Vector3 previousCheckpointPosition;
     private float timeWithoutPushing;
@@ -18,22 +18,22 @@ public class TableSawCut : MonoBehaviour
 	void Start () 
     {
         currentLine = null;
-        originalBladeEdgePosition = BladeEdge.position;
         cuttingAlongLine = false;
         timeWithoutPushing = 0.0f;
+        CurrentState = CutState.ReadyToCut;
 	}
 
     void Update() 
     {
         #region CuttingCode
-        if (manager.CurrentStateIs(CutState.ReadyToCut) && SawBlade.MadeContactWithBoard)
+        if (CurrentState == CutState.ReadyToCut && SawBlade.MadeContactWithBoard && SawBlade.Active)
         {
             Vector3 origin = BladeEdge.position + new Vector3(0.0f, 0.5f, 0.0f);
             Ray ray = new Ray(origin, Vector3.down);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Piece" || hit.collider.tag == "Leftover"))
             {
-                manager.CurrentState = CutState.Cutting;
+                CurrentState = CutState.Cutting;
                 currentLine = manager.GetNearestLine(hit.point);
                 BladeEdge.position = hit.point;
                 cuttingAlongLine = BladeWithinValidCutOffset();
@@ -102,6 +102,11 @@ public class TableSawCut : MonoBehaviour
         //    }
         //}
         #endregion
+    }
+
+    public void ActivateSaw(bool active)
+    {
+        
     }
 
     private bool BladeWithinValidCutOffset()

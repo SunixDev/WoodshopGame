@@ -4,10 +4,17 @@ using System.Collections.Generic;
 
 public class Blade : MonoBehaviour 
 {
-    public bool MadeContactWithBoard { get; set; }
-    public bool CuttingWoodBoard { get; set; }
-    public bool NoInteractionWithBoard { get; set; }
+    public bool MadeContactWithBoard { get; private set; }
+    public bool CuttingWoodBoard { get; private set; }
+    public bool NoInteractionWithBoard { get; private set; }
+
+    public Transform BladeEdge;
     public List<GameObject> HitObjects;
+    public BoxCollider Collider;
+    public Rotate Rotation;
+    public bool Active;
+
+    private Vector3 originalBladeEdgePosition;    
 
     void Awake()
     {
@@ -15,6 +22,11 @@ public class Blade : MonoBehaviour
         MadeContactWithBoard = false;
         CuttingWoodBoard = false;
         HitObjects = new List<GameObject>();
+        originalBladeEdgePosition = BladeEdge.position;
+        if (Active)
+            TurnOnBlade();
+        else
+            TurnOff();
     }
 
     void OnTriggerEnter(Collider other)
@@ -82,5 +94,35 @@ public class Blade : MonoBehaviour
             }
         }
         return objToReturn;
+    }
+
+    public void TurnOnBlade()
+    {
+        Active = true;
+        Rotation.EnableRotation(true);
+        Collider.enabled = false;
+    }
+
+    public void TurnOff()
+    {
+        Active = false;
+        Rotation.EnableRotation(false);
+        Collider.enabled = true;
+        transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
+    }
+
+    public Vector3 EdgePosition()
+    {
+        return BladeEdge.position;
+    }
+
+    public void SetEdgePosition(Vector3 position)
+    {
+        BladeEdge.position = position;
+    }
+
+    public void ResetEdgePosition()
+    {
+        BladeEdge.position = originalBladeEdgePosition;
     }
 }

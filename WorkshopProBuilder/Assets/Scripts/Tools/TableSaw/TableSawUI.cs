@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class TableSawUI : MonoBehaviour 
 {
     public CameraControl camera;
     public Color SelectedButtonColor;
     public GameObject SelectedButton;
+    public List<Button> OptionButtons;
 
     void Start()
     {
@@ -27,15 +29,20 @@ public class TableSawUI : MonoBehaviour
         }
     }
 
-    public void ResetCamera()
+    public void EnableOptions()
     {
-        camera.MinDistance = 0.5f;
-        camera.MaxDistance = 2.0f;
+        foreach (Button button in OptionButtons)
+        {
+            button.enabled = true;
+        }
+        SelectedButton.GetComponent<Button>().enabled = false;
     }
 
-    public void SwitchToMakeCut()
+    public void DisableOptions()
     {
-        camera.MinDistance = 0.1f;
-        camera.MaxDistance = 0.6f;
+        foreach (Button button in OptionButtons)
+        {
+            button.enabled = false;
+        }
     }
 }

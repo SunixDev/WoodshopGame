@@ -55,6 +55,7 @@
      <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Gesture.cs" />
      <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\TwoFingerGesture.cs" />
      <Compile Include="Assets\Scripts\Camera\CameraControl.cs" />
+     <Compile Include="Assets\Scripts\Camera\CameraPositioning.cs" />
      <Compile Include="Assets\Scripts\Enums\CutLineType.cs" />
      <Compile Include="Assets\Scripts\Enums\CutState.cs" />
      <Compile Include="Assets\Scripts\Enums\GameState.cs" />
@@ -97,7 +98,6 @@
      <Compile Include="Assets\Scripts\Tools\SwipingGameplay\Sanding.cs" />
      <Compile Include="Assets\Scripts\Tools\SwipingGameplay\SwipeManager.cs" />
      <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawCut.cs" />
-     <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawLoader.cs" />
      <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawManager.cs" />
      <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawUI.cs" />
      <Compile Include="Assets\Scripts\UI\BringToFront.cs" />

@@ -28,7 +28,8 @@ public class BoardController : MonoBehaviour
 
     void Update()
     {
-        
+        //Debug.Log("transform: " + transform.position);
+        //Debug.Log("objRigidbody: " + objRigidbody.position);
     }
 
     public void OnTouchStart(Gesture gesture)
@@ -52,7 +53,7 @@ public class BoardController : MonoBehaviour
         if (Moveable && selected && gesture.touchCount == 1)
         {
             Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
-            deltaPosition = position - objRigidbody.position;
+            deltaPosition = position;
         }
     }
 
@@ -61,7 +62,7 @@ public class BoardController : MonoBehaviour
         if (Moveable && selected && gesture.touchCount == 2)
         {
             Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
-            deltaPosition = position - objRigidbody.position;
+            deltaPosition = position;// -objRigidbody.position;
         }
     }
 
@@ -132,9 +133,9 @@ public class BoardController : MonoBehaviour
     private Vector3 DetermineRestrictions(Vector3 updatedVector)
     {
         Vector3 constrainedVector = new Vector3();
-        constrainedVector.x = (RestrictX) ? objRigidbody.position.x : updatedVector.x;
-        constrainedVector.y = objRigidbody.position.y;
-        constrainedVector.z = (RestrictZ) ? objRigidbody.position.z : updatedVector.z;
+        constrainedVector.x = (RestrictX) ? 0.0f : updatedVector.x; //objRigidbody.position.x
+        constrainedVector.y = 0.0f;
+        constrainedVector.z = (RestrictZ) ? 0.0f : updatedVector.z;
         return constrainedVector;
     }
 
@@ -142,15 +143,9 @@ public class BoardController : MonoBehaviour
     {
         Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
         Vector3 nextPosition = position - deltaPosition;
+        deltaPosition = position;
         nextPosition = DetermineRestrictions(nextPosition);
-        if (!directionSelected)
-        {
-            direction = GetSwipeDirectionVector(gesture.swipe);
-        }
-        float x = (direction.x > 0.0f) ? nextPosition.x : objRigidbody.position.x;
-        float y = objRigidbody.position.y;
-        float z = (direction.z > 0.0f) ? nextPosition.z : objRigidbody.position.z;
-        objRigidbody.position = new Vector3(x, y, z);
+        objRigidbody.position += nextPosition;
     }
 
 #region EventSubscriptions
@@ -201,3 +196,9 @@ public class BoardController : MonoBehaviour
 #endregion
 
 }
+
+
+
+//float x = nextPosition.x; //(direction.x > 0.0f) ? nextPosition.x : objRigidbody.position.x;
+//float y = objRigidbody.position.y;
+//float z = nextPosition.z; //(direction.z > 0.0f) ? nextPosition.z : objRigidbody.position.z;

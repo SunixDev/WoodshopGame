@@ -19,15 +19,14 @@ public class CameraControl : MonoBehaviour
     [Range(1.0f, 5.0f)]
     public float ZoomSensitivity = 1.0f;
 
-    [Header("Vertical Rotaion Clamp")]
+    [Header("Vertical Rotation Clamp")]
     public float yMinRotation = 10.0f;
     public float yMaxRotation = 80.0f;
 
-    public float thing { get; set; }
-
-    [Header("Initial Rotaion")]
+    [Header("Initial Rotation")]
     public float Vertical = 90;
     public float Horizontal = 90;
+    public bool AllowRotation = true;
 
     private float xMovement;
     private float yMovement;
@@ -46,14 +45,15 @@ public class CameraControl : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(yMovement, xMovement, 0.0f);
         Vector3 finalPosition = LookAtPoint.position + (rotation * distanceVector);
 
-        //transform.position = Vector3.MoveTowards(transform.position, finalPosition, 0.1f);
-        transform.position = finalPosition;
+        transform.position = Vector3.MoveTowards(transform.position, finalPosition, 0.1f);
+        //transform.position = finalPosition;
         transform.LookAt(LookAtPoint.position);
     }
 
     public void OrbitCamera(Gesture gesture)
     {
-        if (MovementEnabled && gesture.touchCount == 1)
+        string tag = (gesture.pickedObject == null) ? "Untagged" : gesture.pickedObject.tag;
+        if (MovementEnabled && gesture.touchCount == 1 && AllowRotation && ValidTag(tag))
         {
             xMovement += gesture.deltaPosition.x * (SensitivityX / 2.0f) * Time.deltaTime;
             yMovement -= gesture.deltaPosition.y * (SensitivityY / 2.0f) * Time.deltaTime;
@@ -63,7 +63,8 @@ public class CameraControl : MonoBehaviour
 
     public void ZoomAwayFromPoint(Gesture gesture)
     {
-        if (MovementEnabled && gesture.touchCount == 2)
+        string tag = (gesture.pickedObject == null) ? "Untagged" : gesture.pickedObject.tag;
+        if (MovementEnabled && gesture.touchCount == 2 && ValidTag(tag))
         {
             float zoomAmount = gesture.deltaPinch * (ZoomSensitivity / 10.0f) * Time.deltaTime;
             DistanceFromPoint += zoomAmount;
@@ -73,7 +74,8 @@ public class CameraControl : MonoBehaviour
 
     public void ZoomTowardsPoint(Gesture gesture)
     {
-        if (MovementEnabled && gesture.touchCount == 2)
+        string tag = (gesture.pickedObject == null) ? "Untagged" : gesture.pickedObject.tag;
+        if (MovementEnabled && gesture.touchCount == 2 && ValidTag(tag))
         {
             float zoomAmount = gesture.deltaPinch * (ZoomSensitivity / 10.0f) * Time.deltaTime;
             DistanceFromPoint -= zoomAmount;
@@ -83,7 +85,8 @@ public class CameraControl : MonoBehaviour
 
     public void Drag(Gesture gesture)
     {
-        if (MovementEnabled && gesture.touchCount == 1)
+        string tag = (gesture.pickedObject == null) ? "Untagged" : gesture.pickedObject.tag;
+        if (MovementEnabled && gesture.touchCount == 1 && ValidTag(tag))
         {
             OrbitCamera(gesture);
         }
@@ -114,7 +117,23 @@ public class CameraControl : MonoBehaviour
         return Mathf.Clamp(amount, yMinRotation, yMaxRotation);
     }
 
+    public void SetupCamera(CameraPositioning setup)
+    {
+        DistanceFromPoint = setup.DistanceFromPoint;
+        MinDistance = setup.MinDistance;
+        MaxDistance = setup.MaxDistance;
+        yMinRotation = setup.yMinRotation;
+        yMaxRotation = setup.yMaxRotation;
+        xMovement = setup.Vertical;
+        yMovement = setup.Horizontal;
+        yMovement = ClampAngle(yMovement);
+        AllowRotation = setup.AllowRotation;
+    }
 
+    private bool ValidTag(string tag)
+    {
+        return (tag != "Piece" && tag != "Leftover" && tag != "WoodStrip" && tag != "Tool" && tag != "DadoBlock");
+    }
 
 
 

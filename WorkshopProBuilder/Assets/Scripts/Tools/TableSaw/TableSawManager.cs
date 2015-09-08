@@ -2,16 +2,24 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public enum ActionState
+{
+    OnTableSaw,
+    UsingRuler,
+    None
+}
+
 public class TableSawManager : MonoBehaviour 
 {
     public List<GameObject> AvailableWoodMaterial;
     public List<CutLine> LinesToCut;
-    public CutState CurrentState { get; set; }
-    public Transform InitialPlacement;
-    public WoodListPanel buttonPanel;
+    public Transform InitialPlacementFromBlade;
 
     private int currentPieceIndex = 0;
     private Transform currentSpawnPoint;
+    private ActionState currentAction = ActionState.OnTableSaw;
+    private ActionState previousAction = ActionState.None;
+    private bool switchingPieces = false;
 
 	void Start () 
     {
@@ -21,38 +29,71 @@ public class TableSawManager : MonoBehaviour
         {
             WoodMaterialObject wood = go.GetComponent<WoodMaterialObject>();
             LinesToCut.AddRange(wood.RetrieveLines(CutLineType.TableSawCut, GameManager.instance.GetStep()));
-            buttonPanel.AddWoodMaterialButton(wood.gameObject.name);
             go.SetActive(false);
         }
-        CurrentState = CutState.ReadyToCut;
         AvailableWoodMaterial[currentPieceIndex].SetActive(true);
-        //AvailableWoodMaterial[currentPieceIndex].transform.position = InitialPlacement.position;
-        //currentSpawnPoint = InitialPlacement;
+        currentSpawnPoint = InitialPlacementFromBlade;
+        PlacePiece();
 	}
 
-    public void SwitchPiece(int index)
+    public void SwitchToNextPiece()
     {
+        SwitchPiece(currentPieceIndex + 1);
+    }
+
+    public void SwitchToPreviousPiece()
+    {
+        SwitchPiece(currentPieceIndex - 1);
+    }
+
+    private void SwitchPiece(int indexToSwitchTo)
+    {
+        switchingPieces = true;
         AvailableWoodMaterial[currentPieceIndex].transform.position = Vector3.zero;
         AvailableWoodMaterial[currentPieceIndex].SetActive(false);
-        currentPieceIndex = index;
-        AvailableWoodMaterial[currentPieceIndex].SetActive(true);
-        AvailableWoodMaterial[currentPieceIndex].transform.position = currentSpawnPoint.position;
+        AvailableWoodMaterial[indexToSwitchTo].SetActive(true);
+        currentPieceIndex = indexToSwitchTo;
+        PlacePiece();
     }
 
-    public void SwitchSpawnPoint(Transform spawn)
+    public void SwitchSpawnPoint(Transform spawnPoint)
     {
-        currentSpawnPoint = spawn;
-        AvailableWoodMaterial[currentPieceIndex].transform.position = currentSpawnPoint.position;
+        if (currentSpawnPoint != spawnPoint)
+        {
+            currentSpawnPoint = spawnPoint;
+        }
     }
 
-    public bool CurrentStateIs(CutState state)
+    public void SwitchAction(string actionState)
     {
-        return CurrentState == state;
+        ActionState newState = (ActionState)System.Enum.Parse(typeof(ActionState), actionState);
+        if (currentAction != newState)
+        {
+            previousAction = currentAction;
+            currentAction = newState;
+        }
     }
 
-    public void UpdateState(CutState nextState)
+    public void PlacePiece()
     {
-        CurrentState = nextState;
+        if (switchingPieces || previousAction != currentAction)
+        {
+            AvailableWoodMaterial[currentPieceIndex].transform.position = currentSpawnPoint.position + new Vector3(0.0f, 0.0f, -3.0f);
+            Ray ray = new Ray(currentSpawnPoint.position, -Vector3.forward);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                float distance = (hit.point - currentSpawnPoint.position).magnitude;
+                AvailableWoodMaterial[currentPieceIndex].transform.position += (distance * Vector3.forward);
+            }
+            previousAction = currentAction;
+            switchingPieces = false;
+        }
+    }
+
+    public bool AreAllLinesCut()
+    {
+        return (LinesToCut.Count <= 0);
     }
 
     public CutLine GetNearestLine(Vector3 fromPosition)
