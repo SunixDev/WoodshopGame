@@ -14,6 +14,7 @@ public class TableSawManager : MonoBehaviour
     public List<GameObject> AvailableWoodMaterial;
     public List<CutLine> LinesToCut;
     public Transform InitialPlacementFromBlade;
+    public TableSawUI UI_Manager;
 
     private int currentPieceIndex = 0;
     private Transform currentSpawnPoint;
@@ -34,16 +35,19 @@ public class TableSawManager : MonoBehaviour
         AvailableWoodMaterial[currentPieceIndex].SetActive(true);
         currentSpawnPoint = InitialPlacementFromBlade;
         PlacePiece();
+        UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
 	}
 
     public void SwitchToNextPiece()
     {
         SwitchPiece(currentPieceIndex + 1);
+        UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
     }
 
     public void SwitchToPreviousPiece()
     {
         SwitchPiece(currentPieceIndex - 1);
+        UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
     }
 
     private void SwitchPiece(int indexToSwitchTo)

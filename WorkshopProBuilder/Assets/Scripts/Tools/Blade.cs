@@ -24,7 +24,7 @@ public class Blade : MonoBehaviour
         HitObjects = new List<GameObject>();
         originalBladeEdgePosition = BladeEdge.position;
         if (Active)
-            TurnOnBlade();
+            TurnOn();
         else
             TurnOff();
     }
@@ -96,7 +96,7 @@ public class Blade : MonoBehaviour
         return objToReturn;
     }
 
-    public void TurnOnBlade()
+    public void TurnOn()
     {
         Active = true;
         Rotation.EnableRotation(true);

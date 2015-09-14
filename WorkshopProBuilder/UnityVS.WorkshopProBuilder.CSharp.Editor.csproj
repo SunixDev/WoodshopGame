@@ -5,17 +5,17 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{FEB10B72-EA16-6FC7-5790-377E1EBA9F22}</ProjectGuid>
+    <ProjectGuid>{DA736681-B3B8-D498-5C50-0DFB06FD60B7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace></RootNamespace>
-    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <AssemblyName>Assembly-CSharp-Editor</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
     <CompilerResponseFile></CompilerResponseFile>
-    <UnityProjectType>Game:1</UnityProjectType>
+    <UnityProjectType>Editor:5</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.1.1f1</UnityVersion>
   </PropertyGroup>
@@ -52,11 +52,56 @@
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEditor.UI">
+      <HintPath>Library\UnityAssemblies\UnityEditor.UI.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.Networking">
       <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEditor.Networking">
+      <HintPath>Library\UnityAssemblies\UnityEditor.Networking.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.Analytics">
       <HintPath>Library\UnityAssemblies\UnityEngine.Analytics.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.Graphs">
+      <HintPath>Library\UnityAssemblies\UnityEditor.Graphs.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.Android.Extensions">
+      <HintPath>Library\UnityAssemblies\UnityEditor.Android.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions">
+      <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.WP8.Extensions">
+      <HintPath>Library\UnityAssemblies\UnityEditor.WP8.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.Metro.Extensions">
+      <HintPath>Library\UnityAssemblies\UnityEditor.Metro.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.BB10.Extensions">
+      <HintPath>Library\UnityAssemblies\UnityEditor.BB10.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.SamsungTV.Extensions">
+      <HintPath>Library\UnityAssemblies\UnityEditor.SamsungTV.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.WebGL.Extensions">
+      <HintPath>Library\UnityAssemblies\UnityEditor.WebGL.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.LinuxStandalone.Extensions">
+      <HintPath>Library\UnityAssemblies\UnityEditor.LinuxStandalone.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.WindowsStandalone.Extensions">
+      <HintPath>Library\UnityAssemblies\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.OSXStandalone.Extensions">
+      <HintPath>Library\UnityAssemblies\UnityEditor.OSXStandalone.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.Networking">
+      <HintPath>Library\UnityAssemblies\UnityEditor.Networking.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.UI">
+      <HintPath>Library\UnityAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Networking">
       <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
@@ -67,70 +112,28 @@
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
     </Reference>
+    <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
+      <HintPath>Assets\UnityVS\Editor\SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
+    </Reference>
+    <Reference Include="SyntaxTree.VisualStudio.Unity.Messaging">
+      <HintPath>Assets\UnityVS\Editor\SyntaxTree.VisualStudio.Unity.Messaging.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityVS.VersionSpecific">
+      <HintPath>Assets\UnityVS\Editor\UnityVS.VersionSpecific.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\BaseFinger.cs" />
-    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Component\EasyTouchTrigger.cs" />
-    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\ECamera.cs" />
-    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\EasyTouch.cs" />
-    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\EasyTouchInput.cs" />
-    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Finger.cs" />
-    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Gesture.cs" />
-    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\TwoFingerGesture.cs" />
-    <Compile Include="Assets\Scripts\Camera\CameraControl.cs" />
-    <Compile Include="Assets\Scripts\Camera\CameraPositioning.cs" />
-    <Compile Include="Assets\Scripts\Enums\CutLineType.cs" />
-    <Compile Include="Assets\Scripts\Enums\CutState.cs" />
-    <Compile Include="Assets\Scripts\Enums\GameState.cs" />
-    <Compile Include="Assets\Scripts\Enums\ToolType.cs" />
-    <Compile Include="Assets\Scripts\Enums\WoodMaterialType.cs" />
-    <Compile Include="Assets\Scripts\Enums\WorkMaterial.cs" />
-    <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
-    <Compile Include="Assets\Scripts\Managers\Inventory.cs" />
-    <Compile Include="Assets\Scripts\Managers\Project.cs" />
-    <Compile Include="Assets\Scripts\Managers\Requirements.cs" />
-    <Compile Include="Assets\Scripts\Managers\Step.cs" />
-    <Compile Include="Assets\Scripts\Managers\WoodManagerHelper.cs" />
-    <Compile Include="Assets\Scripts\Managers\WoodMaterialManager.cs" />
-    <Compile Include="Assets\Scripts\Misc\DebugLogScript.cs" />
-    <Compile Include="Assets\Scripts\Misc\DisplayCutLine.cs" />
-    <Compile Include="Assets\Scripts\Misc\IntroScript.cs" />
-    <Compile Include="Assets\Scripts\Misc\Persistance.cs" />
-    <Compile Include="Assets\Scripts\Misc\Rotate.cs" />
-    <Compile Include="Assets\Scripts\Misc\StepID.cs" />
-    <Compile Include="Assets\Scripts\Tools\BandSaw\BandSawCutting.cs" />
-    <Compile Include="Assets\Scripts\Tools\BandSaw\BandSawPieceController.cs" />
-    <Compile Include="Assets\Scripts\Tools\Blade.cs" />
-    <Compile Include="Assets\Scripts\Tools\Checkpoint.cs" />
-    <Compile Include="Assets\Scripts\Tools\ChopSaw\ChopSawController.cs" />
-    <Compile Include="Assets\Scripts\Tools\ChopSaw\ChopSawCut.cs" />
-    <Compile Include="Assets\Scripts\Tools\Connection.cs" />
-    <Compile Include="Assets\Scripts\Tools\CutLine.cs" />
-    <Compile Include="Assets\Scripts\Tools\DadoCutTableSaw\DadoBlock.cs" />
-    <Compile Include="Assets\Scripts\Tools\DadoCutTableSaw\DadoBlockArea.cs" />
-    <Compile Include="Assets\Scripts\Tools\DadoCutTableSaw\DadoCutManager.cs" />
-    <Compile Include="Assets\Scripts\Tools\DadoCutTableSaw\LineSegment.cs" />
-    <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\ClampHeadPoint.cs" />
-    <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\ClampPoint.cs" />
-    <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GlueBox.cs" />
-    <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluePlane.cs" />
-    <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\PieceController.cs" />
-    <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\SnapPiece.cs" />
-    <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\SnapPoint.cs" />
-    <Compile Include="Assets\Scripts\Tools\Node.cs" />
-    <Compile Include="Assets\Scripts\Tools\SwipingGameplay\Sanding.cs" />
-    <Compile Include="Assets\Scripts\Tools\SwipingGameplay\SwipeManager.cs" />
-    <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawCut.cs" />
-    <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawManager.cs" />
-    <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawUI.cs" />
-    <Compile Include="Assets\Scripts\UI\BringToFront.cs" />
-    <Compile Include="Assets\Scripts\UI\DrawerSlide.cs" />
-    <Compile Include="Assets\Scripts\UI\ModelWindowManager.cs" />
-    <Compile Include="Assets\Scripts\UI\WoodListPanel.cs" />
-    <Compile Include="Assets\Scripts\WoodMaterials\BoardController.cs" />
-    <Compile Include="Assets\Scripts\WoodMaterials\WoodLeftover.cs" />
-    <Compile Include="Assets\Scripts\WoodMaterials\WoodMaterialObject.cs" />
-    <Compile Include="Assets\Scripts\WoodMaterials\WoodPiece.cs" />
+    <ProjectReference Include="UnityVS.WorkshopProBuilder.CSharp.csproj">
+      <Project>{FEB10B72-EA16-6FC7-5790-377E1EBA9F22}</Project>
+      <Name>UnityVS.WorkshopProBuilder.CSharp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Editor\EasyTouchInspector.cs" />
+    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Editor\EasyTouchMenu.cs" />
+    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Editor\EasyTouchTriggerInspector.cs" />
+    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Editor\EasytouchHierachyCallBack.cs" />
+    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Editor\HTGuiTools.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\EasyTouchBundle\EasyTouch\RealseNotes.txt" />

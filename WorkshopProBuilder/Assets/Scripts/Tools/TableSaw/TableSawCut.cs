@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class TableSawCut : MonoBehaviour 
 {
     public TableSawManager manager;
-    public Transform BladeEdge;
     public Blade SawBlade;
     public float ValidCutOffset = 0.005f;
     public CutState CurrentState { get; set; }
@@ -28,14 +27,14 @@ public class TableSawCut : MonoBehaviour
         #region CuttingCode
         if (CurrentState == CutState.ReadyToCut && SawBlade.MadeContactWithBoard && SawBlade.Active)
         {
-            Vector3 origin = BladeEdge.position + new Vector3(0.0f, 0.5f, 0.0f);
+            Vector3 origin = SawBlade.EdgePosition() + new Vector3(0.0f, 0.5f, 0.0f);
             Ray ray = new Ray(origin, Vector3.down);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Piece" || hit.collider.tag == "Leftover"))
             {
                 CurrentState = CutState.Cutting;
                 currentLine = manager.GetNearestLine(hit.point);
-                BladeEdge.position = hit.point;
+                SawBlade.SetEdgePosition(hit.point);
                 cuttingAlongLine = BladeWithinValidCutOffset();
             }
         }
@@ -111,7 +110,7 @@ public class TableSawCut : MonoBehaviour
 
     private bool BladeWithinValidCutOffset()
     {
-        Vector3 edge = new Vector3(BladeEdge.position.x, 0.0f, 0.0f);
+        Vector3 edge = new Vector3(SawBlade.EdgePosition().x, 0.0f, 0.0f);
         Vector3 checkpoint = new Vector3(currentLine.GetCurrentCheckpoint().GetPosition().x, 0.0f, 0.0f);
 
         float distance = Vector3.Distance(edge, checkpoint);
@@ -134,7 +133,7 @@ public class TableSawCut : MonoBehaviour
     private bool PassedCurrentCheckpoint()
     {
         bool passed = false;
-        Vector3 difference = currentLine.GetCurrentCheckpoint().GetPosition() - BladeEdge.position;
+        Vector3 difference = currentLine.GetCurrentCheckpoint().GetPosition() - SawBlade.EdgePosition();
         if (difference.z >= 0)
         {
             passed = true;

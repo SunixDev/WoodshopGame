@@ -5,10 +5,15 @@ using System.Collections.Generic;
 
 public class TableSawUI : MonoBehaviour 
 {
-    public CameraControl camera;
     public Color SelectedButtonColor;
     public GameObject SelectedButton;
     public List<Button> OptionButtons;
+
+    public Button NextButton;
+    public Button PreviousButton;
+    public Button StartSawButton;
+    public Button StopSawButton;
+
 
     void Start()
     {
@@ -29,20 +34,60 @@ public class TableSawUI : MonoBehaviour
         }
     }
 
+    public void ChangeSawButtons(Blade blade)
+    {
+        if (blade.Active)
+        {
+            StartSawButton.gameObject.SetActive(false);
+            StopSawButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            StartSawButton.gameObject.SetActive(true);
+            StopSawButton.gameObject.SetActive(false);
+        }
+    }
+
+    public void UpdateSelectionButtons(int index, int totalWoodMaterial)
+    {
+        NextButton.interactable = (index < totalWoodMaterial - 1);
+        PreviousButton.interactable = (index > 0);
+    }
+
     public void EnableOptions()
     {
         foreach (Button button in OptionButtons)
         {
-            button.enabled = true;
+            button.interactable = true;
+            button.GetComponent<Image>().color = Color.white;
         }
-        SelectedButton.GetComponent<Button>().enabled = false;
+        SelectedButton.GetComponent<Button>().interactable = false;
     }
 
     public void DisableOptions()
     {
         foreach (Button button in OptionButtons)
         {
-            button.enabled = false;
+            button.interactable = false;
+            button.GetComponent<Image>().color = Color.white;
         }
+    }
+
+    public void EnableAllButtons()
+    {
+        EnableOptions();
+        NextButton.interactable = true;
+        PreviousButton.interactable = true;
+        StartSawButton.interactable = true;
+        StopSawButton.interactable = true;
+    }
+
+    public void DisableAllButtons()
+    {
+        DisableOptions();
+        NextButton.interactable = false;
+        PreviousButton.interactable = false;
+        StartSawButton.interactable = false;
+        StopSawButton.interactable = false;
     }
 }

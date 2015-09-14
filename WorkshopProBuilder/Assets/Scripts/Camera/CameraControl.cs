@@ -45,8 +45,8 @@ public class CameraControl : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(yMovement, xMovement, 0.0f);
         Vector3 finalPosition = LookAtPoint.position + (rotation * distanceVector);
 
-        transform.position = Vector3.MoveTowards(transform.position, finalPosition, 0.1f);
-        //transform.position = finalPosition;
+        //transform.position = Vector3.MoveTowards(transform.position, finalPosition, 0.1f);
+        transform.position = finalPosition;
         transform.LookAt(LookAtPoint.position);
     }
 
