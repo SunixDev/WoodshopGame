@@ -100,14 +100,20 @@ public class Blade : MonoBehaviour
     {
         Active = true;
         Rotation.EnableRotation(true);
-        Collider.enabled = false;
+        if (Collider != null)
+        {
+            Collider.enabled = false;
+        }
     }
 
     public void TurnOff()
     {
         Active = false;
         Rotation.EnableRotation(false);
-        Collider.enabled = true;
+        if (Collider != null)
+        {
+            Collider.enabled = true;
+        }
         transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
     }
 

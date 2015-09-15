@@ -6,16 +6,9 @@ public class Checkpoint : MonoBehaviour
 {
     public float DebugRadius = 0.02f;
 
-    private Transform objectTransform;
-
-	void Awake() 
-    {
-        objectTransform = transform;
-	}
-
     public Vector3 GetPosition()
     {
-        return objectTransform.position;
+        return transform.position;
     }
 
     void OnDrawGizmos()

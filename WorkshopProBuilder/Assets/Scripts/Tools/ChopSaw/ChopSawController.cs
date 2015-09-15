@@ -4,8 +4,8 @@ using System.Collections;
 public class ChopSawController : MonoBehaviour 
 {
     public bool Moveable;
-    public Transform Blade;
-    public Transform BladeEdge;
+    public Transform BladeTransform;
+    public Blade Blade;
 
     [Header("Rotation Limits (0 to 360)")]
     public float UpperLimit = 345;
@@ -17,7 +17,6 @@ public class ChopSawController : MonoBehaviour
 
     void Start()
     {
-        Moveable = true;
         selected = false;
     }
 
@@ -31,7 +30,6 @@ public class ChopSawController : MonoBehaviour
                 if (Moveable && obj == gameObject)
                 {
                     selected = true;
-                    originalBladeEdgePosition = BladeEdge.position;
                 }
             }
         }
@@ -42,8 +40,8 @@ public class ChopSawController : MonoBehaviour
         if (selected)
         {
             selected = false;
-            transform.eulerAngles = new Vector3(0.0f, transform.eulerAngles.y, transform.eulerAngles.z);
-            BladeEdge.position = originalBladeEdgePosition;
+            transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
+            Blade.ResetEdgePosition();
         }
     }
 
@@ -51,9 +49,11 @@ public class ChopSawController : MonoBehaviour
     {
         if (Moveable && selected && (gesture.swipe == EasyTouch.SwipeDirection.Up || gesture.swipe == EasyTouch.SwipeDirection.Down) )
         {
-            previousPosition = Blade.position;
+            previousPosition = BladeTransform.position;
             float direction = (gesture.swipe == EasyTouch.SwipeDirection.Up) ? -1.0f : 1.0f;
             float deltaMagnitude = gesture.deltaPosition.magnitude;
+            if (deltaMagnitude > 4.0f)
+                deltaMagnitude = 4.0f;
             transform.Rotate(Vector3.right, (deltaMagnitude * direction), Space.Self);
             if (transform.eulerAngles.x > LowerLimit && transform.eulerAngles.x < 180)
             {
@@ -65,10 +65,16 @@ public class ChopSawController : MonoBehaviour
             }
             else
             {
-                float difference = Blade.position.y - previousPosition.y;
-                BladeEdge.position = new Vector3(BladeEdge.position.x, BladeEdge.position.y + difference, BladeEdge.position.z);
+                float difference = BladeTransform.position.y - previousPosition.y;
+                Vector3 newEdgePosition = new Vector3(Blade.EdgePosition().x, Blade.EdgePosition().y + difference, Blade.EdgePosition().z);
+                Blade.SetEdgePosition(newEdgePosition);
             }
         }
+    }
+
+    public void EnableMovement(bool enable)
+    {
+        Moveable = enable;
     }
 
     void OnEnable()

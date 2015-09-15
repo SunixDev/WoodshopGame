@@ -2,19 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum ActionState
-{
-    OnSaw,
-    UsingRuler,
-    None
-}
-
-public class TableSawManager : MonoBehaviour 
+public class ChopSawManager : MonoBehaviour 
 {
     public List<GameObject> AvailableWoodMaterial;
     public List<CutLine> LinesToCut;
     public Transform InitialPlacementFromBlade;
-    public TableSawUI UI_Manager;
+    public ChopSawUI UI_Manager;
 
     private int currentPieceIndex = 0;
     private Transform currentSpawnPoint;
@@ -24,12 +17,13 @@ public class TableSawManager : MonoBehaviour
 
 	void Start () 
     {
-        AvailableWoodMaterial = GameManager.instance.GetNecessaryMaterials(CutLineType.TableSawCut);
+        AvailableWoodMaterial = GameManager.instance.GetNecessaryMaterials(CutLineType.ChopSawCut);
         LinesToCut = new List<CutLine>();
         foreach (GameObject go in AvailableWoodMaterial)
         {
+            go.transform.Rotate(Vector3.up, 90, Space.World);
             WoodMaterialObject wood = go.GetComponent<WoodMaterialObject>();
-            LinesToCut.AddRange(wood.RetrieveLines(CutLineType.TableSawCut, GameManager.instance.GetStep()));
+            LinesToCut.AddRange(wood.RetrieveLines(CutLineType.ChopSawCut, GameManager.instance.GetStep()));
             go.SetActive(false);
         }
         AvailableWoodMaterial[currentPieceIndex].SetActive(true);
@@ -82,13 +76,27 @@ public class TableSawManager : MonoBehaviour
     {
         if (switchingPieces || previousAction != currentAction)
         {
-            AvailableWoodMaterial[currentPieceIndex].transform.position = currentSpawnPoint.position + new Vector3(0.0f, 0.0f, -3.0f);
-            Ray ray = new Ray(currentSpawnPoint.position, -Vector3.forward);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if (currentAction == ActionState.UsingRuler)
             {
-                float distance = (hit.point - currentSpawnPoint.position).magnitude;
-                AvailableWoodMaterial[currentPieceIndex].transform.position += (distance * Vector3.forward);
+                AvailableWoodMaterial[currentPieceIndex].transform.position = currentSpawnPoint.position + new Vector3(0.0f, 0.0f, -3.0f);
+                Ray ray = new Ray(currentSpawnPoint.position, -Vector3.forward);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit))
+                {
+                    float distance = (hit.point - currentSpawnPoint.position).magnitude;
+                    AvailableWoodMaterial[currentPieceIndex].transform.position += (distance * Vector3.forward);
+                }
+            }
+            else if (currentAction == ActionState.OnSaw)
+            {
+                AvailableWoodMaterial[currentPieceIndex].transform.position = currentSpawnPoint.position + new Vector3(3.0f, 0.0f, 0.0f);
+                Ray ray = new Ray(currentSpawnPoint.position, Vector3.right);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit))
+                {
+                    float distance = (hit.point - currentSpawnPoint.position).magnitude;
+                    AvailableWoodMaterial[currentPieceIndex].transform.position += (distance * -Vector3.right);
+                }
             }
             previousAction = currentAction;
             switchingPieces = false;

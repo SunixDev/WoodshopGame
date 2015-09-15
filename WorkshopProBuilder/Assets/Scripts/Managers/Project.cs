@@ -18,12 +18,11 @@ public class Project : MonoBehaviour
     public List<Step> ProjectSteps;
     public bool Completed;
     public ProjectState state;
-
-    private int CurrentStep;
+    public int CurrentStep;
 
     void Awake()
     {
-        CurrentStep = 0;
+
     }
 
     public int GetCurrentStepNumber()

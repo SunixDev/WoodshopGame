@@ -67,7 +67,6 @@ public class BoardController : MonoBehaviour
 
     public void RotateAroundPoint(Gesture gesture)
     {
-        Debug.Log(": " + selected);
         if (Moveable && selected && gesture.touchCount == 2)
         {
             if (RotationPoint != null)
