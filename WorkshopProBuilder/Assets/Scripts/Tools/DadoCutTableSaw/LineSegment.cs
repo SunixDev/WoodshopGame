@@ -27,7 +27,7 @@ public class LineSegment : MonoBehaviour
     {
         bool passed = false;
         Vector3 blade = new Vector3(0.0f, 0.0f, bladePosition.z);
-        Vector3 end = Vector3.zero;
+        Vector3 end;
         if (CuttingBackwards)
         {
             end = new Vector3(0.0f, 0.0f, EndPointOne.position.z);
@@ -37,7 +37,7 @@ public class LineSegment : MonoBehaviour
             end = new Vector3(0.0f, 0.0f, EndPointTwo.position.z);
         }
 
-        Vector3 difference = end - bladePosition;
+        Vector3 difference = end - blade;
         if (difference.z >= 0.0f)
         {
             passed = true;

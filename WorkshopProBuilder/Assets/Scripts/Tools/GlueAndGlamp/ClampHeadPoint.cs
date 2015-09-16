@@ -14,6 +14,11 @@ public class ClampHeadPoint : MonoBehaviour
         isConnected = false;
 	}
 
+    public bool IsClampedDown()
+    {
+        return isConnected;
+    }
+
     public Vector3 ClampHeadPosition()
     {
         return ClampHead.position;
@@ -29,6 +34,7 @@ public class ClampHeadPoint : MonoBehaviour
         Vector3 totalMovement = (direction * magnitude);
         transform.position += totalMovement;
         ConnectMoveableClamp();
+        isConnected = true;
     }
 
     public void ConnectMoveableClamp()
@@ -37,7 +43,6 @@ public class ClampHeadPoint : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-            Debug.Log(hit.collider.name);
             Vector3 position = MoveableHeadPoint.position;
             Vector3 nextPosition = Vector3.MoveTowards(position, hit.point, 1.0f);
             float magnitude = Vector3.Magnitude(nextPosition - position);

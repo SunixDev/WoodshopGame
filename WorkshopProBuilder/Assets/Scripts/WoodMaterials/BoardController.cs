@@ -26,8 +26,7 @@ public class BoardController : MonoBehaviour
 
     void Update()
     {
-        //Debug.Log("transform: " + transform.position);
-        //Debug.Log("objRigidbody: " + objRigidbody.position);
+        
     }
 
     public void OnTouchStart(Gesture gesture)
@@ -79,6 +78,14 @@ public class BoardController : MonoBehaviour
                 Vector3 position = gesture.GetTouchToWorldPoint(transform.position);
                 transform.RotateAround(position, axis, -gesture.twistAngle);
             }
+        }
+    }
+
+    public void ResetRotation(Gesture gesture)
+    {
+        if (Moveable && selected)
+        {
+            transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
         }
     }
 

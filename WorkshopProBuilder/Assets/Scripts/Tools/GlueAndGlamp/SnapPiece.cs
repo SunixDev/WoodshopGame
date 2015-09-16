@@ -7,7 +7,7 @@ public class SnapPiece : MonoBehaviour
     public List<SnapPoint> SnapPoints;
     public Vector3 ConnectedLocalRotation;
 
-    private List<SnapPiece> PiecesConnectedTo;
+    //private List<SnapPiece> PiecesConnectedTo;
     private bool AllPointsConnected
     {
         get
@@ -23,7 +23,7 @@ public class SnapPiece : MonoBehaviour
 
 	void Awake () 
     {
-        PiecesConnectedTo = new List<SnapPiece>();
+        //PiecesConnectedTo = new List<SnapPiece>();
 	}
 
     public void SnapTo(Vector3 movementVector)

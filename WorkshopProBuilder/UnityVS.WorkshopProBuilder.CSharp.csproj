@@ -98,8 +98,10 @@
     <Compile Include="Assets\Scripts\Misc\Rotate.cs" />
     <Compile Include="Assets\Scripts\Misc\StepID.cs" />
     <Compile Include="Assets\Scripts\ObjectController.cs" />
+    <Compile Include="Assets\Scripts\Tools\BandSaw\BandSawBlade.cs" />
     <Compile Include="Assets\Scripts\Tools\BandSaw\BandSawCutting.cs" />
-    <Compile Include="Assets\Scripts\Tools\BandSaw\BandSawPieceController.cs" />
+    <Compile Include="Assets\Scripts\Tools\BandSaw\BandSawManager.cs" />
+    <Compile Include="Assets\Scripts\Tools\BandSaw\BandSawUI.cs" />
     <Compile Include="Assets\Scripts\Tools\Blade.cs" />
     <Compile Include="Assets\Scripts\Tools\Checkpoint.cs" />
     <Compile Include="Assets\Scripts\Tools\ChopSaw\ChopSawController.cs" />
