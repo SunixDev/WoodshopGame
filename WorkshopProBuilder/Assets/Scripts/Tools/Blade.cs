@@ -77,7 +77,7 @@ public class Blade : MonoBehaviour
         return HitObjects[index];
     }
 
-    public GameObject GetHitObjectWithTag(string otherTag)
+    public GameObject GetHitObjectByTag(string otherTag)
     {
         if(HitObjects.Count <= 0)
         {

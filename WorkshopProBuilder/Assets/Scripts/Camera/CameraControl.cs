@@ -16,7 +16,7 @@ public class CameraControl : MonoBehaviour
     public float SensitivityX = 6.0f;
     [Range(5.0f, 20.0f)]
     public float SensitivityY = 6.0f;
-    [Range(1.0f, 5.0f)]
+    [Range(0.1f, 5.0f)]
     public float ZoomSensitivity = 1.0f;
 
     [Header("Vertical Rotation Clamp")]

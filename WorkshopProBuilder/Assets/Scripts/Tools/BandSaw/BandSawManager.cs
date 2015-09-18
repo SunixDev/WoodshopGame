@@ -21,9 +21,16 @@ public class BandSawManager : MonoBehaviour
             LinesToCut.AddRange(wood.RetrieveLines(CutLineType.CurvatureCut, GameManager.instance.GetStep()));
             go.SetActive(false);
         }
-        AvailableWoodMaterial[currentPieceIndex].SetActive(true);
-        PlacePiece();
-        UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
+        if (AvailableWoodMaterial.Count > 0)
+        {
+            AvailableWoodMaterial[currentPieceIndex].SetActive(true);
+            PlacePiece();
+            UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
+        }
+        else
+        {
+            Debug.Log("No pieces are available");
+        }
 	}
 
     public void SwitchToNextPiece()

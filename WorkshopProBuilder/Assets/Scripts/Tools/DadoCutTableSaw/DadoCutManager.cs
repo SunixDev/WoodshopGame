@@ -2,90 +2,97 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public enum DadoCutActionState
+{
+    UsingSaw,
+    PreppingTools,
+    SettingUpWood,
+    None
+}
+
 public class DadoCutManager : MonoBehaviour 
 {
-    //public WoodMaterialManager WoodManager;
-    //public GameObject WoodMaterial;
-    //public List<DadoBlock> DadoBlocks;
-    //public Blade SawBlade;
-    //public Transform BladeEdge;
-    //public bool CuttingInProgress { get; set; }
+    public List<GameObject> AvailableWoodMaterial;
+    public List<DadoBlock> DadosToCut;
+    public Transform InitialPlacementFromBlade;
+    public TableSawUI UI_Manager;
 
-    //private CutState state;
-    //private DadoBlock CurrentDado;
-    //private bool WithinDadoCut;
-    //private Vector3 previousEndPosition;
-    //private Vector3 originalBoardPosition; 
+    private int currentPieceIndex = 0;
+    private Transform currentSpawnPoint;
+    private DadoCutActionState currentAction = DadoCutActionState.UsingSaw;
+    private DadoCutActionState previousAction = DadoCutActionState.None;
+    private bool switchingPieces = false;
 
-    //void Start () 
-    //{
-    //    state = CutState.ReadyToCut;
-    //    CuttingInProgress = false;
-    //    //originalBoardPosition = WoodMaterial.transform.position;
-    //}
-	
-    //void Update () 
-    //{
-    //    if (state == CutState.ReadyToCut)
-    //    {
-    //        if (SawBlade.MadeContactWithBoard)
-    //        {
-    //            GameObject hit = SawBlade.GetHitObjectWithTag("DadoBlock");
-    //            CurrentDado = hit.GetComponent<DadoBlock>();
-    //            WithinDadoCut = CurrentDado.BlockArea.WithinDadoCut(BladeEdge.position);
-    //            //Take off points if needed
-    //            CurrentDado.ScaleDown();
-    //            previousEndPosition = CurrentDado.CutLine.GetLastCheckpoint().GetPosition();
-    //            state = CutState.Cutting;
-    //            CuttingInProgress = true;
-    //        }
-    //    }
-    //    else if (state == CutState.Cutting)
-    //    {
-    //        if (!PassedEndOfBoard())
-    //        {
-    //            if (WithinDadoCut)
-    //            {
-    //                float currentDistance = Vector3.Distance(BladeEdge.position, CurrentDado.CutLine.GetLastCheckpoint().GetPosition());
-    //                float previousDistance = Vector3.Distance(BladeEdge.position, previousEndPosition);
-    //                float deltaDistance = previousDistance - currentDistance;
-    //                //Use to measure push consistency
-    //            }
-    //            else
-    //            {
-    //                //Reduce until restart is necessary
-    //            }
-    //        }
-    //        else
-    //        {
-    //            state = CutState.EndOfCut;
-    //        }
-    //    }
-    //    else if (state == CutState.EndOfCut)
-    //    {
-    //        if (!SawBlade.CuttingWoodBoard && SawBlade.NoInteractionWithBoard)
-    //        {
-    //            WoodMaterial.transform.position = originalBoardPosition;
-    //            state = CutState.ReadyToCut;
-    //            WithinDadoCut = false;
-    //            CuttingInProgress = false;
-    //            if (!CurrentDado.AnyCutsLeft())
-    //            {
-    //                Destroy(CurrentDado.gameObject);
-    //            }
-    //            CurrentDado = null;
-    //        }
-    //    }
-    //}
+	void Start () 
+    {
+        //AvailableWoodMaterial = GameManager.instance.GetNecessaryMaterials(CutLineType.TableSawCut);
+        //LinesToCut = new List<CutLine>();
+        //foreach (GameObject go in AvailableWoodMaterial)
+        //{
+        //    WoodMaterialObject wood = go.GetComponent<WoodMaterialObject>();
+        //    LinesToCut.AddRange(wood.RetrieveLines(CutLineType.TableSawCut, GameManager.instance.GetStep()));
+        //    go.SetActive(false);
+        //}
+        //AvailableWoodMaterial[currentPieceIndex].SetActive(true);
+        //currentSpawnPoint = InitialPlacementFromBlade;
+        //PlacePiece();
+        //UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
+	}
 
-    //private bool PassedEndOfBoard()
-    //{
-    //    bool passed = false;
-    //    Vector3 difference = CurrentDado.CutLine.GetLastCheckpoint().GetPosition() - BladeEdge.position;
-    //    if (difference.z >= 0)
-    //    {
-    //        passed = true;
-    //    }
-    //    return passed;
-    //}
+    public void SwitchToNextPiece()
+    {
+        SwitchPiece(currentPieceIndex + 1);
+        UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
+    }
+
+    public void SwitchToPreviousPiece()
+    {
+        SwitchPiece(currentPieceIndex - 1);
+        UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
+    }
+
+    private void SwitchPiece(int indexToSwitchTo)
+    {
+        switchingPieces = true;
+        AvailableWoodMaterial[currentPieceIndex].transform.position = Vector3.zero;
+        AvailableWoodMaterial[currentPieceIndex].SetActive(false);
+        AvailableWoodMaterial[indexToSwitchTo].SetActive(true);
+        currentPieceIndex = indexToSwitchTo;
+        PlacePiece();
+    }
+
+    public void SwitchSpawnPoint(Transform spawnPoint)
+    {
+        if (currentSpawnPoint != spawnPoint)
+        {
+            currentSpawnPoint = spawnPoint;
+        }
+    }
+
+    public void SwitchAction(string actionState)
+    {
+        DadoCutActionState newState = (DadoCutActionState)System.Enum.Parse(typeof(DadoCutActionState), actionState);
+        if (currentAction != newState)
+        {
+            previousAction = currentAction;
+            currentAction = newState;
+        }
+    }
+
+    public void PlacePiece()
+    {
+        if (switchingPieces || previousAction != currentAction)
+        {
+            AvailableWoodMaterial[currentPieceIndex].transform.position = currentSpawnPoint.position + new Vector3(0.0f, 0.0f, -3.0f);
+            Ray ray = new Ray(currentSpawnPoint.position, -Vector3.forward);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                float distance = (hit.point - currentSpawnPoint.position).magnitude;
+                AvailableWoodMaterial[currentPieceIndex].transform.position += (distance * Vector3.forward);
+            }
+            previousAction = currentAction;
+            switchingPieces = false;
+        }
+    }
 }
