@@ -111,14 +111,6 @@ public class WoodMaterialObject : MonoBehaviour
         return lines;
     }
 
-
-
-
-
-
-
-
-
     //public List<CutLine> RetrieveLinesByType(CutLineType cutType)
     //{
     //    List<CutLine> lines = new List<CutLine>();

@@ -28,6 +28,8 @@ public class GlueBox : MonoBehaviour
         previousHitPoint = Vector3.zero;
         currentGlueAmount = 0.0f;
         minimumGlueAmountReached = false;
+        PointToActivate.CanConnect = false;
+        PointToActivate.HidePoint();
 	}
 
     void Update()
@@ -42,6 +44,8 @@ public class GlueBox : MonoBehaviour
                 if (currentGlueAmount >= MinPercentForPerfectScore && !minimumGlueAmountReached)
                 {
                     minimumGlueAmountReached = true;
+                    PointToActivate.CanConnect = true;
+                    PointToActivate.DisplayPoint();
                     Debug.Log("Minimum Reached");
                 }
                 foreach (GluePlane p in GluingPlanes)

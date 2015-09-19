@@ -33,10 +33,10 @@ public class DadoBlock : MonoBehaviour
         float changeAmount = previousScale - resizing;
         transform.localScale = new Vector3(changeAmount, StartingScale.y, StartingScale.z);
 
-        float newX = transform.position.x + (((previousScale - transform.localScale.x) / (NumberOfCuts * NumberOfCuts)) / NumberOfCuts);
-        Vector3 movement = new Vector3(newX, transform.position.y, transform.position.z) - transform.position;
-        Vector3 newPosition = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z) * movement;
-        transform.position += movement;
+        //float newX = transform.position.x + (((previousScale - transform.localScale.x) / (NumberOfCuts * NumberOfCuts)) / NumberOfCuts);
+        //Vector3 movement = new Vector3(newX, transform.position.y, transform.position.z) - transform.position;
+        //Vector3 newPosition = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z) * movement;
+        //transform.position += movement;
 
         if (transform.localScale.x <= 0.0f)
         {

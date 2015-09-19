@@ -6,10 +6,8 @@ using System.Collections.Generic;
 public class BoardController : MonoBehaviour
 {
     public bool Moveable;
-    public Transform RotationPoint;
     public bool RestrictX;
     public bool RestrictZ;
-    public bool PointRotation;
     public Rigidbody objRigidbody { get; set; }
     public WoodMaterialObject WoodObject { get; set; }
 
@@ -68,16 +66,9 @@ public class BoardController : MonoBehaviour
     {
         if (Moveable && selected && gesture.touchCount == 2)
         {
-            if (RotationPoint != null)
-            {
-                transform.RotateAround(RotationPoint.position, Vector3.up, -gesture.twistAngle);
-            }
-            else
-            {
-                Vector3 axis = Vector3.up;
-                Vector3 position = gesture.GetTouchToWorldPoint(transform.position);
-                transform.RotateAround(position, axis, -gesture.twistAngle);
-            }
+            Vector3 axis = Vector3.up;
+            Vector3 position = gesture.GetTouchToWorldPoint(transform.position);
+            transform.RotateAround(position, axis, -gesture.twistAngle);
         }
     }
 

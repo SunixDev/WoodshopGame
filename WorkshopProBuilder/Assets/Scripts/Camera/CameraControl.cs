@@ -132,7 +132,7 @@ public class CameraControl : MonoBehaviour
 
     private bool ValidTag(string tag)
     {
-        return (tag != "Piece" && tag != "Leftover" && tag != "WoodStrip" && tag != "Tool" && tag != "DadoBlock");
+        return (tag != "Piece" && tag != "Leftover" && tag != "WoodStrip" && tag != "Tool" && tag != "DadoBlock" && tag != "GlueBox");
     }
 
 

@@ -4,9 +4,9 @@ using System.Collections;
 public class PieceController : MonoBehaviour 
 {
     public bool Moveable;
-    public float RotationSpeed = 5.0f;
     [Range(0.0f, 1.0f)]
     public float ActionTimeToDrag = 0.2f;
+    public static float RotationSpeed = 250.0f;
 
     private Transform objTransform;
     private bool Selected;
@@ -50,6 +50,11 @@ public class PieceController : MonoBehaviour
         }
     }
 
+    public void OnTouch(Gesture gesture)
+    {
+        Selected = (gesture.pickedObject == gameObject);
+    }
+
     public void MovePiece(Gesture gesture)
     {
         if (Moveable && Selected && !Rotating && gesture.pickedObject == gameObject && gesture.touchCount == 1 && gesture.actionTime >= ActionTimeToDrag)
@@ -64,18 +69,6 @@ public class PieceController : MonoBehaviour
         {
             rotationAxis = GetRotationAxis(gesture.swipe);
             Rotating = true;
-        }
-    }
-
-    public void OnTouch(Gesture gesture)
-    {
-        if (gesture.pickedObject == gameObject)
-        {
-            Selected = true;
-        }
-        else
-        {
-            Selected = false;
         }
     }
 

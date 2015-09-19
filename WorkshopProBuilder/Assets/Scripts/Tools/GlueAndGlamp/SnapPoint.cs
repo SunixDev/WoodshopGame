@@ -15,6 +15,11 @@ public class SnapPoint : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        HidePoint();
+    }
+
     public bool CanConnectTo(SnapPoint otherPoint)
     {
         return (otherPoint.ConnectionID == ConnectionID) && CanConnect && otherPoint.CanConnect && !otherPoint.IsConnected && !IsConnected;
@@ -35,5 +40,15 @@ public class SnapPoint : MonoBehaviour
         Vector3 direction = Vector3.Normalize(nextPosition - CurrentPosition);
         Vector3 totalMovement = (direction * magnitude);
         ParentSnapPiece.SnapTo(totalMovement);
+    }
+
+    public void DisplayPoint()
+    {
+        GetComponent<MeshRenderer>().enabled = true;
+    }
+
+    public void HidePoint()
+    {
+        GetComponent<MeshRenderer>().enabled = false;
     }
 }
