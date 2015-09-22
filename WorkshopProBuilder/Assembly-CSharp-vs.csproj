@@ -54,6 +54,7 @@
      <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Finger.cs" />
      <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Gesture.cs" />
      <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\TwoFingerGesture.cs" />
+     <Compile Include="Assets\NewBehaviourScript.cs" />
      <Compile Include="Assets\Scripts\Camera\CameraControl.cs" />
      <Compile Include="Assets\Scripts\Camera\CameraPositioning.cs" />
      <Compile Include="Assets\Scripts\Enums\CutLineType.cs" />
@@ -62,6 +63,7 @@
      <Compile Include="Assets\Scripts\Enums\ToolType.cs" />
      <Compile Include="Assets\Scripts\Enums\WoodMaterialType.cs" />
      <Compile Include="Assets\Scripts\Enums\WorkMaterial.cs" />
+     <Compile Include="Assets\Scripts\LinePrac.cs" />
      <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
      <Compile Include="Assets\Scripts\Managers\Inventory.cs" />
      <Compile Include="Assets\Scripts\Managers\Project.cs" />
@@ -102,8 +104,9 @@
      <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\SnapPiece.cs" />
      <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\SnapPoint.cs" />
      <Compile Include="Assets\Scripts\Tools\Node.cs" />
-     <Compile Include="Assets\Scripts\Tools\SwipingGameplay\Sanding.cs" />
+     <Compile Include="Assets\Scripts\Tools\SwipingGameplay\SwipeGameplay.cs" />
      <Compile Include="Assets\Scripts\Tools\SwipingGameplay\SwipeManager.cs" />
+     <Compile Include="Assets\Scripts\Tools\SwipingGameplay\SwipeUI.cs" />
      <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawCut.cs" />
      <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawManager.cs" />
      <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawUI.cs" />

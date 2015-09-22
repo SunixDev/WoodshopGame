@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
-public class TableSawUI : MonoBehaviour 
+public class SwipeUI : MonoBehaviour 
 {
     public Color SelectedButtonColor;
     public GameObject SelectedButton;
@@ -11,8 +11,7 @@ public class TableSawUI : MonoBehaviour
 
     public Button NextButton;
     public Button PreviousButton;
-    public Button StartSawButton;
-    public Button StopSawButton;
+    public Button CompletionButton;
 
     void Start()
     {
@@ -30,20 +29,6 @@ public class TableSawUI : MonoBehaviour
             SelectedButton = buttonToUse;
             SelectedButton.GetComponent<Image>().color = SelectedButtonColor;
             SelectedButton.GetComponent<Button>().enabled = false;
-        }
-    }
-
-    public void ChangeSawButtons(Blade blade)
-    {
-        if (blade.Active)
-        {
-            StartSawButton.gameObject.SetActive(false);
-            StopSawButton.gameObject.SetActive(true);
-        }
-        else
-        {
-            StartSawButton.gameObject.SetActive(true);
-            StopSawButton.gameObject.SetActive(false);
         }
     }
 
@@ -77,8 +62,7 @@ public class TableSawUI : MonoBehaviour
         EnableOptions();
         NextButton.interactable = true;
         PreviousButton.interactable = true;
-        StartSawButton.interactable = true;
-        StopSawButton.interactable = true;
+        CompletionButton.interactable = true;
     }
 
     public void DisableAllButtons()
@@ -86,7 +70,6 @@ public class TableSawUI : MonoBehaviour
         DisableOptions();
         NextButton.interactable = false;
         PreviousButton.interactable = false;
-        StartSawButton.interactable = false;
-        StopSawButton.interactable = false;
+        CompletionButton.interactable = false;
     }
 }

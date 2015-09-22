@@ -71,6 +71,29 @@ public class GameManager : MonoBehaviour
         return allValidMaterials;
     }
 
+    public List<GameObject> GetNecessaryPieces()
+    {
+        int currentStep = CurrentProject.GetCurrentStepIndex();
+        List<GameObject> allMaterials = WoodManager.GetRevealedPieces();
+        List<GameObject> allValidMaterials = new List<GameObject>();
+
+        foreach (GameObject go in allMaterials)
+        {
+            List<StepID> steps = new List<StepID>(go.GetComponents<StepID>());
+            bool found = false;
+            for (int i = 0; i < steps.Count && !found; i++)
+            {
+                if (steps[i].UsedInStep(currentStep))
+                {
+                    found = true;
+                    allValidMaterials.Add(go);
+                }
+            }
+        }
+
+        return allValidMaterials;
+    }
+
     public void OnApplicationQuit()
     {
         _instance = null;

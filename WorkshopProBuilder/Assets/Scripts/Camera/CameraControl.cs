@@ -145,6 +145,14 @@ public class CameraControl : MonoBehaviour
         EasyTouch.On_Drag += Drag;
     }
 
+    void OnDisable()
+    {
+        EasyTouch.On_Swipe -= OrbitCamera;
+        EasyTouch.On_PinchIn -= ZoomAwayFromPoint;
+        EasyTouch.On_PinchOut -= ZoomTowardsPoint;
+        EasyTouch.On_Drag -= Drag;
+    }
+
     void OnDestroy()
     {
         EasyTouch.On_Swipe -= OrbitCamera;

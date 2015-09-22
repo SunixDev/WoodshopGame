@@ -46,6 +46,11 @@ public class WoodMaterialManager : MonoBehaviour
         return materials;
     }
 
+    public List<GameObject> GetAllWoodMaterials()
+    {
+        return WoodMaterials;
+    }
+
     public GameObject CombinePieces(WoodPiece pieceOne, WoodPiece pieceTwo)
     {
         return null;
