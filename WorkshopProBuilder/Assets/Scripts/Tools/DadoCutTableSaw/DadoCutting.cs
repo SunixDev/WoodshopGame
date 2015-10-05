@@ -7,27 +7,40 @@ public class DadoCutting : MonoBehaviour
     public Blade SawBlade;
     public CutState CurrentState { get; set; }
 
+    private DadoBlock CurrentDado;
+    private Vector3 previousDadoPosition;
+
     void Start()
     {
         CurrentState = CutState.ReadyToCut;
     }
 
-    //void Update () 
-    //{
-    //    if (state == CutState.ReadyToCut)
-    //    {
-    //        if (SawBlade.MadeContactWithBoard)
-    //        {
-    //            GameObject hit = SawBlade.GetHitObjectWithTag("DadoBlock");
-    //            CurrentDado = hit.GetComponent<DadoBlock>();
-    //            WithinDadoCut = CurrentDado.BlockArea.WithinDadoCut(BladeEdge.position);
-    //            //Take off points if needed
-    //            CurrentDado.ScaleDown();
-    //            previousEndPosition = CurrentDado.CutLine.GetLastCheckpoint().GetPosition();
-    //            state = CutState.Cutting;
-    //            CuttingInProgress = true;
-    //        }
-    //    }
+    void Update()
+    {
+        if (CurrentState == CutState.ReadyToCut && SawBlade.MadeContactWithBoard)
+        {
+            if (BladeHitPiece() && BladeHitDadoBlock())
+            {
+                //GameObject hit = SawBlade.GetHitObjectByTag("DadoBlock");
+                //CurrentDado = hit.GetComponent<DadoBlock>();
+                //previousDadoPosition = CurrentDado.Position;
+                //CurrentState = CutState.Cutting;
+                //Reduce score by small amount
+                Debug.Log("Hit piece and dado block");
+            }
+            else if (BladeHitDadoBlock())
+            {
+                //GameObject hit = SawBlade.GetHitObjectByTag("DadoBlock");
+                //CurrentDado = hit.GetComponent<DadoBlock>();
+                //previousDadoPosition = CurrentDado.Position;
+                //CurrentState = CutState.Cutting;
+                Debug.Log("Only hit dado block");
+            }
+            else if (BladeHitPiece())
+            {
+                Debug.Log("Only hit piece and losing points");
+            }
+        }
     //    else if (state == CutState.Cutting)
     //    {
     //        if (!PassedEndOfBoard())
@@ -64,7 +77,21 @@ public class DadoCutting : MonoBehaviour
     //            CurrentDado = null;
     //        }
     //    }
-    //}
+    }
+
+    private bool BladeHitDadoBlock()
+    {
+        GameObject dadoHit = SawBlade.GetHitObjectByTag("DadoBlock");
+        bool dadoWasHit = (dadoHit != null);
+        return dadoWasHit;
+    }
+
+    private bool BladeHitPiece()
+    {
+        GameObject hitPiece = SawBlade.GetHitObjectByTag("Piece");
+        bool pieceWashit = (hitPiece != null);
+        return pieceWashit;
+    }
 
     //private bool PassedEndOfBoard()
     //{

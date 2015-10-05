@@ -3,10 +3,17 @@ using System.Collections;
 
 public class DadoBlock : MonoBehaviour 
 {
-    public DadoBlockArea FrontFace;
-    public DadoBlockArea BackFace;
-    public LineSegment Line;
+    //public DadoBlockArea FrontFace;
+    //public DadoBlockArea BackFace;
+    //public LineSegment Line;
     public float NumberOfCuts;
+    public Vector3 Position
+    {
+        get
+        {
+            return transform.position;
+        }
+    }
 
     private float ScalingAmountPerCut;
     private Vector3 StartingScale;

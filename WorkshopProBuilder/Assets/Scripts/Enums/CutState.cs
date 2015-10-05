@@ -3,5 +3,6 @@
     Waiting,
     ReadyToCut,
     Cutting,
+    CuttingOutOfBounds,
     EndOfCut
 }

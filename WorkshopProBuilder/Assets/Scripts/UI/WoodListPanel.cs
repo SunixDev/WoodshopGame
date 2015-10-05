@@ -8,33 +8,31 @@ public class WoodListPanel : MonoBehaviour
 {
     public GameObject WoodPieceButton;
     public GameObject ButtonContainer;
-    public TableSawManager manager;
     public Color SelectedButtonColor;
-    public Color NonSelectedButtonColor;
     public int SelectedButtonIndex { get; set; }
 
     private List<GameObject> AvailableButtonsList = new List<GameObject>();
 
-    public void AddWoodMaterialButton(string woodName)
+    public void AddWoodMaterialButton(string woodName, SnapPieceGameManager manager)
     {
-        //GameObject button = Instantiate(WoodPieceButton) as GameObject;
-        //button.transform.SetParent(ButtonContainer.transform);
-        //button.GetComponent<RectTransform>().localScale = new Vector3(1.0f, 1.0f, 1.0f);
+        GameObject button = Instantiate(WoodPieceButton) as GameObject;
+        button.transform.SetParent(ButtonContainer.transform);
+        button.GetComponent<RectTransform>().localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
-        //Button newButton = button.GetComponent<Button>();
-        //newButton.GetComponentInChildren<Text>().text = woodName;
-        //newButton.GetComponent<Image>().color = NonSelectedButtonColor;
+        Button newButton = button.GetComponent<Button>();
+        newButton.GetComponentInChildren<Text>().text = woodName;
+        newButton.GetComponent<Image>().color = Color.white;
 
-        //int temp = AvailableButtonsList.Count;
-        //newButton.onClick.AddListener(() => SwitchSelectedButton(temp));
+        int temp = AvailableButtonsList.Count;
+        newButton.onClick.AddListener(() => SwitchSelectedButton(temp));
         //newButton.onClick.AddListener(() => manager.SwitchPiece(temp));
-        //if (AvailableButtonsList.Count == 0)
-        //{
-        //    newButton.GetComponent<Image>().color = SelectedButtonColor;
-        //    newButton.GetComponent<Button>().enabled = false;
-        //    SelectedButtonIndex = 0;
-        //}
-        //AvailableButtonsList.Add(button);
+        if (AvailableButtonsList.Count == 0)
+        {
+            newButton.GetComponent<Image>().color = SelectedButtonColor;
+            newButton.GetComponent<Button>().enabled = false;
+            SelectedButtonIndex = 0;
+        }
+        AvailableButtonsList.Add(button);
     }
 
     public void RemoveButton(int index)
@@ -49,6 +47,10 @@ public class WoodListPanel : MonoBehaviour
             {
                 SwitchSelectedButton(AvailableButtonsList.Count - 1);
             }
+            else if (index == 0 && AvailableButtonsList.Count == 1)
+            {
+                SelectedButtonIndex = -1;
+            }
         }
         AvailableButtonsList.RemoveAt(index);
         GameObject buttonToRemove = ButtonContainer.transform.GetChild(index).gameObject;
@@ -59,12 +61,31 @@ public class WoodListPanel : MonoBehaviour
     {
         if (indexToUse >= 0 && indexToUse < AvailableButtonsList.Count && indexToUse != SelectedButtonIndex)
         {
-            AvailableButtonsList[SelectedButtonIndex].GetComponent<Image>().color = NonSelectedButtonColor;
-            AvailableButtonsList[SelectedButtonIndex].GetComponent<Button>().enabled = true;
+            if (SelectedButtonIndex > -1)
+            {
+                AvailableButtonsList[SelectedButtonIndex].GetComponent<Image>().color = Color.white;
+                AvailableButtonsList[SelectedButtonIndex].GetComponent<Button>().enabled = true;
+            }
 
             AvailableButtonsList[indexToUse].GetComponent<Image>().color = SelectedButtonColor;
-            AvailableButtonsList[indexToUse].GetComponent<Button>().enabled = true;
+            AvailableButtonsList[indexToUse].GetComponent<Button>().enabled = false;
             SelectedButtonIndex = indexToUse;
+        }
+    }
+
+    public void EnableButtons()
+    {
+        foreach (GameObject button in AvailableButtonsList)
+        {
+            button.GetComponent<Button>().interactable = true;
+        }
+    }
+
+    public void DisableButtons()
+    {
+        foreach (GameObject button in AvailableButtonsList)
+        {
+            button.GetComponent<Button>().interactable = true;
         }
     }
 }

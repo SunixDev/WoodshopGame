@@ -68,4 +68,9 @@ public class ObjectController : MonoBehaviour
         EasyTouch.On_Drag -= MoveObject;
         EasyTouch.On_DragEnd -= OnDragEnd;
     }
+
+    void OnCollisionEnter()
+    {
+
+    }
 }

@@ -84,6 +84,15 @@ public class WoodMaterialManager : MonoBehaviour
             WoodMaterials.Add(obj);
         }
     }
+
+    public void HideAllPieces()
+    {
+        foreach (GameObject go in WoodMaterials)
+        {
+            go.SetActive(false);
+            go.transform.position = Vector3.zero;
+        }
+    }
 }
 
 

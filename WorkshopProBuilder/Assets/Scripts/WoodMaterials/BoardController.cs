@@ -13,25 +13,23 @@ public class BoardController : MonoBehaviour
 
     private bool selected = false;
 
-    private Vector3 deltaPosition;
+    private Vector3 previousPosition = Vector3.zero;
+    private Vector3 rotationPoint = Vector3.zero;
 
     void Start()
     {
         objRigidbody = GetComponent<Rigidbody>();
         WoodObject = GetComponent<WoodMaterialObject>();
-        deltaPosition = Vector3.zero;
-    }
-
-    void Update()
-    {
-        
     }
 
     public void OnTouchStart(Gesture gesture)
     {
-        if (Moveable && WoodObject.ContainsPiece(gesture.pickedObject))
+        if (gesture.pickedObject != null)
         {
-            selected = true;
+            if (Moveable && WoodObject.ContainsPiece(gesture.pickedObject))
+            {
+                selected = true;
+            }
         }
     }
 
@@ -40,13 +38,15 @@ public class BoardController : MonoBehaviour
         if (Moveable && selected && gesture.touchCount == 1)
         {
             Vector3 position = gesture.GetTouchToWorldPoint(transform.position);
-            deltaPosition = position;
+            previousPosition = position;
         }
     }
 
     public void OnDragRelease(Gesture gesture)
     {
         selected = false;
+        previousPosition = Vector3.zero;
+        rotationPoint = Vector3.zero;
     }
 
     public void OnDragRelease_TwoFingers(Gesture gesture)
@@ -66,17 +66,53 @@ public class BoardController : MonoBehaviour
     {
         if (Moveable && selected && gesture.touchCount == 2)
         {
+            if (rotationPoint == Vector3.zero)
+            {
+                Vector3 position = gesture.GetTouchToWorldPoint(transform.position);
+                rotationPoint = position;
+            }
             Vector3 axis = Vector3.up;
-            Vector3 position = gesture.GetTouchToWorldPoint(transform.position);
-            transform.RotateAround(position, axis, -gesture.twistAngle);
+            transform.RotateAround(rotationPoint, axis, -gesture.twistAngle);
         }
     }
 
-    public void ResetRotation(Gesture gesture)
+    public void ResetRotationWithTap(Gesture gesture)
     {
         if (Moveable && selected)
         {
-            transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
+            ResetRotation();
+        }
+    }
+
+    public void ResetRotation()
+    {
+        transform.rotation = Quaternion.identity;
+    }
+
+    public void ApplyRotation(Vector3 axis, float angle)
+    {
+        transform.Rotate(axis, angle, Space.World);
+    }
+
+    public void ChangeOrientation()
+    {
+        transform.position = transform.position + new Vector3(0.0f, 5.0f, 0.0f);
+        transform.Rotate(new Vector3(0.0f, 0.0f, 1.0f), 90.0f, Space.Self);
+
+        Ray ray = new Ray(transform.position, -Vector3.up);
+        RaycastHit hitOntoTable;
+        int layermask  = 1 << 9;
+        if (Physics.Raycast(ray, out hitOntoTable, 10.0f, layermask))
+        {
+            Debug.Log("hitOntoTable: " + hitOntoTable.collider.gameObject);
+            ray = new Ray(hitOntoTable.point, Vector3.up);
+            RaycastHit hitOntoWood;
+            if (Physics.Raycast(ray, out hitOntoWood))
+            {
+                Debug.Log("hitOntoWood: " + hitOntoWood.collider.gameObject);
+                Vector3 displacement = hitOntoTable.point - hitOntoWood.point;
+                transform.position = transform.position + displacement;
+            }
         }
     }
 
@@ -92,8 +128,8 @@ public class BoardController : MonoBehaviour
     private void MoveObject(Gesture gesture)
     {
         Vector3 position = gesture.GetTouchToWorldPoint(transform.position);
-        Vector3 nextPosition = position - deltaPosition;
-        deltaPosition = position;
+        Vector3 nextPosition = position - previousPosition;
+        previousPosition = position;
         nextPosition = DetermineRestrictions(nextPosition);
         objRigidbody.position += nextPosition;
     }
@@ -117,6 +153,7 @@ public class BoardController : MonoBehaviour
     private void SubscribeAll()
     {
         EasyTouch.On_TouchStart += OnTouchStart;
+        EasyTouch.On_DoubleTap += ResetRotationWithTap;
 
         EasyTouch.On_DragStart += OnDragStart;
 
@@ -124,11 +161,13 @@ public class BoardController : MonoBehaviour
 
         EasyTouch.On_Twist += RotateAroundPoint;
         EasyTouch.On_DragEnd += OnDragRelease;
+        EasyTouch.On_TwistEnd += OnDragRelease;
     }
 
     private void UnsubscribeAll()
     {
         EasyTouch.On_TouchStart -= OnTouchStart;
+        EasyTouch.On_DoubleTap -= ResetRotationWithTap;
 
         EasyTouch.On_DragStart -= OnDragStart;
 
@@ -136,6 +175,7 @@ public class BoardController : MonoBehaviour
 
         EasyTouch.On_Twist -= RotateAroundPoint;
         EasyTouch.On_DragEnd -= OnDragRelease;
+        EasyTouch.On_TwistEnd -= OnDragRelease;
     }
 #endregion
 

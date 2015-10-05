@@ -33,4 +33,34 @@ public class WoodPiece : MonoBehaviour
             objMeshCollider.convex = enable;
         }
     }
+
+    public int ActivateGlueBoxes(int stepNumber)
+    {
+        int numberActived = 0;
+        foreach (GlueBox glue in GlueBoxes)
+        {
+            StepID id = glue.GetComponent<StepID>();
+            if (id.UsedInStep(stepNumber))
+            {
+                glue.gameObject.SetActive(true);
+                numberActived++;
+            }
+        }
+        return numberActived;
+    }
+
+    public int ActivateSnapPoints(int stepNumber)
+    {
+        int numberActived = 0;
+        foreach (SnapPoint snapPoint in SnapPoints)
+        {
+            StepID id = snapPoint.GetComponent<StepID>();
+            if (id.UsedInStep(stepNumber))
+            {
+                snapPoint.gameObject.SetActive(true);
+                numberActived++;
+            }
+        }
+        return numberActived;
+    }
 }

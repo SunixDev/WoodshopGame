@@ -12,7 +12,7 @@ public class ChopSawCut : MonoBehaviour
 
     private CutLine currentLine;
     private bool cuttingAlongLine;
-    private Vector3 previousBladePosition;
+    private Vector3 previousBladeEdgePosition;
     private float timeWithoutPushing;
 
     void Start()
@@ -32,80 +32,88 @@ public class ChopSawCut : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, mask) && (hit.collider.tag == "Piece" || hit.collider.tag == "Leftover"))
             {
-                CurrentState = CutState.Cutting;
                 currentLine = manager.GetNearestLine(hit.point);
                 Vector3 bladeEdgePosition = new Vector3(hit.point.x, hit.point.y, currentLine.GetCurrentCheckpoint().GetPosition().z);
                 SawBlade.SetEdgePosition(bladeEdgePosition);
+                previousBladeEdgePosition = SawBlade.EdgePosition();
                 cuttingAlongLine = BladeWithinValidCutOffset();
+                manager.EnableCurrentBoardMovement(false);
+                CurrentState = CutState.Cutting;
             }
         }
-        //else if (state == CutState.Cutting)
-        //{
-        //    if (CuttingFirstCheckpoint() && SawBlade.CuttingWoodBoard)
-        //    {
-        //        if (cuttingAlongLine)
-        //        {
-        //            if (PassedCurrentCheckpoint())
-        //            {
-        //                currentLine.UpdateToNextCheckpoint();
-        //                float distance = DistanceBetweenBladeAndLine(currentLine.GetCurrentCheckpoint().GetPosition(), BladeEdge.position, currentLine.GetPreviousCheckpoint().GetPosition());
-        //                //Use distance to determine score
-        //                previousBladePosition = BladeEdge.position;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            //Decrease value until player is forced to start over
-        //        }
-        //    }
-        //    else if ((CuttingConnectedCheckpoint() || CuttingLastCheckpoint()) && SawBlade.CuttingWoodBoard)
-        //    {
-        //        float distance = Vector3.Distance(previousBladePosition, BladeEdge.position);
-        //        //Distance determines push rate, which can lower score if too fast or too slow
-        //        if (distance == 0)
-        //        {
-        //            timeWithoutPushing += Time.deltaTime;
-        //            if (timeWithoutPushing >= 1.0f)
-        //            {
-        //                //Burnt wood; Start over;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            timeWithoutPushing = 0.0f;
-        //        }
+        else if (CurrentState == CutState.Cutting)
+        {
+            if (currentLine.OnFirstCheckpoint() && SawBlade.CuttingWoodBoard)
+            {
+                if (cuttingAlongLine)
+                {
+                    if (PassedCurrentCheckpoint())
+                    {
+                        currentLine.UpdateToNextCheckpoint();
+                        float distance = DistanceBetweenBladeAndLine(SawBlade.EdgePosition(), currentLine.GetCurrentCheckpoint().GetPosition(), currentLine.GetPreviousCheckpoint().GetPosition());
+                        //Use distance to determine score
+                        previousBladeEdgePosition = SawBlade.EdgePosition();
+                    }
+                }
+                else
+                {
+                    //Decrease value by certain amount
+                    //Increase time cutting until enough damage is made to start over
+                    if (SawBlade.NoInteractionWithBoard)
+                    {
+                        CurrentState = CutState.ReadyToCut;
+                        SawBlade.ResetEdgePosition();
+                        currentLine = null;
+                        manager.EnableCurrentBoardMovement(true);
+                    }
+                }
+            }
+            else if ((currentLine.OnConnectedCheckpoint() || currentLine.OnLastCheckpoint()) && SawBlade.CuttingWoodBoard)
+            {
+                float deltaDistance = Vector3.Distance(previousBladeEdgePosition, SawBlade.EdgePosition());
+                Debug.Log(deltaDistance);
+                //Distance determines push rate, which can lower score if too fast or too slow
+                //if (distance == 0)
+                //{
+                //    timeWithoutPushing += Time.deltaTime;
+                //    if (timeWithoutPushing >= 1.0f)
+                //    {
+                //        //Burnt wood; Start over;
+                //    }
+                //}
+                //else
+                //{
+                //    timeWithoutPushing = 0.0f;
+                //}
 
-        //        if (PassedCurrentCheckpoint())
-        //        {
-        //            currentLine.UpdateToNextCheckpoint();
-        //            if (currentLine.GetCurrentCheckpoint() == null)
-        //            {
-        //                state = CutState.EndOfCut;
-        //            }
-        //        }
-        //    }
-        //    else if (SawBlade.NoInteractionWithBoard)
-        //    {
-        //        state = CutState.ReadyToCut;
-        //        currentLine = null;
-        //        boardBeingCut = null;
-        //        cuttingAlongLine = false;
-        //        timeWithoutPushing = 0.0f;
-        //    }
-        //}
-        //else if (state == CutState.EndOfCut)
-        //{
-        //    if(!SawBlade.NoInteractionWithBoard)
-        //    {
-        //        cuttingAlongLine = false;
-        //        state = CutState.ReadyToCut;
-        //        LinesToCut.Remove(currentLine);
-        //        WoodManager.SplitBoard(currentLine.GetFirstBaseNode(), currentLine.GetSecondBaseNode(), boardBeingCut, currentLine);
-        //        currentLine = null;
-        //        boardBeingCut = null;
-        //        BladeEdge.position = originalBladeEdgePosition;
-        //    }
-        //}
+                if (PassedCurrentCheckpoint())
+                {
+                    currentLine.UpdateToNextCheckpoint();
+                    if (currentLine.GetCurrentCheckpoint() == null)
+                    {
+                        CurrentState = CutState.EndOfCut;
+                    }
+                }
+            }
+            else if (SawBlade.NoInteractionWithBoard)
+            {
+                CurrentState = CutState.ReadyToCut;
+                currentLine = null;
+                cuttingAlongLine = false;
+                timeWithoutPushing = 0.0f;
+            }
+        }
+        else if (CurrentState == CutState.EndOfCut)
+        {
+            if (!SawBlade.CuttingWoodBoard && SawBlade.NoInteractionWithBoard)
+            {
+                manager.SplitMaterial(currentLine);
+                cuttingAlongLine = false;
+                currentLine = null;
+                SawBlade.ResetEdgePosition();
+                CurrentState = CutState.ReadyToCut;
+            }
+        }
         #endregion
     }
 
@@ -120,13 +128,13 @@ public class ChopSawCut : MonoBehaviour
 
     private float DistanceBetweenBladeAndLine(Vector3 bladeEdge, Vector3 currentCheckpoint, Vector3 origin)
     {
-        Vector3 toEdge = bladeEdge - origin;
+        Vector3 toBladeEdge = bladeEdge - origin;
         Vector3 toCheckpoint = currentCheckpoint - origin;
         toCheckpoint.Normalize();
 
-        float projection = Vector3.Dot(toEdge, toCheckpoint);
+        float projection = Vector3.Dot(toBladeEdge, toCheckpoint);
         toCheckpoint = toCheckpoint * projection;
-        Vector3 rejectionVector = toEdge - toCheckpoint;
+        Vector3 rejectionVector = toBladeEdge - toCheckpoint;
 
         return rejectionVector.magnitude;
     }

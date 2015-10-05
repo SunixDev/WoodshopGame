@@ -10,11 +10,12 @@ public class Blade : MonoBehaviour
 
     public Transform BladeEdge;
     public List<GameObject> HitObjects;
-    public BoxCollider Collider;
+    public BoxCollider BarrierCollider;
+    public MeshCollider BladeCollider;
     public Rotate Rotation;
     public bool Active;
 
-    private Vector3 originalBladeEdgePosition;    
+    private Vector3 originalBladeEdgePosition = Vector3.zero;    
 
     void Awake()
     {
@@ -22,7 +23,10 @@ public class Blade : MonoBehaviour
         MadeContactWithBoard = false;
         CuttingWoodBoard = false;
         HitObjects = new List<GameObject>();
-        originalBladeEdgePosition = BladeEdge.position;
+        if (BladeEdge != null)
+        {
+            originalBladeEdgePosition = BladeEdge.position;
+        }
         if (Active)
             TurnOn();
         else
@@ -31,7 +35,7 @@ public class Blade : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock")
+        if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && Active)
         {
             MadeContactWithBoard = true;
             NoInteractionWithBoard = false;
@@ -41,7 +45,7 @@ public class Blade : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        if (other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock")
+        if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && Active)
         {
             CuttingWoodBoard = true;
             NoInteractionWithBoard = false;
@@ -50,7 +54,7 @@ public class Blade : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock")
+        if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && Active)
         {
             NoInteractionWithBoard = true;
             MadeContactWithBoard = false;
@@ -96,39 +100,76 @@ public class Blade : MonoBehaviour
         return objToReturn;
     }
 
+    public List<GameObject> GetAllObjectsByTag(string otherTag)
+    {
+        if (HitObjects.Count <= 0)
+        {
+            return null;
+        }
+        List<GameObject> objsToReturn = new List<GameObject>();
+        for (int i = 0; i < HitObjects.Count; i++)
+        {
+            if (HitObjects[i].tag == otherTag)
+            {
+                objsToReturn.Add(HitObjects[i]);
+            }
+        }
+        return objsToReturn;
+    }
+
     public void TurnOn()
     {
         Active = true;
         Rotation.EnableRotation(true);
-        if (Collider != null)
+        if (BarrierCollider != null)
         {
-            Collider.enabled = false;
+            BarrierCollider.enabled = false;
         }
+        BladeCollider.isTrigger = true;
     }
 
     public void TurnOff()
     {
         Active = false;
         Rotation.EnableRotation(false);
-        if (Collider != null)
+        if (BarrierCollider != null)
         {
-            Collider.enabled = true;
+            BarrierCollider.enabled = true;
         }
         transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
+        BladeCollider.isTrigger = false;
     }
 
     public Vector3 EdgePosition()
     {
+        if (BladeEdge == null)
+        {
+            return Vector3.zero;
+        }
         return BladeEdge.position;
     }
 
     public void SetEdgePosition(Vector3 position)
     {
-        BladeEdge.position = position;
+        if (BladeEdge != null)
+        {
+            BladeEdge.position = position;
+        }
+        else
+        {
+            Debug.Log("There is no edge point on this blade");
+        }
     }
 
     public void ResetEdgePosition()
     {
-        BladeEdge.position = originalBladeEdgePosition;
+        if (BladeEdge != null)
+        {
+            BladeEdge.position = originalBladeEdgePosition;
+        }
+        else
+        {
+            Debug.Log("There is no edge point on this blade");
+        }
     }
 }

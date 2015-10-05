@@ -28,7 +28,6 @@ public class WoodLeftover : MonoBehaviour
     {
         while (objMaterial.color.a > fullTransparency + 0.05f)
         {
-            Debug.Log(objMaterial.color.a);
             float alpha = Mathf.Lerp(objMaterial.color.a, fullTransparency, VanishingSpeed * Time.deltaTime);
             objMaterial.color = new Color(objMaterial.color.r, objMaterial.color.g, objMaterial.color.b, alpha);
             yield return null;
