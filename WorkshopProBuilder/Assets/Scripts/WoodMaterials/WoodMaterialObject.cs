@@ -111,6 +111,20 @@ public class WoodMaterialObject : MonoBehaviour
         return lines;
     }
 
+    public List<DadoBlock> RetrieveDadoCuts(int stepNumber)
+    {
+        List<DadoBlock> dadoBlocks = new List<DadoBlock>();
+        foreach (DadoBlock dadoBlock in DadosToCut)
+        {
+            StepID step = dadoBlock.GetComponent<StepID>();
+            if (step.UsedInStep(stepNumber))
+            {
+                dadoBlocks.Add(dadoBlock);
+            }
+        }
+        return dadoBlocks;
+    }
+
     //public List<CutLine> RetrieveLinesByType(CutLineType cutType)
     //{
     //    List<CutLine> lines = new List<CutLine>();

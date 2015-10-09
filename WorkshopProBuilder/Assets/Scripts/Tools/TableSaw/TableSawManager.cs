@@ -131,12 +131,12 @@ public class TableSawManager : MonoBehaviour, IToolManager
 
         AvailableWoodMaterial[currentPieceIndex].SetActive(true);
         currentBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();
-        if (currentAction == ActionState.OnSaw)
+        if (currentAction == ActionState.OnSaw || previousAction == ActionState.OnSaw)
         {
             EnableCurrentBoardMovement(true);
             RestrictCurrentBoardMovement(false, false);
         }
-        else if (currentAction == ActionState.UsingRuler || currentAction == ActionState.ChangingCamera)
+        else if (currentAction == ActionState.UsingRuler || previousAction == ActionState.UsingRuler)
         {
             EnableCurrentBoardMovement(false);
         }

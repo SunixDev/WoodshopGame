@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Ruler : MonoBehaviour 
 {
+    public float OffsetFromLine = 0.01f;
     private IToolManager manager;
     private LineRenderer line;
     private Transform pickedObjectTransform;
@@ -34,6 +35,7 @@ public class Ruler : MonoBehaviour
                     line.SetVertexCount(2);
                     line.SetWidth(0.005f, 0.005f);
                     line.SetPosition(0, markLine.transform.position + new Vector3(0.0f, 0.001f, 0.0f));
+                    line.SetPosition(1, markLine.transform.position + new Vector3(0.0f, 0.001f, 0.0f));
                     pickedObjectTransform = gesture.pickedObject.transform;
                 }
             }
@@ -48,7 +50,7 @@ public class Ruler : MonoBehaviour
             {
                 Ray ray = Camera.main.ScreenPointToRay(new Vector3(gesture.position.x, gesture.position.y, 0.0f));
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit))
+                if (Physics.Raycast(ray, out hit) && hit.collider.gameObject == gesture.pickedObject)
                 {
                     Vector3 position = hit.point;
                     SecondPosition = position + new Vector3(0.0f, 0.001f, 0.0f);
@@ -65,9 +67,15 @@ public class Ruler : MonoBehaviour
             if (gesture.pickedObject.tag == "Piece" || gesture.pickedObject.tag == "Leftover")
             {
                 CutLine nearestLine = manager.GetNearestLine(line.gameObject.transform.position);
-                float distanceToLine = nearestLine.CalculateDistance(line.gameObject.transform.position);
-                if (distanceToLine < 0.01f && !nearestLine.IsMarked)
+                Vector3 markedPosition = line.gameObject.transform.position;
+                if (MarkIsNearLine(nearestLine, markedPosition))
                 {
+                    if (nearestLine.IsMarked)
+                    {
+                        GameObject previousLine = nearestLine.LineMark;
+                        nearestLine.LineMark = null;
+                        Destroy(previousLine);
+                    }
                     nearestLine.LineMark = line.gameObject;
                     nearestLine.IsMarked = true;
                     line.SetColors(Color.green, Color.green);
@@ -85,6 +93,26 @@ public class Ruler : MonoBehaviour
                 }
             }
         }
+    }
+
+    public bool MarkIsNearLine(CutLine line, Vector3 markPosition)
+    {
+        bool closeToLine = false;
+        if (line.CutType == CutLineType.TableSawCut)
+        {
+            float distanceToLine = line.CalculateDistance(line.gameObject.transform.position);
+            closeToLine = (distanceToLine < OffsetFromLine);
+        }
+        else if (line.CutType == CutLineType.ChopSawCut)
+        {
+            Vector3 linePosition = line.Checkpoints[0].GetPosition();
+            Vector3 adjustedMarkedPosition = new Vector3(markPosition.x, linePosition.y, markPosition.z);
+            Vector3 toAdjustedMark = adjustedMarkedPosition - linePosition;
+            Vector3 rightOfLine = (linePosition + line.Checkpoints[0].transform.forward) - linePosition;
+            float projectionOntoLine = Vector3.Dot(toAdjustedMark, rightOfLine);
+            closeToLine = (Mathf.Abs(projectionOntoLine) < OffsetFromLine);
+        }
+        return closeToLine;
     }
 
     void OnEnable()

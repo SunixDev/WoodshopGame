@@ -112,6 +112,7 @@
     <Compile Include="Assets\Scripts\Tools\ChopSaw\ChopSawUI.cs" />
     <Compile Include="Assets\Scripts\Tools\Connection.cs" />
     <Compile Include="Assets\Scripts\Tools\CutLine.cs" />
+    <Compile Include="Assets\Scripts\Tools\DadoCutTableSaw\BladeController.cs" />
     <Compile Include="Assets\Scripts\Tools\DadoCutTableSaw\DadoBlock.cs" />
     <Compile Include="Assets\Scripts\Tools\DadoCutTableSaw\DadoBlockArea.cs" />
     <Compile Include="Assets\Scripts\Tools\DadoCutTableSaw\DadoCutManager.cs" />

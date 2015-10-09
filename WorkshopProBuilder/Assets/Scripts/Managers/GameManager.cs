@@ -71,6 +71,33 @@ public class GameManager : MonoBehaviour
         return allValidMaterials;
     }
 
+    public List<GameObject> GetMaterialsWithDadoCuts()
+    {
+        int currentStep = CurrentProject.GetCurrentStepIndex();
+        List<GameObject> allMaterials = WoodManager.GetAllWoodMaterials();
+        List<GameObject> allValidMaterials = new List<GameObject>();
+        foreach (GameObject go in allMaterials)
+        {
+            if (go.GetComponent<WoodMaterialObject>() != null)
+            {
+                List<DadoBlock> dadoCuts = go.GetComponent<WoodMaterialObject>().DadosToCut;
+                foreach (DadoBlock dadoCut in dadoCuts)
+                {
+                    StepID stepID = dadoCut.GetComponent<StepID>();
+                    if (stepID != null)
+                    {
+                        if (stepID.UsedInStep(currentStep))
+                        {
+                            allValidMaterials.Add(go);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return allValidMaterials;
+    }
+
     public List<GameObject> GetNecessaryPieces()
     {
         int currentStep = CurrentProject.GetCurrentStepIndex();

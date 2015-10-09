@@ -9,22 +9,23 @@ public class CutLine : MonoBehaviour
     public List<Connection> Connections;
     public bool IsMarked = false;
     public GameObject LineMark { get; set; }
+    public LineRenderer lineRenderer;
 
     private bool CutBackwards = false;
     private int CheckpointIndex = 0;
-    private LineRenderer lineRenderer = null;
 
-	void Start ()
+    void Start()
     {
         lineRenderer = gameObject.AddComponent<LineRenderer>();
         lineRenderer.SetVertexCount(Checkpoints.Count);
         lineRenderer.SetWidth(0.005f, 0.005f);
         for (int i = 0; i < Checkpoints.Count; i++)
         {
-            lineRenderer.SetPosition(i, Checkpoints[i].GetPosition() + new Vector3(0.0f, 0.001f, 0.0f));
+            Vector3 offset = (CutType == CutLineType.ChopSawCut) ? -(Checkpoints[0].transform.right * 0.001f) : new Vector3(0.0f, 0.001f, 0.0f);
+            lineRenderer.SetPosition(i, Checkpoints[i].GetPosition() + offset);
         }
         lineRenderer.enabled = false;
-	}
+    }
 
     void Update()
     {
@@ -32,9 +33,15 @@ public class CutLine : MonoBehaviour
         {
             for (int i = 0; i < Checkpoints.Count; i++) //CheckpointIndex
             {
-                lineRenderer.SetPosition(i, Checkpoints[i].GetPosition() + new Vector3(0.0f, 0.001f, 0.0f));
+                Vector3 offset = (CutType == CutLineType.ChopSawCut) ? -(Checkpoints[0].transform.right * 0.001f) : new Vector3(0.0f, 0.001f, 0.0f);
+                lineRenderer.SetPosition(i, Checkpoints[i].GetPosition() + offset);
             }
         }
+    }
+
+    public Vector3 GetCurrentCheckpointPosition()
+    {
+        return Checkpoints[CheckpointIndex].GetPosition();
     }
 
     public void SeverConnections()
@@ -72,13 +79,19 @@ public class CutLine : MonoBehaviour
         return lineCut;
     }
 
-    public void DisplayLine(bool display)
+    public void DisplayLine(bool display, bool showMark)
     {
+        if (lineRenderer == null)
+        {
+            lineRenderer = gameObject.GetComponent<LineRenderer>();
+        }
+
         lineRenderer.enabled = display;
         if (LineMark != null)
         {
-            LineMark.SetActive(!display);
+            LineMark.SetActive(showMark);
         }
+
     }
 
     public void UpdateLine(Vector3 bladePosition)
@@ -101,7 +114,12 @@ public class CutLine : MonoBehaviour
         }
         else if (CutType == CutLineType.CurvatureCut)
         {
-            //Determine based on how close you are to the checkpoint
+            float validDistance = 0.001f;
+            float distance = Vector3.Distance(Checkpoints[CheckpointIndex].GetPosition(), bladePosition);
+            if (distance <= validDistance)
+            {
+                UpdateToNextCheckpoint();
+            }
         }
     }
 
@@ -234,7 +252,7 @@ public class CutLine : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        for (int i = 0; i < Checkpoints.Count && i+1 < Checkpoints.Count; i++)
+        for (int i = 0; i < Checkpoints.Count && i + 1 < Checkpoints.Count; i++)
         {
             if (Checkpoints[i] == null)
             {
@@ -242,7 +260,7 @@ public class CutLine : MonoBehaviour
             }
             else if (Checkpoints[i + 1] == null)
             {
-                Debug.LogError("Checkpoint at index " + (i+1) + " is missing");
+                Debug.LogError("Checkpoint at index " + (i + 1) + " is missing");
             }
             else
             {
@@ -259,48 +277,3 @@ public class CutLine : MonoBehaviour
         Destroy(LineMark);
     }
 }
-
-
-
-
-
-//private int firstCheckpoint;
-//private int lastCheckpoint;
-
-
-
-/*In Start()*/
-//firstCheckpoint = 0;
-//lastCheckpoint = Checkpoints.Count - 1;
-
-
-
-/*In UpdateToNextCheckpoint()*/
-//if (CutBackwards)
-//{
-//    lastCheckpoint--;
-//}
-//else
-//{
-//    firstCheckpoint++;
-//}
-
-
-
-//public Checkpoint GetFirstCheckpointInList()
-//{
-//    if (Checkpoints.Count == 0)
-//    {
-//        return null;
-//    }
-//    return Checkpoints[firstCheckpoint];
-//}
-
-//public Checkpoint GetLastCheckpointInList()
-//{
-//    if (Checkpoints.Count == 0)
-//    {
-//        return null;
-//    }
-//    return Checkpoints[lastCheckpoint];
-//}

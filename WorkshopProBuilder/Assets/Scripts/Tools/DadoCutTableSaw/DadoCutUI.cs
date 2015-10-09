@@ -13,7 +13,10 @@ public class DadoCutUI : MonoBehaviour
     public Button PreviousButton;
     public Button StartSawButton;
     public Button StopSawButton;
+    public Button RotateButton;
+    public Button ResetRotationButton;
 
+    private bool SawButtonsActive = true;
 
     void Start()
     {
@@ -34,17 +37,20 @@ public class DadoCutUI : MonoBehaviour
         }
     }
 
-    public void ChangeSawButtons(Blade blade)
+    public void ChangeSawButtons(bool bladeIsActive)
     {
-        if (blade.Active)
+        if (SawButtonsActive)
         {
-            StartSawButton.gameObject.SetActive(false);
-            StopSawButton.gameObject.SetActive(true);
-        }
-        else
-        {
-            StartSawButton.gameObject.SetActive(true);
-            StopSawButton.gameObject.SetActive(false);
+            if (bladeIsActive)
+            {
+                StartSawButton.interactable = false;
+                StopSawButton.interactable = true;
+            }
+            else
+            {
+                StartSawButton.interactable = true;
+                StopSawButton.interactable = false;
+            }
         }
     }
 
@@ -80,6 +86,8 @@ public class DadoCutUI : MonoBehaviour
         PreviousButton.interactable = true;
         StartSawButton.interactable = true;
         StopSawButton.interactable = true;
+        RotateButton.interactable = true;
+        ResetRotationButton.interactable = true;
     }
 
     public void DisableAllButtons()
@@ -89,5 +97,27 @@ public class DadoCutUI : MonoBehaviour
         PreviousButton.interactable = false;
         StartSawButton.interactable = false;
         StopSawButton.interactable = false;
+        RotateButton.interactable = false;
+        ResetRotationButton.interactable = false;
     }
+
+    //public void DisplaySawButtons()
+    //{
+    //    StartSawButton.gameObject.SetActive(true);
+    //    StopSawButton.gameObject.SetActive(true);
+    //    RotateClockwiseButton.gameObject.SetActive(false);
+    //    RotateCounterClockwiseButton.gameObject.SetActive(false);
+    //    ResetRotationButton.gameObject.SetActive(false);
+    //    SawButtonsActive = true;
+    //}
+
+    //public void DisplayBoardRotationButtons()
+    //{
+    //    StartSawButton.gameObject.SetActive(false);
+    //    StopSawButton.gameObject.SetActive(false);
+    //    RotateClockwiseButton.gameObject.SetActive(true);
+    //    RotateCounterClockwiseButton.gameObject.SetActive(true);
+    //    ResetRotationButton.gameObject.SetActive(true);
+    //    SawButtonsActive = false;
+    //}
 }

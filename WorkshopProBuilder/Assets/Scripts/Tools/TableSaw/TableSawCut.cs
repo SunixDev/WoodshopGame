@@ -29,11 +29,11 @@ public class TableSawCut : MonoBehaviour
         CutLine nearestLine = manager.GetNearestLine(SawBlade.transform.position);
         if (nearestLine.IsMarked)
         {
-            nearestLine.DisplayLine(true);
+            nearestLine.DisplayLine(true, false);
         }
         if (currentLine != null && currentLine != nearestLine)
         {
-            currentLine.DisplayLine(false);
+            currentLine.DisplayLine(false, true);
         }
         currentLine = nearestLine;
     }
@@ -100,12 +100,12 @@ public class TableSawCut : MonoBehaviour
                                 //Wood burnt, Start over
                             }
                         }
-                        //else
-                        //{
-                        //    timeStalling = 0.0f;
-                        //    //Calculate push rate is within consistent rate
-                        //    //Lose points if too slow or too fast
-                        //}
+                        else
+                        {
+                            timeStalling = 0.0f;
+                            //Calculate push rate is within consistent rate
+                            //Lose points if too slow or too fast
+                        }
                     }
                 }
                 else
@@ -139,7 +139,7 @@ public class TableSawCut : MonoBehaviour
     {
         if(currentLine != null)
         {
-        currentLine.DisplayLine(false);
+        currentLine.DisplayLine(false, true);
         currentLine = null;
             }
         CurrentState = CutState.ReadyToCut;

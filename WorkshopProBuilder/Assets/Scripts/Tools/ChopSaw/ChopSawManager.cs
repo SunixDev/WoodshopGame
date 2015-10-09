@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ChopSawManager : MonoBehaviour 
+public class ChopSawManager : MonoBehaviour, IToolManager
 {
     public List<GameObject> AvailableWoodMaterial;
     public List<CutLine> LinesToCut;
@@ -14,6 +14,8 @@ public class ChopSawManager : MonoBehaviour
     public ChopSawUI UI_Manager;
     public Blade SawBlade;
     public Ruler GameRuler;
+    public ChopSawCut CutGameplay;
+    public ChopSawController SawController;
 
     private int currentPieceIndex = 0;
     private Transform currentSpawnPoint;
@@ -23,11 +25,12 @@ public class ChopSawManager : MonoBehaviour
 
 	void Start () 
     {
+        GameRuler.AssignManager(this);
+        SawController.EnableMovement(false);
         AvailableWoodMaterial = GameManager.instance.GetNecessaryMaterials(CutLineType.ChopSawCut);
         LinesToCut = new List<CutLine>();
         foreach (GameObject go in AvailableWoodMaterial)
         {
-            go.transform.Rotate(Vector3.up, 90, Space.World);
             WoodMaterialObject wood = go.GetComponent<WoodMaterialObject>();
             LinesToCut.AddRange(wood.RetrieveLines(CutLineType.ChopSawCut, GameManager.instance.GetStep()));
             BoardController controller = go.AddComponent<BoardController>();
@@ -52,22 +55,33 @@ public class ChopSawManager : MonoBehaviour
 
         GameManager.instance.WoodManager.HideAllPieces();
 
-        AvailableWoodMaterial = GameManager.instance.GetNecessaryMaterials(CutLineType.ChopSawCut);
-        foreach (GameObject go in AvailableWoodMaterial)
+        if (LinesToCut.Count != 0)
         {
-            WoodMaterialObject wood = go.GetComponent<WoodMaterialObject>();
-            BoardController controller = go.AddComponent<BoardController>();
-            controller.Moveable = true;
-            controller.WoodObject = wood;
-            go.SetActive(false);
+            AvailableWoodMaterial = GameManager.instance.GetNecessaryMaterials(CutLineType.ChopSawCut);
+            foreach (GameObject go in AvailableWoodMaterial)
+            {
+                if (go.GetComponent<BoardController>() == null)
+                {
+                    WoodMaterialObject wood = go.GetComponent<WoodMaterialObject>();
+                    BoardController controller = go.AddComponent<BoardController>();
+                    controller.Moveable = true;
+                    controller.WoodObject = wood;
+                }
+                go.SetActive(false);
+            }
+            currentPieceIndex = 0;
+            AvailableWoodMaterial[currentPieceIndex].SetActive(true);
+            currentBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();
+            SetupForCutting();
+            if (currentAction == ActionState.OnSaw)
+            {
+                PlacePieceAtSpawnPoint(new Vector3(0.0f, 0.0f, -3.0f));
+            }
+            UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
         }
-        currentPieceIndex = 0;
-        AvailableWoodMaterial[currentPieceIndex].SetActive(true);
-        SetupForCutting();
-        UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
     }
 
-    public void SetCurrentBoardRestrictions(bool restrictZ, bool restrictX)
+    public void RestrictCurrentBoardMovement(bool restrictZ, bool restrictX)
     {
         currentBoardController.RestrictZ = restrictZ;
         currentBoardController.RestrictX = restrictX;
@@ -104,17 +118,20 @@ public class ChopSawManager : MonoBehaviour
         currentBoardController.Moveable = enableMovement;
     }
 
+    public Vector3 GetCurrentBoardPosition()
+    {
+        return currentBoardController.gameObject.transform.position;
+    }
+
     public void SwitchToNextPiece()
     {
         SwitchPiece(currentPieceIndex + 1);
-        currentBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();
         UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
     }
 
     public void SwitchToPreviousPiece()
     {
         SwitchPiece(currentPieceIndex - 1);
-        currentBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();
         UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
     }
 
@@ -123,14 +140,19 @@ public class ChopSawManager : MonoBehaviour
         AvailableWoodMaterial[currentPieceIndex].transform.position = Vector3.zero;
         AvailableWoodMaterial[currentPieceIndex].transform.rotation = Quaternion.identity;
         AvailableWoodMaterial[currentPieceIndex].SetActive(false);
-        AvailableWoodMaterial[indexToSwitchTo].SetActive(true);
         currentPieceIndex = indexToSwitchTo;
-        if (currentAction == ActionState.OnSaw)
+
+        AvailableWoodMaterial[currentPieceIndex].SetActive(true);
+        currentBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();
+        if (currentAction == ActionState.OnSaw || previousAction == ActionState.OnSaw)
         {
+            EnableCurrentBoardMovement(true);
+            RestrictCurrentBoardMovement(false, false);
             PlacePieceAtSpawnPoint(new Vector3(0.0f, 0.0f, -3.0f));
         }
-        else if (currentAction == ActionState.UsingRuler)
+        else if (currentAction == ActionState.UsingRuler || previousAction == ActionState.UsingRuler)
         {
+            EnableCurrentBoardMovement(false);
             PlacePieceAtSpawnPoint(new Vector3(-3.0f, 0.0f, 0.0f));
         }
     }
@@ -172,16 +194,22 @@ public class ChopSawManager : MonoBehaviour
             GameCamera.ChangeLookAtPoint(CameraSawLookAtPoint);
             GameCamera.ChangeDistanceVariables(1.5f, 0.2f, 2.0f);
             GameCamera.ChangeVerticalRotationLimit(30.0f, 80.0f);
-            //GameCamera.ChangeAngle(90.0f, 45.0f);
+            GameCamera.ChangeAngle(90.0f, 45.0f);
+        }
+        if (currentAction != ActionState.ChangingCamera)
+        {
+            SawBlade.TurnOff();
+            SawController.EnableMovement(false);
         }
         GameCamera.EnableRotation(true);
         GameCamera.EnableMovement(false);
         EnableCurrentBoardMovement(true);
-        SetCurrentBoardRestrictions(false, false);
+        RestrictCurrentBoardMovement(false, false);
         SwitchAction(ActionState.OnSaw);
-        SawBlade.TurnOff();
         UI_Manager.ChangeSawButtons(false);
         UI_Manager.DisplaySawButtons();
+        GameRuler.gameObject.SetActive(false);
+        CutGameplay.enabled = true;
     }
 
     public void SetupForMeasuring()
@@ -203,6 +231,10 @@ public class ChopSawManager : MonoBehaviour
         SawBlade.TurnOff();
         UI_Manager.ChangeSawButtons(false);
         UI_Manager.DisplayBoardRotationButtons();
+        GameRuler.gameObject.SetActive(true);
+        GameRuler.CanMeasure = true;
+        CutGameplay.enabled = false;
+        SawController.EnableMovement(false);
     }
 
     public void SetupForCameraControl()
@@ -210,6 +242,19 @@ public class ChopSawManager : MonoBehaviour
         SwitchAction(ActionState.ChangingCamera);
         GameCamera.EnableMovement(true);
         EnableCurrentBoardMovement(false);
+        GameRuler.CanMeasure = false;
+    }
+
+    public void EnableUI(bool enable)
+    {
+        if (enable)
+        {
+            UI_Manager.DisableAllButtons();
+        }
+        else
+        {
+            UI_Manager.EnableAllButtons();
+        }
     }
 
     public CutLine GetNearestLine(Vector3 fromPosition)
@@ -225,7 +270,15 @@ public class ChopSawManager : MonoBehaviour
             if (i == 0 || firstDistance < smallestDistance || lastDistance < smallestDistance)
             {
                 nearestLineIndex = i;
-                smallestDistance = (firstDistance < smallestDistance) ? firstDistance : lastDistance;
+                if (i == 0)
+                {
+                    smallestDistance = (firstDistance < lastDistance) ? firstDistance : lastDistance;
+                }
+                else
+                {
+                    smallestDistance = (firstDistance < smallestDistance) ? firstDistance : smallestDistance;
+                    smallestDistance = (lastDistance < smallestDistance) ? lastDistance : smallestDistance;
+                }
             }
         }
         return LinesToCut[nearestLineIndex];
