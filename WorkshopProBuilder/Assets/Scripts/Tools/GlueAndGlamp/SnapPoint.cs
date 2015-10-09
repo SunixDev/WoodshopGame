@@ -6,6 +6,7 @@ public class SnapPoint : MonoBehaviour
     public SnapPiece ParentSnapPiece;
     public string ConnectionID = "Default";
     public bool CanConnect = true;
+    public bool isActive { get; set; }
     public bool IsConnected { get; private set; }
     public Vector3 CurrentPosition
     {
@@ -18,6 +19,7 @@ public class SnapPoint : MonoBehaviour
     void Start()
     {
         HidePoint();
+        isActive = false;
     }
 
     public bool CanConnectTo(SnapPoint otherPoint)

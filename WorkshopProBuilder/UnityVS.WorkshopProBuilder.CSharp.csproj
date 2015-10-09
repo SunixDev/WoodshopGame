@@ -84,7 +84,7 @@
     <Compile Include="Assets\Scripts\Enums\ToolType.cs" />
     <Compile Include="Assets\Scripts\Enums\WoodMaterialType.cs" />
     <Compile Include="Assets\Scripts\Enums\WorkMaterial.cs" />
-    <Compile Include="Assets\Scripts\LinePrac.cs" />
+    <Compile Include="Assets\Scripts\LineMark.cs" />
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
     <Compile Include="Assets\Scripts\Managers\Inventory.cs" />
     <Compile Include="Assets\Scripts\Managers\Project.cs" />
@@ -128,6 +128,7 @@
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\SnapPieceGameplay.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\SnapPieceUI.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\SnapPoint.cs" />
+    <Compile Include="Assets\Scripts\Tools\IToolManager.cs" />
     <Compile Include="Assets\Scripts\Tools\Node.cs" />
     <Compile Include="Assets\Scripts\Tools\Ruler\Ruler.cs" />
     <Compile Include="Assets\Scripts\Tools\Ruler\RulerMovement.cs" />

@@ -7,99 +7,157 @@ public class CutLine : MonoBehaviour
     public CutLineType CutType;
     public List<Checkpoint> Checkpoints;
     public List<Connection> Connections;
-    public bool ShowLines = false;
-    public bool CutBackwards { get; set; }
+    public bool IsMarked = false;
+    public GameObject LineMark { get; set; }
 
+    private bool CutBackwards = false;
     private int CheckpointIndex = 0;
     private LineRenderer lineRenderer = null;
-    private int firstCheckpoint;
-    private int lastCheckpoint;
-
 
 	void Start ()
     {
-        if (Checkpoints.Count <= 1)
+        lineRenderer = gameObject.AddComponent<LineRenderer>();
+        lineRenderer.SetVertexCount(Checkpoints.Count);
+        lineRenderer.SetWidth(0.005f, 0.005f);
+        for (int i = 0; i < Checkpoints.Count; i++)
         {
-            Debug.LogWarning("Not enough points to make a line");
+            lineRenderer.SetPosition(i, Checkpoints[i].GetPosition() + new Vector3(0.0f, 0.001f, 0.0f));
         }
-        if (ShowLines)
-        {
-            lineRenderer = gameObject.AddComponent<LineRenderer>();
-            lineRenderer.SetVertexCount(Checkpoints.Count);
-            lineRenderer.SetWidth(0.005f, 0.005f);
-        }
-        firstCheckpoint = 0;
-        lastCheckpoint = Checkpoints.Count - 1;
+        lineRenderer.enabled = false;
 	}
 
     void Update()
     {
-        if (ShowLines)
+        if (lineRenderer.enabled)
         {
-            for (int i = 0; i < Checkpoints.Count; i++)
+            for (int i = 0; i < Checkpoints.Count; i++) //CheckpointIndex
             {
                 lineRenderer.SetPosition(i, Checkpoints[i].GetPosition() + new Vector3(0.0f, 0.001f, 0.0f));
             }
         }
     }
 
-    public Checkpoint GetCurrentCheckpoint()
+    public void SeverConnections()
     {
-        Checkpoint currentPoint = null;
-        if (CutBackwards && CheckpointIndex >= 0)
+        foreach (Connection c in Connections)
         {
-            currentPoint = Checkpoints[CheckpointIndex];
+            c.Disconnect();
         }
-        else if(!CutBackwards && CheckpointIndex < Checkpoints.Count)
-        {
-            currentPoint = Checkpoints[CheckpointIndex];
-        }
-        return currentPoint;
     }
 
-    public void UpdateToNextCheckpoint()
+    public bool ContainsPiece(Node node)
+    {
+        bool HasPiece = false;
+        for (int i = 0; i < Connections.Count && !HasPiece; i++)
+        {
+            Connection c = Connections[i];
+            HasPiece = (c.FirstPiece == node || c.SecondPiece == node);
+        }
+        return HasPiece;
+    }
+
+    public Node GetFirstBaseNode()
+    {
+        return Connections[0].FirstPiece;
+    }
+
+    public Node GetSecondBaseNode()
+    {
+        return Connections[0].SecondPiece;
+    }
+
+    public bool LineIsCut()
+    {
+        bool lineCut = (CheckpointIndex < 0 || CheckpointIndex >= Checkpoints.Count);
+        return lineCut;
+    }
+
+    public void DisplayLine(bool display)
+    {
+        lineRenderer.enabled = display;
+        if (LineMark != null)
+        {
+            LineMark.SetActive(!display);
+        }
+    }
+
+    public void UpdateLine(Vector3 bladePosition)
+    {
+        if (CutType == CutLineType.TableSawCut)
+        {
+            Vector3 difference = Checkpoints[CheckpointIndex].GetPosition() - bladePosition;
+            if (difference.z >= 0)
+            {
+                UpdateToNextCheckpoint();
+            }
+        }
+        else if (CutType == CutLineType.ChopSawCut)
+        {
+            Vector3 difference = Checkpoints[CheckpointIndex].GetPosition() - bladePosition;
+            if (difference.y >= 0)
+            {
+                UpdateToNextCheckpoint();
+            }
+        }
+        else if (CutType == CutLineType.CurvatureCut)
+        {
+            //Determine based on how close you are to the checkpoint
+        }
+    }
+
+    public void DetermineCutDirection(Vector3 position)
+    {
+        Vector3 firstPosition = Checkpoints[0].GetPosition();
+        Vector3 lastPosition = Checkpoints[Checkpoints.Count - 1].GetPosition();
+        float distanceFromFirst = Vector3.Distance(position, firstPosition);
+        float distanceFromLast = Vector3.Distance(position, lastPosition);
+
+        if (distanceFromFirst < distanceFromLast)
+        {
+            CheckpointIndex = 0;
+            CutBackwards = false;
+        }
+        else if (distanceFromLast < distanceFromFirst)
+        {
+            CheckpointIndex = Checkpoints.Count - 1;
+            CutBackwards = true;
+        }
+    }
+
+    private void UpdateToNextCheckpoint()
     {
         if (CutBackwards)
         {
             CheckpointIndex--;
-            lastCheckpoint--;
         }
         else
         {
             CheckpointIndex++;
-            firstCheckpoint++;
         }
     }
 
-    public Checkpoint GetNextCheckpoint()
+    public float CalculateDistance(Vector3 bladePosition)
     {
-        Checkpoint nextPoint = null;
-        if (CutBackwards && (CheckpointIndex - 1) >= 0)
+        Vector3 origin = GetPreviousCheckpoint();
+        Vector3 nextCheckpoint = Checkpoints[CheckpointIndex].GetPosition();
+        if ((CutBackwards && CheckpointIndex == Checkpoints.Count - 1) || (!CutBackwards && CheckpointIndex == 0))
         {
-            nextPoint = Checkpoints[CheckpointIndex - 1];
+            origin = Checkpoints[CheckpointIndex].GetPosition();
+            nextCheckpoint = GetNextCheckpoint();
         }
-        else if(!CutBackwards && (CheckpointIndex + 1) < Checkpoints.Count)
-        {
-            nextPoint = Checkpoints[CheckpointIndex + 1];
-        }
-        return nextPoint;
+
+        Vector3 toBladeEdge = bladePosition - origin;
+        Vector3 toCheckpoint = nextCheckpoint - origin;
+        toCheckpoint.Normalize();
+
+        float projection = Vector3.Dot(toBladeEdge, toCheckpoint);
+        toCheckpoint = toCheckpoint * projection;
+        Vector3 rejectionVector = toBladeEdge - toCheckpoint;
+
+        return rejectionVector.magnitude;
     }
 
-    public Checkpoint GetPreviousCheckpoint()
-    {
-        Checkpoint previousPoint = null;
-        if (CutBackwards && (CheckpointIndex + 1) < Checkpoints.Count)
-        {
-            previousPoint = Checkpoints[CheckpointIndex + 1];
-        }
-        else if (!CutBackwards && (CheckpointIndex - 1) >= 0)
-        {
-            previousPoint = Checkpoints[CheckpointIndex - 1];
-        }
-        return previousPoint;
-    }
-
-    public Checkpoint GetFirstCheckpoint()
+    private Vector3 GetFirstCheckpoint()
     {
         Checkpoint firstPoint = null;
         if (Checkpoints.Count == 1)
@@ -118,19 +176,40 @@ public class CutLine : MonoBehaviour
         {
             firstPoint = Checkpoints[0];
         }
-        return firstPoint;
+        return firstPoint.GetPosition();
     }
 
-    public Checkpoint GetFirstCheckpointInList()
+    private Vector3 GetNextCheckpoint()
     {
-        if (Checkpoints.Count == 0)
+        Checkpoint nextPoint = null;
+        int nextIndex = (CutBackwards) ? CheckpointIndex - 1 : CheckpointIndex + 1;
+        if (nextIndex >= 0 && nextIndex < Checkpoints.Count)
         {
-            return null;
+            nextPoint = Checkpoints[nextIndex];
         }
-        return Checkpoints[firstCheckpoint];
+        else
+        {
+            return Vector3.zero;
+        }
+        return nextPoint.GetPosition();
     }
 
-    public Checkpoint GetLastCheckpoint()
+    private Vector3 GetPreviousCheckpoint()
+    {
+        Checkpoint previousPoint = null;
+        int previousIndex = (CutBackwards) ? CheckpointIndex + 1 : CheckpointIndex - 1;
+        if (previousIndex >= 0 && previousIndex < Checkpoints.Count)
+        {
+            previousPoint = Checkpoints[previousIndex];
+        }
+        else
+        {
+            return Vector3.zero;
+        }
+        return previousPoint.GetPosition();
+    }
+
+    private Vector3 GetLastCheckpoint()
     {
         Checkpoint lastPoint = null;
         if (Checkpoints.Count == 1)
@@ -150,66 +229,7 @@ public class CutLine : MonoBehaviour
             lastPoint = Checkpoints[Checkpoints.Count - 1];
         }
 
-        return lastPoint;
-    }
-
-    public Checkpoint GetLastCheckpointInList()
-    {
-        if (Checkpoints.Count == 0)
-        {
-            return null;
-        }
-        return Checkpoints[lastCheckpoint];
-    }
-
-    public void SeverConnections()
-    {
-        foreach (Connection c in Connections)
-        {
-            c.Disconnect();
-        }
-    }
-
-    public bool ContainsPiece(Node node)
-    {
-        bool HasPiece = false;
-        for (int i = 0; i < Connections.Count && !HasPiece; i++ )
-        {
-            Connection c = Connections[i];
-            HasPiece = (c.FirstPiece == node || c.SecondPiece == node);
-        }
-        return HasPiece;
-    }
-
-    public Node GetFirstBaseNode()
-    {
-        return Connections[0].FirstPiece;
-    }
-
-    public Node GetSecondBaseNode()
-    {
-        return Connections[0].SecondPiece;
-    }
-
-    public void SetCutDirection(Checkpoint nearestCheckpoint)
-    {
-        int index = Checkpoints.IndexOf(nearestCheckpoint);
-        CutBackwards = (index == (Checkpoints.Count - 1));
-    }
-
-    public bool OnFirstCheckpoint()
-    {
-        return GetPreviousCheckpoint() == null && GetNextCheckpoint() != null;
-    }
-
-    public bool OnConnectedCheckpoint()
-    {
-        return GetPreviousCheckpoint() != null && GetNextCheckpoint() != null;
-    }
-
-    public bool OnLastCheckpoint()
-    {
-        return GetPreviousCheckpoint() != null && GetNextCheckpoint() == null;
+        return lastPoint.GetPosition();
     }
 
     void OnDrawGizmos()
@@ -233,4 +253,54 @@ public class CutLine : MonoBehaviour
             }
         }
     }
+
+    void OnDestroy()
+    {
+        Destroy(LineMark);
+    }
 }
+
+
+
+
+
+//private int firstCheckpoint;
+//private int lastCheckpoint;
+
+
+
+/*In Start()*/
+//firstCheckpoint = 0;
+//lastCheckpoint = Checkpoints.Count - 1;
+
+
+
+/*In UpdateToNextCheckpoint()*/
+//if (CutBackwards)
+//{
+//    lastCheckpoint--;
+//}
+//else
+//{
+//    firstCheckpoint++;
+//}
+
+
+
+//public Checkpoint GetFirstCheckpointInList()
+//{
+//    if (Checkpoints.Count == 0)
+//    {
+//        return null;
+//    }
+//    return Checkpoints[firstCheckpoint];
+//}
+
+//public Checkpoint GetLastCheckpointInList()
+//{
+//    if (Checkpoints.Count == 0)
+//    {
+//        return null;
+//    }
+//    return Checkpoints[lastCheckpoint];
+//}

@@ -219,45 +219,13 @@ public class ChopSawManager : MonoBehaviour
         float smallestDistance = 0.0f;
         for (int i = 0; i < LinesToCut.Count && !lineFound; i++)
         {
-            if (nearestLineIndex == -1)
+            float firstDistance = Vector3.Distance(fromPosition, LinesToCut[i].Checkpoints[0].GetPosition());
+            float lastDistance = Vector3.Distance(fromPosition, LinesToCut[i].Checkpoints[LinesToCut[i].Checkpoints.Count - 1].GetPosition());
+
+            if (i == 0 || firstDistance < smallestDistance || lastDistance < smallestDistance)
             {
                 nearestLineIndex = i;
-                float firstDistance = Vector3.Distance(fromPosition, LinesToCut[i].Checkpoints[0].GetPosition());
-                float lastDistance = Vector3.Distance(fromPosition, LinesToCut[i].Checkpoints[LinesToCut[i].Checkpoints.Count - 1].GetPosition());
-                if (firstDistance < lastDistance)
-                {
-                    smallestDistance = firstDistance;
-                    LinesToCut[i].CutBackwards = false;
-                }
-                else
-                {
-                    smallestDistance = lastDistance;
-                    LinesToCut[i].CutBackwards = true;
-                }
-
-            }
-            else
-            {
-                float firstDistance = Vector3.Distance(fromPosition, LinesToCut[i].Checkpoints[0].GetPosition());
-                float lastDistance = Vector3.Distance(fromPosition, LinesToCut[i].Checkpoints[LinesToCut[i].Checkpoints.Count - 1].GetPosition());
-                if (firstDistance < lastDistance)
-                {
-                    if (firstDistance < smallestDistance)
-                    {
-                        nearestLineIndex = i;
-                        smallestDistance = firstDistance;
-                        LinesToCut[i].CutBackwards = false;
-                    }
-                }
-                else
-                {
-                    if (lastDistance < smallestDistance)
-                    {
-                        nearestLineIndex = i;
-                        smallestDistance = lastDistance;
-                        LinesToCut[i].CutBackwards = true;
-                    }
-                }
+                smallestDistance = (firstDistance < smallestDistance) ? firstDistance : lastDistance;
             }
         }
         return LinesToCut[nearestLineIndex];

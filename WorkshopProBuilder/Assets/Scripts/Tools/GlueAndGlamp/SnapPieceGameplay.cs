@@ -28,6 +28,7 @@ public class SnapPieceGameplay : MonoBehaviour
                         currentPoint.ConnectToPoint(point);
                         PlacedPieces.Add(CurrentPiece);
                         manager.SwitchFromPiece(CurrentPiece);
+                        break;
                     }
                 }
             }

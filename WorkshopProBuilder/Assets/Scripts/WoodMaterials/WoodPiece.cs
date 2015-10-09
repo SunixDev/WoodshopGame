@@ -34,33 +34,33 @@ public class WoodPiece : MonoBehaviour
         }
     }
 
-    public int ActivateGlueBoxes(int stepNumber)
+    public List<GlueBox> ActivateGlueBoxes(int stepNumber)
     {
-        int numberActived = 0;
+        List<GlueBox> activatedGlueBoxes = new List<GlueBox>();
         foreach (GlueBox glue in GlueBoxes)
         {
             StepID id = glue.GetComponent<StepID>();
             if (id.UsedInStep(stepNumber))
             {
-                glue.gameObject.SetActive(true);
-                numberActived++;
+                glue.gameObject.GetComponent<BoxCollider>().enabled = true;
+                activatedGlueBoxes.Add(glue);
             }
         }
-        return numberActived;
+        return activatedGlueBoxes;
     }
 
-    public int ActivateSnapPoints(int stepNumber)
+    public List<SnapPoint> ActivateSnapPoints(int stepNumber)
     {
-        int numberActived = 0;
+        List<SnapPoint> activatedSnapPoints = new List<SnapPoint>();
         foreach (SnapPoint snapPoint in SnapPoints)
         {
             StepID id = snapPoint.GetComponent<StepID>();
             if (id.UsedInStep(stepNumber))
             {
-                snapPoint.gameObject.SetActive(true);
-                numberActived++;
+                snapPoint.isActive = true;
+                activatedSnapPoints.Add(snapPoint);
             }
         }
-        return numberActived;
+        return activatedSnapPoints;
     }
 }

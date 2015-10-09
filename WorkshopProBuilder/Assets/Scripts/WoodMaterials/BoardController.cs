@@ -76,7 +76,7 @@ public class BoardController : MonoBehaviour
         }
     }
 
-    public void ResetRotationWithTap(Gesture gesture)
+    public void ResetRotationWithDoubleTap(Gesture gesture)
     {
         if (Moveable && selected)
         {
@@ -153,7 +153,7 @@ public class BoardController : MonoBehaviour
     private void SubscribeAll()
     {
         EasyTouch.On_TouchStart += OnTouchStart;
-        EasyTouch.On_DoubleTap += ResetRotationWithTap;
+        EasyTouch.On_DoubleTap += ResetRotationWithDoubleTap;
 
         EasyTouch.On_DragStart += OnDragStart;
 
@@ -167,7 +167,7 @@ public class BoardController : MonoBehaviour
     private void UnsubscribeAll()
     {
         EasyTouch.On_TouchStart -= OnTouchStart;
-        EasyTouch.On_DoubleTap -= ResetRotationWithTap;
+        EasyTouch.On_DoubleTap -= ResetRotationWithDoubleTap;
 
         EasyTouch.On_DragStart -= OnDragStart;
 

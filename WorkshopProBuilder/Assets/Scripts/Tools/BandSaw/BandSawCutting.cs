@@ -25,18 +25,18 @@ public class BandSawCutting : MonoBehaviour
 	void Update () 
     {
         #region CuttingCode
-        if (CurrentState == CutState.ReadyToCut && Blade.Active && Blade.CuttingWoodBoard)
-        {
-            Vector3 origin = Blade.BladePoint + new Vector3(0.0f, 0.3f, 0.0f);
-            Ray ray = new Ray(origin, Vector3.down);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Piece" || hit.collider.tag == "Leftover"))
-            {
-                CurrentState = CutState.Cutting;
-                currentLine = manager.GetNearestLine(hit.point);
-                Blade.BladePoint = hit.point;
-            }
-        }
+        //if (CurrentState == CutState.ReadyToCut && Blade.Active && Blade.CuttingWoodBoard)
+        //{
+        //    Vector3 origin = Blade.BladePoint + new Vector3(0.0f, 0.3f, 0.0f);
+        //    Ray ray = new Ray(origin, Vector3.down);
+        //    RaycastHit hit;
+        //    if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Piece" || hit.collider.tag == "Leftover"))
+        //    {
+        //        CurrentState = CutState.Cutting;
+        //        currentLine = manager.GetNearestLine(hit.point);
+        //        Blade.BladePoint = hit.point;
+        //    }
+        //}
         //else if (state == CutState.Cutting)
         //{
         //    if (CuttingFirstCheckpoint())
@@ -82,38 +82,4 @@ public class BandSawCutting : MonoBehaviour
         //}
         #endregion
 	}
-
-    private bool BladeWithinValidCutOffset()
-    {
-        Vector3 edge = new Vector3(Blade.BladePoint.x, 0.0f, Blade.BladePoint.z);
-        Vector3 checkpoint = new Vector3(currentLine.GetCurrentCheckpoint().GetPosition().x, 0.0f, currentLine.GetCurrentCheckpoint().GetPosition().z);
-
-        float distance = Vector3.Distance(edge, checkpoint);
-        return (distance <= ValidCutOffset);
-    }
-
-    private float DistanceBetweenBladeAndLine(Vector3 bladeEdge, Vector3 currentCheckpoint, Vector3 origin)
-    {
-        Vector3 toEdge = bladeEdge - origin;
-        Vector3 toCheckpoint = currentCheckpoint - origin;
-        toCheckpoint.Normalize();
-
-        float projection = Vector3.Dot(toEdge, toCheckpoint);
-        toCheckpoint = toCheckpoint * projection;
-        Vector3 rejectionVector = toEdge - toCheckpoint;
-
-        return rejectionVector.magnitude;
-    }
-
-    private bool PassedCurrentCheckpoint()
-    {
-        bool withinRange = BladeWithinValidCutOffset();
-        bool passed = withinRange;
-        if (withinRange)
-        {
-            Vector3 difference = currentLine.GetCurrentCheckpoint().GetPosition() - Blade.BladePoint;
-            passed = (difference.z >= 0);
-        }
-        return passed;
-    }
 }

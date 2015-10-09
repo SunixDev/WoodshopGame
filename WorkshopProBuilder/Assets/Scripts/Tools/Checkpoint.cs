@@ -11,6 +11,11 @@ public class Checkpoint : MonoBehaviour
         return transform.position;
     }
 
+    public void SetPosition(Vector3 newPosition)
+    {
+        transform.position = newPosition;
+    }
+
     void OnDrawGizmos()
     {
         Gizmos.color = Color.cyan;

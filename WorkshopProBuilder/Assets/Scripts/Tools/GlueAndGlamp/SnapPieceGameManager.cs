@@ -6,11 +6,16 @@ public class SnapPieceGameManager : MonoBehaviour
 {
     public List<GameObject> AvailablePieces;
     public SnapPieceUI UI_Manager;
-    public Transform InitialSpawnPoint;
+    public CameraControl GameCamera;
+    public Transform SpawnPoint;
+    public float ValidConnectionDistance = 0.1f;
 
+    public List<GlueBox> Glues { get; set; }
+    public List<SnapPoint> SnapPoints { get; set; }
+
+    private WoodPiece CurrentPiece;
     private int currentPieceIndex = 0;
-    public int NumberOfGlues { get; set; }
-    public int NumberOfSnapPoints { get; set; }
+    private List<GameObject> ConnectedPieces;
 
 	void Start () 
     {
@@ -18,14 +23,45 @@ public class SnapPieceGameManager : MonoBehaviour
         foreach (GameObject go in AvailablePieces)
         {
             WoodPiece wood = go.GetComponent<WoodPiece>();
-            NumberOfGlues = wood.ActivateGlueBoxes(GameManager.instance.GetStep());
-            NumberOfSnapPoints = wood.ActivateSnapPoints(GameManager.instance.GetStep());
+            Glues = wood.ActivateGlueBoxes(GameManager.instance.GetStep());
+            SnapPoints = wood.ActivateSnapPoints(GameManager.instance.GetStep());
         }
+
 	}
 
-    public bool StepCompleted()
+    void Update()
     {
-        return (NumberOfGlues == 0 && NumberOfSnapPoints == 0);
+        bool piecesConnected = true;
+        for (int i = 0; i < SnapPoints.Count && piecesConnected; i++)
+        {
+            piecesConnected = SnapPoints[i].IsConnected;
+        }
+
+        if (!piecesConnected)
+        {
+            foreach (GameObject availablePiece in AvailablePieces)
+            {
+                WoodPiece piece = availablePiece.GetComponent<WoodPiece>();
+                if (piece != CurrentPiece)
+                {
+                    foreach (SnapPoint otherPoint in piece.SnapPoints)
+                    {
+                        foreach (SnapPoint currentPoint in CurrentPiece.SnapPoints)
+                        {
+                            if (currentPoint.CanConnectTo(otherPoint) && currentPoint.DistanceFromPoint(otherPoint) <= ValidConnectionDistance)
+                            {
+                                currentPoint.ConnectToPoint(otherPoint);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Step Done");
+        }
     }
 
     public void SwitchFromPiece(WoodPiece piece)
@@ -35,6 +71,17 @@ public class SnapPieceGameManager : MonoBehaviour
 
     public void SwitchPiece(int index)
     {
-
+        if (index >= 0 && index < AvailablePieces.Count && index != currentPieceIndex)
+        {
+            AvailablePieces[currentPieceIndex].SetActive(false);
+            AvailablePieces[index].SetActive(true);
+            AvailablePieces[index].transform.position = SpawnPoint.position;
+            AvailablePieces[index].transform.rotation = Quaternion.identity;
+        }
+        else
+        {
+            Debug.Log("Index #" + index + " is invalid.");
+            Debug.Log("Index #" + index + " is invalid.");
+        }
     }
 }
