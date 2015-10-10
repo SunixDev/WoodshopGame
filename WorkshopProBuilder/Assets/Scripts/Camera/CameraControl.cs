@@ -18,6 +18,8 @@ public class CameraControl : MonoBehaviour
     public float SensitivityY = 6.0f;
     [Range(0.1f, 5.0f)]
     public float ZoomSensitivity = 1.0f;
+    [Range(0.1f, 5.0f)]
+    public float PanSensitivity = 2.0f;
 
     [Header("Vertical Rotation Clamp")]
     public float yMinRotation = 10.0f;
@@ -31,7 +33,7 @@ public class CameraControl : MonoBehaviour
     private float xMovement;
     private float yMovement;
     private Vector3 panMovement = Vector3.zero;
-    private Vector3 previousFingerPosition = Vector3.zero;
+    private Vector2 previousFingerPosition = Vector2.zero;
     private Vector3 previousCameraPosition = Vector3.zero;
     private bool canPan = true;
     private bool canOrbit = true;
@@ -50,19 +52,17 @@ public class CameraControl : MonoBehaviour
         distance = Mathf.Clamp(distance, MinDistance, MaxDistance);
         Vector3 distanceVector = new Vector3(0.0f, 0.0f, -distance);
         Quaternion rotation = Quaternion.Euler(yMovement, xMovement, 0.0f);
-        Vector3 finalPosition = (LookAtPoint.position) + (rotation * distanceVector);
+        Vector3 finalPosition = (LookAtPoint.position + panMovement) + (rotation * distanceVector);
 
         //transform.position = Vector3.MoveTowards(transform.position, finalPosition, 0.1f);
         transform.position = finalPosition;
-        transform.LookAt(LookAtPoint.position);
+        transform.LookAt(LookAtPoint.position + panMovement);
         if (previousCameraPosition == transform.position)
         {
             ResetMovementOptions(null);
         }
-        else
-        {
-            previousCameraPosition = transform.position;
-        }
+        previousCameraPosition = transform.position;
+        
     }
 
     public void ResetMovementOptions(Gesture gesture)
@@ -137,21 +137,22 @@ public class CameraControl : MonoBehaviour
     {
         if (MovementEnabled && gesture.touchCount == 2 && canPan)// && ValidTag(tag))
         {
-            if (previousFingerPosition == Vector3.zero)
+            if (previousFingerPosition == Vector2.zero)
             {
-                previousFingerPosition = gesture.deltaPosition;// + panMovement);
+                previousFingerPosition = gesture.position;
                 canPan = true;
                 canZoom = false;
                 canOrbit = false;
             }
             else
             {
-                Vector3 currentPosition = gesture.deltaPosition;// + panMovement);
+                Vector2 currentPosition = gesture.position;
                 if (currentPosition != previousFingerPosition)
                 {
                     Vector3 deltaPosition = currentPosition - previousFingerPosition;
+                    deltaPosition = deltaPosition.normalized * (PanSensitivity * Time.deltaTime);
+                    panMovement += (Quaternion.Euler(new Vector3(0.0f, xMovement, 0.0f)) * new Vector3(-deltaPosition.x, 0.0f, -deltaPosition.y));
                     previousFingerPosition = currentPosition;
-                    LookAtPoint.position += new Vector3(deltaPosition.x, 0.0f, deltaPosition.z);
                 }
             }
         }
@@ -161,7 +162,8 @@ public class CameraControl : MonoBehaviour
     {
         if (MovementEnabled && gesture.touchCount == 2 && canPan)// && ValidTag(tag))
         {
-            previousFingerPosition = Vector3.zero;
+            previousFingerPosition = Vector2.zero;
+            panMovement = Vector3.zero;
             canPan = true;
             canZoom = false;
             canOrbit = false;

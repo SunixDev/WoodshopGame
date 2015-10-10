@@ -6,19 +6,22 @@ public class BandSawCutting : MonoBehaviour
 {
     public BandSawManager manager;
     public BandSawBlade Blade;
-    public CutState CurrentState { get; set; }
     public float ValidCutOffset = 0.005f;
+    public float MaxStallTime = 3.0f;
+    //public float PushRateOffset = 0.001;
+    public CutState CurrentState { get; set; }
 
+    private int numberOfLinesToCut;
     private CutLine currentLine;
     private bool cuttingAlongLine;
-    private Vector3 previousCheckpointPosition;
-    private float timeWithoutPushing;
+    private Vector3 previousBoardPosition;
+    private float timeStalling;
 
 	void Start () 
     {
         currentLine = null;
         cuttingAlongLine = false;
-        timeWithoutPushing = 0.0f;
+        timeStalling = 0.0f;
         CurrentState = CutState.ReadyToCut;
 	}
 	

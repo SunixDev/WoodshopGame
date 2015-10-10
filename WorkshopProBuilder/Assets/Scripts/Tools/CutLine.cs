@@ -16,7 +16,11 @@ public class CutLine : MonoBehaviour
 
     void Start()
     {
-        lineRenderer = gameObject.AddComponent<LineRenderer>();
+        lineRenderer = gameObject.GetComponent<LineRenderer>();
+        if (gameObject.GetComponent<LineRenderer>() == null)
+        {
+            lineRenderer = gameObject.AddComponent<LineRenderer>();
+        }
         lineRenderer.SetVertexCount(Checkpoints.Count);
         lineRenderer.SetWidth(0.005f, 0.005f);
         for (int i = 0; i < Checkpoints.Count; i++)
@@ -31,7 +35,7 @@ public class CutLine : MonoBehaviour
     {
         if (lineRenderer.enabled)
         {
-            for (int i = 0; i < Checkpoints.Count; i++) //CheckpointIndex
+            for (int i = 0; i < Checkpoints.Count; i++)
             {
                 Vector3 offset = (CutType == CutLineType.ChopSawCut) ? -(Checkpoints[0].transform.right * 0.001f) : new Vector3(0.0f, 0.001f, 0.0f);
                 lineRenderer.SetPosition(i, Checkpoints[i].GetPosition() + offset);
@@ -107,7 +111,7 @@ public class CutLine : MonoBehaviour
         else if (CutType == CutLineType.ChopSawCut)
         {
             Vector3 difference = Checkpoints[CheckpointIndex].GetPosition() - bladePosition;
-            if (difference.y >= 0)
+            if (difference.y <= 0)
             {
                 UpdateToNextCheckpoint();
             }

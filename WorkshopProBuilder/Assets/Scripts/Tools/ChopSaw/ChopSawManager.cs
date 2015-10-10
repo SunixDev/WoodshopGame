@@ -72,12 +72,16 @@ public class ChopSawManager : MonoBehaviour, IToolManager
             currentPieceIndex = 0;
             AvailableWoodMaterial[currentPieceIndex].SetActive(true);
             currentBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();
-            SetupForCutting();
-            if (currentAction == ActionState.OnSaw)
-            {
-                PlacePieceAtSpawnPoint(new Vector3(0.0f, 0.0f, -3.0f));
-            }
             UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
+            AvailableWoodMaterial[currentPieceIndex].transform.position = currentSpawnPoint.position + new Vector3(0.0f, 0.0f, -1.0f);
+            Vector3 directionToPiece = (AvailableWoodMaterial[currentPieceIndex].transform.position - currentSpawnPoint.position).normalized;
+            Ray ray = new Ray(currentSpawnPoint.position, directionToPiece);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            {
+                float distance = (hit.point - currentSpawnPoint.position).magnitude;
+                AvailableWoodMaterial[currentPieceIndex].transform.position += (distance * -directionToPiece);
+            }
         }
     }
 
@@ -172,7 +176,7 @@ public class ChopSawManager : MonoBehaviour, IToolManager
         Vector3 directionToPiece = (AvailableWoodMaterial[currentPieceIndex].transform.position - currentSpawnPoint.position).normalized;
         Ray ray = new Ray(currentSpawnPoint.position, directionToPiece);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
             float distance = (hit.point - currentSpawnPoint.position).magnitude;
             AvailableWoodMaterial[currentPieceIndex].transform.position += (distance * -directionToPiece);
@@ -264,20 +268,23 @@ public class ChopSawManager : MonoBehaviour, IToolManager
         float smallestDistance = 0.0f;
         for (int i = 0; i < LinesToCut.Count && !lineFound; i++)
         {
-            float firstDistance = Vector3.Distance(fromPosition, LinesToCut[i].Checkpoints[0].GetPosition());
-            float lastDistance = Vector3.Distance(fromPosition, LinesToCut[i].Checkpoints[LinesToCut[i].Checkpoints.Count - 1].GetPosition());
-
-            if (i == 0 || firstDistance < smallestDistance || lastDistance < smallestDistance)
+            if (LinesToCut[i].gameObject.transform.parent.gameObject.activeSelf)
             {
-                nearestLineIndex = i;
-                if (i == 0)
+                float firstDistance = Vector3.Distance(fromPosition, LinesToCut[i].Checkpoints[0].GetPosition());
+                float lastDistance = Vector3.Distance(fromPosition, LinesToCut[i].Checkpoints[LinesToCut[i].Checkpoints.Count - 1].GetPosition());
+
+                if (nearestLineIndex == -1 || firstDistance < smallestDistance || lastDistance < smallestDistance)
                 {
-                    smallestDistance = (firstDistance < lastDistance) ? firstDistance : lastDistance;
-                }
-                else
-                {
-                    smallestDistance = (firstDistance < smallestDistance) ? firstDistance : smallestDistance;
-                    smallestDistance = (lastDistance < smallestDistance) ? lastDistance : smallestDistance;
+                    if (nearestLineIndex == -1)
+                    {
+                        smallestDistance = (firstDistance < lastDistance) ? firstDistance : lastDistance;
+                    }
+                    else
+                    {
+                        smallestDistance = (firstDistance < smallestDistance) ? firstDistance : smallestDistance;
+                        smallestDistance = (lastDistance < smallestDistance) ? lastDistance : smallestDistance;
+                    }
+                    nearestLineIndex = i;
                 }
             }
         }

@@ -81,6 +81,23 @@ public class DadoCutManager : MonoBehaviour
         return currentBoardController.gameObject.transform.position;
     }
 
+    public void EnableBoardPhysics(bool enable)
+    {
+        WoodMaterialObject wood = AvailableWoodMaterial[currentPieceIndex].GetComponent<WoodMaterialObject>();
+        wood.GetComponent<Rigidbody>().isKinematic = !enable;
+        foreach (GameObject woodPiece in wood.WoodPieces)
+        {
+            if (woodPiece.tag == "Piece" || woodPiece.tag == "Leftover")
+            {
+                MeshCollider collider = woodPiece.GetComponent<MeshCollider>();
+                if (collider != null)
+                {
+                    collider.convex = enable;
+                }
+            }
+        }
+    }
+
     public void SwitchToNextPiece()
     {
         SwitchPiece(currentPieceIndex + 1);

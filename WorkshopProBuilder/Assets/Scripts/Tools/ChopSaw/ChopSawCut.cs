@@ -74,10 +74,10 @@ public class ChopSawCut : MonoBehaviour
                     Vector3 origin = SawBlade.EdgePosition() + new Vector3(0.0f, 0.5f, 0.0f);
                     Ray ray = new Ray(origin, Vector3.down);
                     RaycastHit hit;
-                    if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Piece" || hit.collider.tag == "Leftover"))
+                    if (Physics.Raycast(ray, out hit, Mathf.Infinity, mask) && (hit.collider.tag == "Piece" || hit.collider.tag == "Leftover"))
                     {
                         Vector3 bladeEdgePosition = new Vector3(currentLine.GetCurrentCheckpointPosition().x, hit.point.y, hit.point.z);
-                        StartWoodCutting(hit.point);
+                        StartWoodCutting(bladeEdgePosition);
                     }
                 }
             }
@@ -93,14 +93,14 @@ public class ChopSawCut : MonoBehaviour
                     else
                     {
                         float pushRate = TrackPushRate();
-                        Debug.Log("Push Rate: " + pushRate);
+                        //Debug.Log("Push Rate: " + pushRate);
                         if (pushRate == 0)
                         {
                             timeStalling += Time.deltaTime;
                             if (timeStalling >= MaxStallTime)
                             {
                                 //Wood burnt, Start over
-                                Debug.Log("Wood is burnt, Start over");
+                                //Debug.Log("Wood is burnt, Start over");
                             }
                         }
                         else

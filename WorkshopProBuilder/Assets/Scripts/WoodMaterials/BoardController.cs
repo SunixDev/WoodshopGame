@@ -9,6 +9,7 @@ public class BoardController : MonoBehaviour
     public bool RestrictX;
     public bool RestrictZ;
     public Rigidbody objRigidbody { get; set; }
+    public Transform objTransform { get; set; }
     public WoodMaterialObject WoodObject { get; set; }
 
     private bool selected = false;
@@ -19,6 +20,7 @@ public class BoardController : MonoBehaviour
     void Start()
     {
         objRigidbody = GetComponent<Rigidbody>();
+        objTransform = GetComponent<Transform>();
         WoodObject = GetComponent<WoodMaterialObject>();
     }
 
@@ -81,6 +83,7 @@ public class BoardController : MonoBehaviour
         if (Moveable && selected)
         {
             ResetRotation();
+            selected = false;
         }
     }
 

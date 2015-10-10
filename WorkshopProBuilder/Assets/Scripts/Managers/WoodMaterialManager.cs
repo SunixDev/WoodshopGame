@@ -7,13 +7,17 @@ public class WoodMaterialManager : MonoBehaviour
 {
     public List<GameObject> WoodMaterials;
 
-    public void SplitBoard(Node baseNode, Node baseNode2, WoodMaterialObject boardToSplit, CutLine detachedLine)
+    public List<GameObject> SplitBoard(Node baseNode, Node baseNode2, WoodMaterialObject boardToSplit, CutLine detachedLine)
     {
         WoodMaterials.Remove(boardToSplit.gameObject);
         WoodManagerHelper.RemoveLine(boardToSplit, detachedLine);
-        DeterminePiece(baseNode, ref boardToSplit);
-        DeterminePiece(baseNode2, ref boardToSplit);
+
+        List<GameObject> splitPieces = new List<GameObject>();
+        splitPieces.Add(DeterminePiece(baseNode, ref boardToSplit));
+        splitPieces.Add(DeterminePiece(baseNode2, ref boardToSplit));
         Destroy(boardToSplit.gameObject);
+
+        return splitPieces;
     }
 
     public List<GameObject> GetPiecesByLine(CutLineType line)
@@ -56,8 +60,9 @@ public class WoodMaterialManager : MonoBehaviour
         return null;
     }
 
-    private void DeterminePiece(Node node, ref WoodMaterialObject boardToSplit)
+    private GameObject DeterminePiece(Node node, ref WoodMaterialObject boardToSplit)
     {
+        GameObject objToReturn = null;
         if (node.ConnectedPieces.Count <= 0)
         {
             GameObject obj = node.gameObject;
@@ -77,21 +82,32 @@ public class WoodMaterialManager : MonoBehaviour
             {
                 Debug.LogError(obj.name + " is not tag as Piece or Leftover");
             }
+            objToReturn = obj;
         }
         else
         {
             GameObject obj = WoodManagerHelper.CreateSeparateBoard(node, ref boardToSplit);
             WoodMaterials.Add(obj);
+            objToReturn = obj;
         }
+        return objToReturn;
     }
 
     public void HideAllPieces()
     {
         foreach (GameObject go in WoodMaterials)
         {
-            go.SetActive(false);
             go.transform.position = Vector3.zero;
+            go.transform.rotation = Quaternion.identity;
+            go.SetActive(false);
         }
+    }
+
+    public void HidePiece(GameObject woodMaterial)
+    {
+        woodMaterial.transform.position = Vector3.zero;
+        woodMaterial.transform.rotation = Quaternion.identity;
+        woodMaterial.SetActive(false);
     }
 }
 

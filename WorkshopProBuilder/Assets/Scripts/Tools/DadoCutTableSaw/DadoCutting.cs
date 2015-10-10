@@ -19,7 +19,7 @@ public class DadoCutting : MonoBehaviour
         currentDado = null;
         cuttingOutDado = false;
         timeStalling = 0.0f;
-        CurrentState = CutState.ReadyToCut;
+        CurrentState = CutState.Waiting;
     }
 
     private void SwitchDado()
@@ -30,29 +30,25 @@ public class DadoCutting : MonoBehaviour
 
     private void StartWoodCutting()
     {
-        if (BladeHitPiece() && BladeHitDadoBlock())
+        if (BladeHitDadoBlock())
         {
-            GameObject hit = SawBlade.GetHitObjectByTag("DadoBlock");
-            currentDado = hit.GetComponent<DadoBlock>();
             previousPiecePosition = currentDado.Position;
             cuttingOutDado = true;
-            //Reduce score by small amount
-            Debug.Log("Hit piece and dado block");
-        }
-        else if (BladeHitDadoBlock())
-        {
-            GameObject hit = SawBlade.GetHitObjectByTag("DadoBlock");
-            currentDado = hit.GetComponent<DadoBlock>();
-            previousPiecePosition = currentDado.Position;
-            cuttingOutDado = true;
-            Debug.Log("Only hit dado block");
+            if (BladeHitPiece())
+            {
+                //Reduce score by small amount
+                Debug.Log("Hit piece and dado block: lost some points");
+            }
+            else
+            {
+                Debug.Log("Only hit dado block");
+            }
         }
         else if (BladeHitPiece())
         {
-            Debug.Log("Only hit piece and losing points");
+            Debug.Log("Only hit piece and losing points gradually");
             cuttingOutDado = false;
         }
-        CurrentState = CutState.Cutting;
     }
 
     private float TrackPushRate()
@@ -65,73 +61,92 @@ public class DadoCutting : MonoBehaviour
 
     void Update()
     {
+        #region CuttingCode
         if (manager.DadosToCut.Count > 0)
         {
-            if (CurrentState == CutState.ReadyToCut)
+            if (CurrentState == CutState.Waiting)
             {
                 SwitchDado();
 
                 if (SawBlade.MadeContactWithBoard && SawBlade.Active)
                 {
-                    StartWoodCutting();
+                    CurrentState = CutState.ReadyToCut;
+                    manager.EnableBoardPhysics(false);
                 }
+            }
+            else if (CurrentState == CutState.ReadyToCut)
+            {
+                StartWoodCutting();
+                CurrentState = CutState.Cutting;
+                manager.RestrictCurrentBoardMovement(false, true);
             }
             else if (CurrentState == CutState.Cutting && SawBlade.Active)
             {
-                if (cuttingOutDado)
-                {
-                    if (SawBlade.CuttingWoodBoard)
-                    {
-                        float pushRate = TrackPushRate();
-                        Debug.Log("Push Rate: " + pushRate);
-                        if (pushRate == 0)
-                        {
-                            timeStalling += Time.deltaTime;
-                            if (timeStalling >= MaxStallTime)
-                            {
-                                //Wood burnt, Start over
-                            }
-                        }
-                        else
-                        {
-                            timeStalling = 0.0f;
-                            //Calculate push rate is within consistent rate
-                            //Lose points if too slow or too fast
-                        }
-                    }
-                    else if (SawBlade.NoInteractionWithBoard)
-                    {
-                        CurrentState = CutState.EndOfCut;
-                        //Switch off wood board's convex boolean
-                    }
-                }
-                else
-                {
-                    //Decrease value by certain amount until zero and need to start over
-                    if (SawBlade.NoInteractionWithBoard)
-                    {
-                        CurrentState = CutState.ReadyToCut;
-                        currentDado = null;
-                        manager.RestrictCurrentBoardMovement(false, false);
-                    }
-                }
+
             }
-        }
-        else if (CurrentState == CutState.EndOfCut)
-        {
-            if (!SawBlade.CuttingWoodBoard && SawBlade.NoInteractionWithBoard)
+            else if (CurrentState == CutState.EndOfCut)
             {
-                currentDado.ScaleDown();
-                if (!currentDado.AnyCutsLeft())
-                {
-                    //method in manager that handles removing dado game object
-                    Destroy(currentDado.gameObject);
-                }
-                currentDado = null;
-                cuttingOutDado = false;
-                timeStalling = 0.0f;
-                CurrentState = CutState.ReadyToCut;
+
             }
+            //    else if (CurrentState == CutState.Cutting && SawBlade.Active)
+            //    {
+            //        if (cuttingOutDado)
+            //        {
+            //            if (SawBlade.CuttingWoodBoard)
+            //            {
+            //                float pushRate = TrackPushRate();
+            //                Debug.Log("Push Rate: " + pushRate);
+            //                if (pushRate == 0)
+            //                {
+            //                    timeStalling += Time.deltaTime;
+            //                    if (timeStalling >= MaxStallTime)
+            //                    {
+            //                        //Wood burnt, Start over
+            //                    }
+            //                }
+            //                else
+            //                {
+            //                    timeStalling = 0.0f;
+            //                    //Calculate push rate is within consistent rate
+            //                    //Lose points if too slow or too fast
+            //                }
+            //            }
+            //            else if (SawBlade.NoInteractionWithBoard)
+            //            {
+            //                CurrentState = CutState.EndOfCut;
+            //                manager.EnableBoardPhysics(true);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            //Decrease value by certain amount until zero and need to start over
+            //            if (SawBlade.NoInteractionWithBoard)
+            //            {
+            //                CurrentState = CutState.Waiting;
+            //                currentDado = null;
+            //                manager.RestrictCurrentBoardMovement(false, false);
+            //                manager.EnableBoardPhysics(true);
+            //            }
+            //        }
+            //    }
+            //}
+            //else if (CurrentState == CutState.EndOfCut)
+            //{
+            //    if (!SawBlade.CuttingWoodBoard && SawBlade.NoInteractionWithBoard)
+            //    {
+            //        currentDado.ScaleDown();
+            //        if (!currentDado.AnyCutsLeft())
+            //        {
+            //            //method in manager that handles removing dado game object
+            //            Destroy(currentDado.gameObject);
+            //        }
+            //        currentDado = null;
+            //        cuttingOutDado = false;
+            //        timeStalling = 0.0f;
+            //        CurrentState = CutState.Waiting;
+            //    }
+            //}
+        #endregion
         }
     }
 

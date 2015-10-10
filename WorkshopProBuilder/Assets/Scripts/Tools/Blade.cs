@@ -49,6 +49,10 @@ public class Blade : MonoBehaviour
         {
             CuttingWoodBoard = true;
             NoInteractionWithBoard = false;
+            for (int i = 0; i < HitObjects.Count; i++)
+            {
+                Debug.Log(HitObjects[i]);
+            }
         }
     }
 

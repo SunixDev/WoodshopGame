@@ -259,20 +259,23 @@ public class TableSawManager : MonoBehaviour, IToolManager
         float smallestDistance = 0.0f;
         for (int i = 0; i < LinesToCut.Count && !lineFound; i++)
         {
-            float firstDistance = Vector3.Distance(fromPosition, LinesToCut[i].Checkpoints[0].GetPosition());
-            float lastDistance = Vector3.Distance(fromPosition, LinesToCut[i].Checkpoints[LinesToCut[i].Checkpoints.Count - 1].GetPosition());
-
-            if (i == 0 || firstDistance < smallestDistance || lastDistance < smallestDistance)
+            if (LinesToCut[i].gameObject.transform.parent.gameObject.activeSelf)
             {
-                nearestLineIndex = i;
-                if (i == 0)
+                float firstDistance = Vector3.Distance(fromPosition, LinesToCut[i].Checkpoints[0].GetPosition());
+                float lastDistance = Vector3.Distance(fromPosition, LinesToCut[i].Checkpoints[LinesToCut[i].Checkpoints.Count - 1].GetPosition());
+
+                if (nearestLineIndex == -1 || firstDistance < smallestDistance || lastDistance < smallestDistance)
                 {
-                    smallestDistance = (firstDistance < lastDistance) ? firstDistance : lastDistance;
-                }
-                else
-                {
-                    smallestDistance = (firstDistance < smallestDistance) ? firstDistance : smallestDistance;
-                    smallestDistance = (lastDistance < smallestDistance) ? lastDistance : smallestDistance;
+                    if (nearestLineIndex == -1)
+                    {
+                        smallestDistance = (firstDistance < lastDistance) ? firstDistance : lastDistance;
+                    }
+                    else
+                    {
+                        smallestDistance = (firstDistance < smallestDistance) ? firstDistance : smallestDistance;
+                        smallestDistance = (lastDistance < smallestDistance) ? lastDistance : smallestDistance;
+                    }
+                    nearestLineIndex = i;
                 }
             }
         }

@@ -4,13 +4,11 @@ using System.Collections.Generic;
 
 public class BandSawBlade : MonoBehaviour 
 {
-    public bool Active = false;
+    public bool SawActive = false;
     public Collider WhileOffBladeCollider;
     public Color ActivatedColor;
     public Color DeactivatedColor;
-    public List<GameObject> HitObjects;
 
-    public bool MadeContactWithBoard { get; private set; }
     public bool CuttingWoodBoard { get; private set; }
     public bool NoInteractionWithBoard { get; private set; }
     public Vector3 BladePoint
@@ -31,10 +29,8 @@ public class BandSawBlade : MonoBehaviour
     {
         originalBladePosition = transform.position;
         NoInteractionWithBoard = true;
-        MadeContactWithBoard = false;
         CuttingWoodBoard = false;
-        HitObjects = new List<GameObject>();
-        if (Active)
+        if (SawActive)
             TurnOn();
         else
             TurnOff();
@@ -42,81 +38,39 @@ public class BandSawBlade : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock")
-        {
-            MadeContactWithBoard = true;
-            NoInteractionWithBoard = false;
-            HitObjects.Add(other.gameObject);
-        }
-    }
-
-    void OnTriggerStay(Collider other)
-    {
-        if (other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock")
+        if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && SawActive)
         {
             CuttingWoodBoard = true;
             NoInteractionWithBoard = false;
+            Ray ray = new Ray(BladePoint + new Vector3(0.0f, 1.0f, 0.0f), Vector3.down);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                transform.position = hit.point;
+            }
         }
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock")
+        if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && SawActive)
         {
-            NoInteractionWithBoard = true;
-            MadeContactWithBoard = false;
             CuttingWoodBoard = false;
-            HitObjects.Remove(other.gameObject);
+            NoInteractionWithBoard = true;
+            ResetEdgePosition();
         }
-    }
-
-    public int GetHitCount()
-    {
-        return HitObjects.Count;
-    }
-
-    public GameObject GetHitObjectAt(int index)
-    {
-        if (HitObjects.Count <= 0)
-        {
-            return null;
-        }
-        if (index >= HitObjects.Count)
-        {
-            return null;
-        }
-        return HitObjects[index];
-    }
-
-    public GameObject GetHitObjectWithTag(string otherTag)
-    {
-        if (HitObjects.Count <= 0)
-        {
-            return null;
-        }
-        GameObject objToReturn = null;
-        bool found = false;
-        for (int i = 0; i < HitObjects.Count && !found; i++)
-        {
-            if (HitObjects[i].tag == otherTag)
-            {
-                objToReturn = HitObjects[i];
-                found = true;
-            }
-        }
-        return objToReturn;
     }
 
     public void TurnOn()
     {
-        Active = true;
+        SawActive = true;
         WhileOffBladeCollider.enabled = false;
         GetComponent<Renderer>().material.color = ActivatedColor;
     }
 
     public void TurnOff()
     {
-        Active = false;
+        SawActive = false;
         WhileOffBladeCollider.enabled = true;
         GetComponent<Renderer>().material.color = DeactivatedColor;
     }
