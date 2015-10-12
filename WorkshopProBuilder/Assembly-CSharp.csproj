@@ -39,10 +39,10 @@
 	<Reference Include="System.Core" />
 	<Reference Include="System.Xml.Linq" />
 	<Reference Include="UnityEngine">
-	  <HintPath>D:/Unity/Unity5/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	  <HintPath>F:/Unity/Unity5/Editor/Data/Managed/UnityEngine.dll</HintPath>
 	</Reference>
 	<Reference Include="UnityEditor">
-	  <HintPath>D:/Unity/Unity5/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	  <HintPath>F:/Unity/Unity5/Editor/Data/Managed/UnityEditor.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>
@@ -97,16 +97,19 @@
      <Compile Include="Assets\Scripts\Tools\DadoCutTableSaw\DadoCutUI.cs" />
      <Compile Include="Assets\Scripts\Tools\DadoCutTableSaw\DadoCutting.cs" />
      <Compile Include="Assets\Scripts\Tools\DadoCutTableSaw\LineSegment.cs" />
-     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\ClampHeadPoint.cs" />
-     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\ClampPoint.cs" />
-     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GlueBox.cs" />
-     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluePlane.cs" />
-     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\PieceController.cs" />
-     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\SnapPiece.cs" />
-     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\SnapPieceGameManager.cs" />
-     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\SnapPieceGameplay.cs" />
-     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\SnapPieceUI.cs" />
-     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\SnapPoint.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\ClampScripts\ClampController.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\ClampScripts\ClampHeadPoint.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\ClampScripts\ClampManager.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\ClampScripts\ClampPoint.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\ClampScripts\ClampUI.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\GlueBox.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\GluePlane.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\PieceController.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPiece.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPieceGameManager.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPieceGameplay.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPieceUI.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPoint.cs" />
      <Compile Include="Assets\Scripts\Tools\IToolManager.cs" />
      <Compile Include="Assets\Scripts\Tools\Node.cs" />
      <Compile Include="Assets\Scripts\Tools\Ruler\Ruler.cs" />
@@ -114,6 +117,7 @@
      <Compile Include="Assets\Scripts\Tools\SwipingGameplay\SwipeGameplay.cs" />
      <Compile Include="Assets\Scripts\Tools\SwipingGameplay\SwipeManager.cs" />
      <Compile Include="Assets\Scripts\Tools\SwipingGameplay\SwipeUI.cs" />
+     <Compile Include="Assets\Scripts\Tools\SwipingGameplay\TextureScanner.cs" />
      <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawCut.cs" />
      <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawManager.cs" />
      <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawUI.cs" />
@@ -131,16 +135,16 @@
      <None Include="Assets\Shaders\PaintingShader.shader" />
      <None Include="Assets\EasyTouchBundle\EasyTouch\RealseNotes.txt" />
  <Reference Include="UnityEngine.UI">
- <HintPath>D:/Unity/Unity5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ <HintPath>F:/Unity/Unity5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Networking">
- <HintPath>D:/Unity/Unity5/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ <HintPath>F:/Unity/Unity5/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Analytics">
- <HintPath>D:/Unity/Unity5/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
+ <HintPath>F:/Unity/Unity5/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.iOS.Extensions.Xcode">
- <HintPath>D:/Unity/Unity5/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
+ <HintPath>F:/Unity/Unity5/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

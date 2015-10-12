@@ -7,27 +7,28 @@ public class GlueBox : MonoBehaviour
     public List<GluePlane> GluingPlanes;
     public float GlueApplicationRate = 20.0f;
     public SnapPoint PointToActivate;
+    public bool ReadyToConnect { get; set; }
 
     [Header("Valid Glue Range")]
-    [Range(75.0f, 95.0f)]
-    public float MinPercentForPerfectScore = 75.0f;
+    public float MinValueToActivatePointAndLowScore = 60.0f;
+    public float MinValueForPerfectScore = 90.0f;
+    public float MaxGlueAmountBeforeTooMuch = 100.0f;
 
     private Collider objCollider;
     private float currentGlueAmount;
     private Vector3 previousHitPoint;
-    private float ValidMaxGlueAmount = 100.0f;
-    private bool minimumGlueAmountReached;
+    private bool minimumGlueAmountReached = false;
+    private bool perfectGlueAmountReached = false;
 
 	void Start () 
     {
         objCollider = GetComponent<Collider>();
         foreach (GluePlane p in GluingPlanes)
         {
-            p.MaxGlueAmount = ValidMaxGlueAmount;
+            p.MaxGlueAmount = MaxGlueAmountBeforeTooMuch;
         }
         previousHitPoint = Vector3.zero;
         currentGlueAmount = 0.0f;
-        minimumGlueAmountReached = false;
         PointToActivate.CanConnect = false;
         PointToActivate.HidePoint();
 	}
@@ -41,12 +42,17 @@ public class GlueBox : MonoBehaviour
             if (Physics.Raycast(ray, out hit) && hit.collider == objCollider && previousHitPoint != hit.point)
             {
                 currentGlueAmount += GlueApplicationRate * Time.deltaTime;
-                if (currentGlueAmount >= MinPercentForPerfectScore && !minimumGlueAmountReached)
+                if (currentGlueAmount >= MinValueToActivatePointAndLowScore && !minimumGlueAmountReached)
                 {
+                    ReadyToConnect = true;
                     minimumGlueAmountReached = true;
                     PointToActivate.CanConnect = true;
-                    PointToActivate.DisplayPoint();
                     Debug.Log("Minimum Reached");
+                }
+                if (currentGlueAmount >= MinValueForPerfectScore && currentGlueAmount < MaxGlueAmountBeforeTooMuch && !perfectGlueAmountReached)
+                {
+                    perfectGlueAmountReached = true;
+                    Debug.Log("Perfect Score Reached");
                 }
                 foreach (GluePlane p in GluingPlanes)
                 {
@@ -57,6 +63,11 @@ public class GlueBox : MonoBehaviour
         }
     }
 
+    public float GetTotalGlueApplied()
+    {
+        return currentGlueAmount;
+    }
+
     public bool IsMinimumGlueAmountReached()
     {
         return minimumGlueAmountReached;
@@ -64,6 +75,6 @@ public class GlueBox : MonoBehaviour
 
     public float GetValidMaxGlueAmount()
     {
-        return ValidMaxGlueAmount;
+        return MaxGlueAmountBeforeTooMuch;
     }
 }

@@ -9,6 +9,7 @@ public class WoodListPanel : MonoBehaviour
     public GameObject WoodPieceButton;
     public GameObject ButtonContainer;
     public Color SelectedButtonColor;
+    public Color ConnectedButtonColor;
     public int SelectedButtonIndex { get; set; }
 
     private List<GameObject> AvailableButtonsList = new List<GameObject>();
@@ -25,11 +26,11 @@ public class WoodListPanel : MonoBehaviour
 
         int index = AvailableButtonsList.Count;
         newButton.onClick.AddListener(() => SwitchSelectedButton(index));
-        //newButton.onClick.AddListener(() => manager.SwitchPiece(index));
+        newButton.onClick.AddListener(() => manager.SwitchPiece(index));
         if (AvailableButtonsList.Count == 0)
         {
             newButton.GetComponent<Image>().color = SelectedButtonColor;
-            newButton.GetComponent<Button>().enabled = false;
+            newButton.GetComponent<Button>().interactable = false;
             SelectedButtonIndex = 0;
         }
         AvailableButtonsList.Add(button);
@@ -37,38 +38,35 @@ public class WoodListPanel : MonoBehaviour
 
     public void RemoveButton(int index)
     {
-        if (index == SelectedButtonIndex)
+        AvailableButtonsList[index].GetComponent<Image>().color = ConnectedButtonColor;
+        AvailableButtonsList[index].GetComponent<Button>().enabled = false;
+        int nextIndex = index + 1;
+        if (nextIndex == AvailableButtonsList.Count || !AvailableButtonsList[nextIndex].GetComponent<Button>().enabled)
         {
-            if (index != 0)
+            bool found = false;
+            for (int i = 0; i < AvailableButtonsList.Count && !found; i++)
             {
-                SwitchSelectedButton(index - 1);
-            }
-            else if (index == 0 && AvailableButtonsList.Count > 1)
-            {
-                SwitchSelectedButton(AvailableButtonsList.Count - 1);
-            }
-            else if (index == 0 && AvailableButtonsList.Count == 1)
-            {
-                SelectedButtonIndex = -1;
+                if (AvailableButtonsList[i].GetComponent<Button>().enabled)
+                {
+                    found = true;
+                    nextIndex = i;
+                }
             }
         }
-        AvailableButtonsList.RemoveAt(index);
-        GameObject buttonToRemove = ButtonContainer.transform.GetChild(index).gameObject;
-        Destroy(buttonToRemove);
+        AvailableButtonsList[nextIndex].GetComponent<Image>().color = SelectedButtonColor;
+        AvailableButtonsList[nextIndex].GetComponent<Button>().interactable = false;
+        SelectedButtonIndex = nextIndex;
     }
 
     public void SwitchSelectedButton(int indexToUse)
     {
         if (indexToUse >= 0 && indexToUse < AvailableButtonsList.Count && indexToUse != SelectedButtonIndex)
         {
-            if (SelectedButtonIndex > -1)
-            {
-                AvailableButtonsList[SelectedButtonIndex].GetComponent<Image>().color = Color.white;
-                AvailableButtonsList[SelectedButtonIndex].GetComponent<Button>().enabled = true;
-            }
+            AvailableButtonsList[SelectedButtonIndex].GetComponent<Image>().color = Color.white;
+            AvailableButtonsList[SelectedButtonIndex].GetComponent<Button>().interactable = true;
 
             AvailableButtonsList[indexToUse].GetComponent<Image>().color = SelectedButtonColor;
-            AvailableButtonsList[indexToUse].GetComponent<Button>().enabled = false;
+            AvailableButtonsList[indexToUse].GetComponent<Button>().interactable = false;
             SelectedButtonIndex = indexToUse;
         }
     }

@@ -70,7 +70,7 @@ public class SwipeGameplay : MonoBehaviour
                 Vector3 paintUVPosition = new Vector3(0.0f, uvs.y - RenderCamera.orthographicSize,
                                                             uvs.x - RenderCamera.orthographicSize - 0.05f);
 
-                BrushColor.a = 1.0f;// BrushSize;// *2.0f;
+                BrushColor.a = 1.0f;  //BrushSize * 50.0f;
                 SwipeBrushStrokes[BrushIndex].GetComponent<SpriteRenderer>().enabled = true;
                 SwipeBrushStrokes[BrushIndex].GetComponent<SpriteRenderer>().color = BrushColor;
                 SwipeBrushStrokes[BrushIndex].transform.localPosition = paintUVPosition;

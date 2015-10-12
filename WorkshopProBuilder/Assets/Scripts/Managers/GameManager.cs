@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour 
 {
-    public Project CurrentProject;
-    public Inventory PlayerInventory;
-    public WoodMaterialManager WoodManager;
+    //public Project CurrentProject;
+    //public Inventory PlayerInventory;
+    //public WoodMaterialManager WoodManager;
 
     private static GameManager _instance;
     public static GameManager instance
@@ -32,93 +32,93 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (PlayerInventory == null)
-        {
-            PlayerInventory = GetComponent<Inventory>();
-        }
-        if (WoodManager == null)
-        {
-            WoodManager = GetComponent<WoodMaterialManager>();
-        }
+        //if (PlayerInventory == null)
+        //{
+        //    PlayerInventory = GetComponent<Inventory>();
+        //}
+        //if (WoodManager == null)
+        //{
+        //    WoodManager = GetComponent<WoodMaterialManager>();
+        //}
     }
 
     public int GetStep()
     {
-        return CurrentProject.GetCurrentStepIndex();
+        return -1;// CurrentProject.GetCurrentStepIndex();
     }
 
     public List<GameObject> GetNecessaryMaterials(CutLineType cutType)
     {
-        int currentStep = CurrentProject.GetCurrentStepIndex();
-        List<GameObject> allMaterials = WoodManager.GetPiecesByLine(cutType);
-        List<GameObject> allValidMaterials = new List<GameObject>();
-        foreach (GameObject go in allMaterials)
-        {
-            List<CutLine> lines = go.GetComponent<WoodMaterialObject>().LinesToCut;
-            foreach (CutLine line in lines)
-            {
-                StepID stepID = line.GetComponent<StepID>();
-                if (stepID != null)
-                {
-                    if (stepID.UsedInStep(currentStep))
-                    {
-                        allValidMaterials.Add(go);
-                        break;
-                    }
-                }
-            }
-        }
-        return allValidMaterials;
+        //int currentStep = CurrentProject.GetCurrentStepIndex();
+        //List<GameObject> allMaterials = WoodManager.GetPiecesByLine(cutType);
+        //List<GameObject> allValidMaterials = new List<GameObject>();
+        //foreach (GameObject go in allMaterials)
+        //{
+        //    List<CutLine> lines = go.GetComponent<WoodMaterialObject>().LinesToCut;
+        //    foreach (CutLine line in lines)
+        //    {
+        //        StepID stepID = line.GetComponent<StepID>();
+        //        if (stepID != null)
+        //        {
+        //            if (stepID.UsedInStep(currentStep))
+        //            {
+        //                allValidMaterials.Add(go);
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
+        return null;
     }
 
     public List<GameObject> GetMaterialsWithDadoCuts()
     {
-        int currentStep = CurrentProject.GetCurrentStepIndex();
-        List<GameObject> allMaterials = WoodManager.GetAllWoodMaterials();
-        List<GameObject> allValidMaterials = new List<GameObject>();
-        foreach (GameObject go in allMaterials)
-        {
-            if (go.GetComponent<WoodMaterialObject>() != null)
-            {
-                List<DadoBlock> dadoCuts = go.GetComponent<WoodMaterialObject>().DadosToCut;
-                foreach (DadoBlock dadoCut in dadoCuts)
-                {
-                    StepID stepID = dadoCut.GetComponent<StepID>();
-                    if (stepID != null)
-                    {
-                        if (stepID.UsedInStep(currentStep))
-                        {
-                            allValidMaterials.Add(go);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return allValidMaterials;
+        //int currentStep = CurrentProject.GetCurrentStepIndex();
+        //List<GameObject> allMaterials = WoodManager.GetAllWoodMaterials();
+        //List<GameObject> allValidMaterials = new List<GameObject>();
+        //foreach (GameObject go in allMaterials)
+        //{
+        //    if (go.GetComponent<WoodMaterialObject>() != null)
+        //    {
+        //        List<DadoBlock> dadoCuts = go.GetComponent<WoodMaterialObject>().DadosToCut;
+        //        foreach (DadoBlock dadoCut in dadoCuts)
+        //        {
+        //            StepID stepID = dadoCut.GetComponent<StepID>();
+        //            if (stepID != null)
+        //            {
+        //                if (stepID.UsedInStep(currentStep))
+        //                {
+        //                    allValidMaterials.Add(go);
+        //                    break;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+        return null;// allValidMaterials;
     }
 
     public List<GameObject> GetNecessaryPieces()
     {
-        int currentStep = CurrentProject.GetCurrentStepIndex();
-        List<GameObject> allMaterials = WoodManager.GetRevealedPieces();
-        List<GameObject> allValidMaterials = new List<GameObject>();
+        //int currentStep = CurrentProject.GetCurrentStepIndex();
+        //List<GameObject> allMaterials = WoodManager.GetRevealedPieces();
+        //List<GameObject> allValidMaterials = new List<GameObject>();
 
-        foreach (GameObject go in allMaterials)
-        {
-            List<StepID> steps = new List<StepID>(go.GetComponents<StepID>());
-            bool found = false;
-            for (int i = 0; i < steps.Count && !found; i++)
-            {
-                if (steps[i].UsedInStep(currentStep))
-                {
-                    found = true;
-                    allValidMaterials.Add(go);
-                }
-            }
-        }
+        //foreach (GameObject go in allMaterials)
+        //{
+        //    List<StepID> steps = new List<StepID>(go.GetComponents<StepID>());
+        //    bool found = false;
+        //    for (int i = 0; i < steps.Count && !found; i++)
+        //    {
+        //        if (steps[i].UsedInStep(currentStep))
+        //        {
+        //            found = true;
+        //            allValidMaterials.Add(go);
+        //        }
+        //    }
+        //}
 
-        return allValidMaterials;
+        return null;//allValidMaterials;
     }
 
     public void OnApplicationQuit()

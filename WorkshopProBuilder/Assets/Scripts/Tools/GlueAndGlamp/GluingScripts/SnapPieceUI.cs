@@ -9,11 +9,16 @@ public class SnapPieceUI : MonoBehaviour
     public GameObject SelectedButton;
     public List<Button> OptionButtons;
     public WoodListPanel ListPanel;
+    public GameObject InfoPanel;
+    public Text InfoText;
+    public Button SceneButton;
+    public Image InfoImage;
 
     void Start()
     {
         SelectedButton.GetComponent<Image>().color = SelectedButtonColor;
         SelectedButton.GetComponent<Button>().enabled = false;
+        InfoPanel.SetActive(false);
     }
 
     public void SwitchActiveToolButton(GameObject buttonToUse)

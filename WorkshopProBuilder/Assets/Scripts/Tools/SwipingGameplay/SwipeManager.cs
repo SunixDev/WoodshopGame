@@ -12,36 +12,25 @@ public class SwipeManager : MonoBehaviour
     public Material SandingMaterial;
     public Material LaqcuerMaterial;
     public SwipeUI UI_Manager;
+    public string NextScene;
     public bool PieceRotationEnabled { get; set; }
 
     private int currentPieceIndex = 0;
+    private List<TextureScanner> textureScans = new List<TextureScanner>();
+    private bool swiping = true;
+    private bool scanning = true;
 
     void Start()
     {
         PieceRotationEnabled = false;
-        AvailablePieces = GameManager.instance.GetNecessaryPieces();
-        Step currentStep = GameManager.instance.CurrentProject.GetCurrentStepObject();
         Material selectedMaterial = PaintingMaterial;
-        if (currentStep.ToolToUse == ToolType.PaintBrush)
+        if (SwipeGameplayManager.type == SwipeGameType.Sanding)
         {
-            SwipeGameplayManager.type = SwipeGameType.Paint;
-            selectedMaterial = PaintingMaterial;
-        }
-        else if (currentStep.ToolToUse == ToolType.Sander)
-        {
-            SwipeGameplayManager.type = SwipeGameType.Sanding;
             selectedMaterial = SandingMaterial;
         }
-        else if (currentStep.ToolToUse == ToolType.Stainer)
+        else if (SwipeGameplayManager.type == SwipeGameType.Lacquer)
         {
-            SwipeGameplayManager.type = SwipeGameType.Lacquer;
             selectedMaterial = LaqcuerMaterial;
-        }
-        else
-        {
-            Debug.LogError("The current step is not set to any of the necessary tool types!");
-            SwipeGameplayManager.SwipeEnabled = false;
-            return;
         }
 
         foreach (GameObject piece in AvailablePieces)
@@ -72,24 +61,15 @@ public class SwipeManager : MonoBehaviour
         PlacePiece();
     }
 
-    public void PlacePiece()
-    {
-        AvailablePieces[currentPieceIndex].transform.position = PieceSpawnPoint.position;
-    }
-
-    public void RotateObject(Gesture gesture)
-    {
-        if (PieceRotationEnabled)
-        {
-            AvailablePieces[currentPieceIndex].transform.Rotate(gesture.deltaPosition.y, -gesture.deltaPosition.x, 0.0f, Space.World);
-        }
-    }
-
     public void PieceCompleted()
     {
-
         Texture2D textureToAnalyze = SwipeGameplayManager.GetPaintedTexture();
-        Debug.Log(textureToAnalyze);
+        TextureScanner scan = gameObject.AddComponent<TextureScanner>();
+        scan.texture = textureToAnalyze;
+        scan.objMeshFilter = AvailablePieces[currentPieceIndex].GetComponent<MeshFilter>();
+        scan.StartScanning();
+        textureScans.Add(scan);
+
         SwipeGameplayManager.ResetSwipeBackgroundTexture();
         if (currentPieceIndex != AvailablePieces.Count - 1)
         {
@@ -97,8 +77,47 @@ public class SwipeManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("All pieces are done");
+            AvailablePieces[currentPieceIndex].transform.position = Vector3.zero;
+            AvailablePieces[currentPieceIndex].SetActive(false);
+            UI_Manager.DisplayMessagePanelWithText("Evaluating performance...");
+            swiping = false;
         }
+    }
+
+    void Update()
+    {
+        if (!swiping && scanning)
+        {
+            bool scansComplete = true;
+            for (int i = 0; i < textureScans.Count && scansComplete; i++)
+            {
+                scansComplete = textureScans[i].ScanIsComplete();
+            }
+            if (scansComplete)
+            {
+                //Get score from each scan for points
+                UI_Manager.DisplayFullMessagePanel("All pieces are done. Go to the next step");
+                scanning = false;
+            }
+        }
+    }
+
+    public void PlacePiece()
+    {
+        AvailablePieces[currentPieceIndex].transform.position = PieceSpawnPoint.position;
+    }
+
+    public void RotateObject(Gesture gesture)
+    {
+        if (PieceRotationEnabled && gesture.touchCount == 1)
+        {
+            AvailablePieces[currentPieceIndex].transform.Rotate(gesture.deltaPosition.y, -gesture.deltaPosition.x, 0.0f, Space.World);
+        }
+    }
+
+    public void GoToNextScene()
+    {
+        Application.LoadLevel(NextScene);
     }
 
     void OnEnable()
@@ -116,3 +135,15 @@ public class SwipeManager : MonoBehaviour
         EasyTouch.On_Drag -= RotateObject;
     }
 }
+
+
+
+//string swipeType = "paint";
+//if (SwipeGameplayManager.type == SwipeGameType.Sanding)
+//{
+//    swipeType = "sand";
+//}
+//else if (SwipeGameplayManager.type == SwipeGameType.Lacquer)
+//{
+//    swipeType = "shine";
+//}

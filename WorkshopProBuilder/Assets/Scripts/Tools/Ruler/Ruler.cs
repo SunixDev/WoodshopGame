@@ -10,6 +10,8 @@ public class Ruler : MonoBehaviour
     private Vector3 SecondPosition;
     public bool CanMeasure { get; set; }
 
+    private GameObject currentLineMark;
+
     public void AssignManager(IToolManager thisManager)
     {
         manager = thisManager;
@@ -18,24 +20,24 @@ public class Ruler : MonoBehaviour
 
     public void AddMark(Gesture gesture)
     {
-        if (gesture.pickedObject != null && CanMeasure)
+        if (gesture.pickedObject != null && CanMeasure && gesture.touchCount == 1)
         {
             if (gesture.pickedObject.tag == "Piece" || gesture.pickedObject.tag == "Leftover")
             {
-                GameObject markLine = new GameObject();
-                markLine.name = "Line Mark";
+                currentLineMark = new GameObject();
+                currentLineMark.name = "Line Mark";
 
                 Ray ray = Camera.main.ScreenPointToRay(new Vector3(gesture.position.x, gesture.position.y, 0.0f));
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit))
                 {
-                    markLine.transform.position = hit.point;
-                    markLine.transform.parent = gesture.pickedObject.transform;
-                    line = markLine.AddComponent<LineRenderer>();
+                    currentLineMark.transform.position = hit.point;
+                    currentLineMark.transform.parent = gesture.pickedObject.transform;
+                    line = currentLineMark.AddComponent<LineRenderer>();
                     line.SetVertexCount(2);
                     line.SetWidth(0.005f, 0.005f);
-                    line.SetPosition(0, markLine.transform.position + new Vector3(0.0f, 0.001f, 0.0f));
-                    line.SetPosition(1, markLine.transform.position + new Vector3(0.0f, 0.001f, 0.0f));
+                    line.SetPosition(0, currentLineMark.transform.position + new Vector3(0.0f, 0.001f, 0.0f));
+                    line.SetPosition(1, currentLineMark.transform.position + new Vector3(0.0f, 0.001f, 0.0f));
                     pickedObjectTransform = gesture.pickedObject.transform;
                 }
             }
@@ -44,13 +46,13 @@ public class Ruler : MonoBehaviour
 
     public void SwipeMark(Gesture gesture)
     {
-        if (gesture.pickedObject != null && CanMeasure)
+        if (gesture.pickedObject != null && CanMeasure && gesture.touchCount == 1)
         {
             if (gesture.pickedObject.tag == "Piece" || gesture.pickedObject.tag == "Leftover")
             {
                 Ray ray = Camera.main.ScreenPointToRay(new Vector3(gesture.position.x, gesture.position.y, 0.0f));
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit) && hit.collider.gameObject == gesture.pickedObject)
+                if (Physics.Raycast(ray, out hit) && (gesture.pickedObject.tag == "Piece" || gesture.pickedObject.tag == "Leftover"))
                 {
                     Vector3 position = hit.point;
                     SecondPosition = position + new Vector3(0.0f, 0.001f, 0.0f);
@@ -62,7 +64,7 @@ public class Ruler : MonoBehaviour
 
     public void LeaveMark(Gesture gesture)
     {
-        if (gesture.pickedObject != null && CanMeasure)
+        if (gesture.pickedObject != null && CanMeasure && gesture.touchCount == 1)
         {
             if (gesture.pickedObject.tag == "Piece" || gesture.pickedObject.tag == "Leftover")
             {
@@ -83,7 +85,7 @@ public class Ruler : MonoBehaviour
                     markedLine.StartPoint = line.gameObject.transform;
                     GameObject secondPoint = new GameObject();
                     secondPoint.transform.position = SecondPosition;
-                    secondPoint.transform.parent = line.gameObject.transform.parent;
+                    secondPoint.transform.parent = currentLineMark.transform;
                     markedLine.EndPoint = secondPoint.transform;
                     markedLine.line = line;
                 }
@@ -100,7 +102,7 @@ public class Ruler : MonoBehaviour
         bool closeToLine = false;
         if (line.CutType == CutLineType.TableSawCut)
         {
-            float distanceToLine = line.CalculateDistance(line.gameObject.transform.position);
+            float distanceToLine = line.CalculateDistance(markPosition);
             closeToLine = (distanceToLine < OffsetFromLine);
         }
         else if (line.CutType == CutLineType.ChopSawCut)

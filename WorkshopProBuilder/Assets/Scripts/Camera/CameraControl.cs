@@ -1,6 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum ZoomType
+{
+    ZoomToLookAt,
+    MoveLookAt
+}
+
+public enum PanType
+{
+    XZ_Plane,
+    XY_Plane
+}
+
+public enum CameraType
+{
+    FirstPerson,
+    Overlook
+}
+
 public class CameraControl : MonoBehaviour 
 {
     public bool MovementEnabled = true;
@@ -10,6 +28,9 @@ public class CameraControl : MonoBehaviour
     public float DistanceFromPoint = 2.0f;
     public float MinDistance = 0.5f;
     public float MaxDistance = 5.0f;
+    //public PanType PanningType = PanType.XZ_Plane;
+    //public ZoomType ZoomInType = ZoomType.ZoomToLookAt;
+    public CameraType type = CameraType.Overlook;
 
     [Header("Speed Input")]
     [Range(5.0f, 20.0f)]
@@ -28,11 +49,15 @@ public class CameraControl : MonoBehaviour
     [Header("Initial Rotation")]
     public float Vertical = 90;
     public float Horizontal = 90;
+
+    [Header("Movement Toogle")]
     public bool AllowRotation = true;
+    public bool AllowPanning = true;
+    public bool AllowZooming = true;
 
     private float xMovement;
     private float yMovement;
-    private Vector3 panMovement = Vector3.zero;
+    private Vector3 lookAtPointOffset = Vector3.zero;
     private Vector2 previousFingerPosition = Vector2.zero;
     private Vector3 previousCameraPosition = Vector3.zero;
     private bool canPan = true;
@@ -48,21 +73,23 @@ public class CameraControl : MonoBehaviour
 
     void Update()
     {
-        float distance = DistanceFromPoint;
-        distance = Mathf.Clamp(distance, MinDistance, MaxDistance);
-        Vector3 distanceVector = new Vector3(0.0f, 0.0f, -distance);
-        Quaternion rotation = Quaternion.Euler(yMovement, xMovement, 0.0f);
-        Vector3 finalPosition = (LookAtPoint.position + panMovement) + (rotation * distanceVector);
-
-        //transform.position = Vector3.MoveTowards(transform.position, finalPosition, 0.1f);
-        transform.position = finalPosition;
-        transform.LookAt(LookAtPoint.position + panMovement);
-        if (previousCameraPosition == transform.position)
+        if (type == CameraType.Overlook)
         {
-            ResetMovementOptions(null);
+            float distance = DistanceFromPoint;
+            distance = Mathf.Clamp(distance, MinDistance, MaxDistance);
+            Vector3 distanceVector = new Vector3(0.0f, 0.0f, -distance);
+            Quaternion rotation = Quaternion.Euler(yMovement, xMovement, 0.0f);
+            Vector3 finalPosition = (LookAtPoint.position + lookAtPointOffset) + (rotation * distanceVector);
+
+            //transform.position = Vector3.MoveTowards(transform.position, finalPosition, 0.1f);
+            transform.position = finalPosition;
+            transform.LookAt(LookAtPoint.position + lookAtPointOffset);
+            if (previousCameraPosition == transform.position)
+            {
+                ResetMovementOptions(null);
+            }
+            previousCameraPosition = transform.position;
         }
-        previousCameraPosition = transform.position;
-        
     }
 
     public void ResetMovementOptions(Gesture gesture)
@@ -76,7 +103,6 @@ public class CameraControl : MonoBehaviour
 
     public void StartCameraOrbit(Gesture gesture)
     {
-        //string tag = (gesture.pickedObject == null) ? "Untagged" : gesture.pickedObject.tag;
         if (MovementEnabled && gesture.touchCount == 1 && AllowRotation && canOrbit)// && ValidTag(tag))
         {
             canPan = false;
@@ -87,12 +113,21 @@ public class CameraControl : MonoBehaviour
 
     public void OrbitCamera(Gesture gesture)
     {
-        //string tag = (gesture.pickedObject == null) ? "Untagged" : gesture.pickedObject.tag;
-        if (MovementEnabled && gesture.touchCount == 1 && AllowRotation && canOrbit)// && ValidTag(tag))
+        if (MovementEnabled && gesture.touchCount == 1 && AllowRotation && canOrbit)
         {
-            xMovement += gesture.deltaPosition.x * (SensitivityX / 2.0f) * Time.deltaTime;
-            yMovement -= gesture.deltaPosition.y * (SensitivityY / 2.0f) * Time.deltaTime;
-            yMovement = ClampAngle(yMovement);
+            if (type == CameraType.Overlook)
+            {
+                xMovement += gesture.deltaPosition.x * (SensitivityX / 2.0f) * Time.deltaTime;
+                yMovement -= gesture.deltaPosition.y * (SensitivityY / 2.0f) * Time.deltaTime;
+                yMovement = ClampAngle(yMovement);
+            }
+            else
+            {
+                float yRotation = gesture.deltaPosition.x * (SensitivityX / 2.0f) * Time.deltaTime;
+                float xRotation = -gesture.deltaPosition.y * (SensitivityY / 2.0f) * Time.deltaTime;
+                transform.Rotate(0.0f, yRotation, 0.0f, Space.World);
+                transform.Rotate(xRotation, 0.0f, 0.0f, Space.Self);
+            }
         }
     }
 
@@ -100,8 +135,7 @@ public class CameraControl : MonoBehaviour
 
     public void StartCameraZoom(Gesture gesture)
     {
-        //string tag = (gesture.pickedObject == null) ? "Untagged" : gesture.pickedObject.tag;
-        if (MovementEnabled && gesture.touchCount == 2 && canZoom)// && ValidTag(tag))
+        if (MovementEnabled && gesture.touchCount == 2 && canZoom && AllowZooming)
         {
             canPan = false;
             canZoom = true;
@@ -111,23 +145,37 @@ public class CameraControl : MonoBehaviour
 
     public void ZoomAwayFromPoint(Gesture gesture)
     {
-        //string tag = (gesture.pickedObject == null) ? "Untagged" : gesture.pickedObject.tag;
-        if (MovementEnabled && gesture.touchCount == 2 && canZoom)// && ValidTag(tag))
+        if (MovementEnabled && gesture.touchCount == 2 && canZoom && AllowZooming)
         {
             float zoomAmount = gesture.deltaPinch * (ZoomSensitivity / 10.0f) * Time.deltaTime;
-            DistanceFromPoint += zoomAmount;
-            DistanceFromPoint = Mathf.Clamp(DistanceFromPoint, MinDistance, MaxDistance);
+            if (type == CameraType.Overlook)
+            {
+                DistanceFromPoint += zoomAmount;
+                DistanceFromPoint = Mathf.Clamp(DistanceFromPoint, MinDistance, MaxDistance);
+            }
+            else
+            {
+                Vector3 movement = transform.forward.normalized * zoomAmount;
+                transform.position -= movement;
+            }
         }
     }
 
     public void ZoomTowardsPoint(Gesture gesture)
     {
-        //string tag = (gesture.pickedObject == null) ? "Untagged" : gesture.pickedObject.tag;
-        if (MovementEnabled && gesture.touchCount == 2 && canZoom)// && ValidTag(tag))
+        if (MovementEnabled && gesture.touchCount == 2 && canZoom && AllowZooming)
         {
             float zoomAmount = gesture.deltaPinch * (ZoomSensitivity / 10.0f) * Time.deltaTime;
-            DistanceFromPoint -= zoomAmount;
-            DistanceFromPoint = Mathf.Clamp(DistanceFromPoint, MinDistance, MaxDistance);
+            if (type == CameraType.Overlook)
+            {
+                DistanceFromPoint -= zoomAmount;
+                DistanceFromPoint = Mathf.Clamp(DistanceFromPoint, MinDistance, MaxDistance);
+            }
+            else
+            {
+                Vector3 movement = transform.forward.normalized * zoomAmount;
+                transform.position += movement;
+            }
         }
     }
 
@@ -135,7 +183,7 @@ public class CameraControl : MonoBehaviour
 
     public void PanCamera(Gesture gesture)
     {
-        if (MovementEnabled && gesture.touchCount == 2 && canPan)// && ValidTag(tag))
+        if (MovementEnabled && gesture.touchCount == 2 && canPan && AllowPanning)
         {
             if (previousFingerPosition == Vector2.zero)
             {
@@ -151,7 +199,15 @@ public class CameraControl : MonoBehaviour
                 {
                     Vector3 deltaPosition = currentPosition - previousFingerPosition;
                     deltaPosition = deltaPosition.normalized * (PanSensitivity * Time.deltaTime);
-                    panMovement += (Quaternion.Euler(new Vector3(0.0f, xMovement, 0.0f)) * new Vector3(-deltaPosition.x, 0.0f, -deltaPosition.y));
+                    if (type == CameraType.Overlook)
+                    {
+                        lookAtPointOffset += (Quaternion.Euler(new Vector3(0.0f, xMovement, 0.0f)) * new Vector3(-deltaPosition.x, 0.0f, -deltaPosition.y));
+                    }
+                    else
+                    {
+                        Vector3 movement = transform.rotation * new Vector3(-deltaPosition.x, -deltaPosition.y, 0.0f);
+                        transform.position += movement;
+                    }
                     previousFingerPosition = currentPosition;
                 }
             }
@@ -160,10 +216,10 @@ public class CameraControl : MonoBehaviour
 
     public void StopCameraPan(Gesture gesture)
     {
-        if (MovementEnabled && gesture.touchCount == 2 && canPan)// && ValidTag(tag))
+        if (MovementEnabled && gesture.touchCount == 2 && canPan && AllowPanning)
         {
             previousFingerPosition = Vector2.zero;
-            panMovement = Vector3.zero;
+            lookAtPointOffset = Vector3.zero;
             canPan = true;
             canZoom = false;
             canOrbit = false;
@@ -178,8 +234,7 @@ public class CameraControl : MonoBehaviour
     public void ChangeLookAtPoint(Transform point)
     {
         LookAtPoint = point;
-        previousFingerPosition = Vector3.zero;
-        panMovement = Vector3.zero;
+        ResetLookAtOffset();
     }
 
     public void SnapToRotation(float vertical, float horizontal)
@@ -229,18 +284,21 @@ public class CameraControl : MonoBehaviour
         AllowRotation = enable;
     }
 
-    public void SetupCamera(CameraPositioning setup)
+    public void EnablePanning(bool enable)
     {
-        DistanceFromPoint = setup.DistanceFromPoint;
-        MinDistance = setup.MinDistance;
-        MaxDistance = setup.MaxDistance;
-        yMinRotation = setup.yMinRotation;
-        yMaxRotation = setup.yMaxRotation;
-        xMovement = setup.Vertical;
-        yMovement = setup.Horizontal;
-        yMovement = ClampAngle(yMovement);
-        AllowRotation = setup.AllowRotation;
+        AllowPanning = enable;
     }
+    public void EnableZooming(bool enable)
+    {
+        AllowZooming = enable;
+    }
+
+    public void ResetLookAtOffset()
+    {
+        previousFingerPosition = Vector3.zero;
+        lookAtPointOffset = Vector3.zero;
+    }
+
 
     private bool ValidTag(string tag)
     {

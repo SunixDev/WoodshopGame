@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class Blade : MonoBehaviour 
 {
-    public bool MadeContactWithBoard { get; private set; }
     public bool CuttingWoodBoard { get; private set; }
     public bool NoInteractionWithBoard { get; private set; }
 
@@ -13,21 +12,20 @@ public class Blade : MonoBehaviour
     public BoxCollider BarrierCollider;
     public MeshCollider BladeCollider;
     public Rotate Rotation;
-    public bool Active;
+    public bool SawBladeActive;
 
     private Vector3 originalBladeEdgePosition = Vector3.zero;    
 
     void Awake()
     {
         NoInteractionWithBoard = true;
-        MadeContactWithBoard = false;
         CuttingWoodBoard = false;
         HitObjects = new List<GameObject>();
         if (BladeEdge != null)
         {
             originalBladeEdgePosition = BladeEdge.position;
         }
-        if (Active)
+        if (SawBladeActive)
             TurnOn();
         else
             TurnOff();
@@ -35,35 +33,24 @@ public class Blade : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && Active)
+        if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && SawBladeActive)
         {
-            MadeContactWithBoard = true;
+            CuttingWoodBoard = true;
             NoInteractionWithBoard = false;
             HitObjects.Add(other.gameObject);
         }
     }
 
-    void OnTriggerStay(Collider other)
-    {
-        if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && Active)
-        {
-            CuttingWoodBoard = true;
-            NoInteractionWithBoard = false;
-            for (int i = 0; i < HitObjects.Count; i++)
-            {
-                Debug.Log(HitObjects[i]);
-            }
-        }
-    }
-
     void OnTriggerExit(Collider other)
     {
-        if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && Active)
+        if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && SawBladeActive)
         {
-            NoInteractionWithBoard = true;
-            MadeContactWithBoard = false;
-            CuttingWoodBoard = false;
             HitObjects.Remove(other.gameObject);
+            if (HitObjects.Count == 0)
+            {
+                NoInteractionWithBoard = true;
+                CuttingWoodBoard = false;
+            }
         }
     }
 
@@ -123,7 +110,7 @@ public class Blade : MonoBehaviour
 
     public void TurnOn()
     {
-        Active = true;
+        SawBladeActive = true;
         Rotation.EnableRotation(true);
         if (BarrierCollider != null)
         {
@@ -134,7 +121,7 @@ public class Blade : MonoBehaviour
 
     public void TurnOff()
     {
-        Active = false;
+        SawBladeActive = false;
         Rotation.EnableRotation(false);
         if (BarrierCollider != null)
         {
@@ -177,3 +164,20 @@ public class Blade : MonoBehaviour
         }
     }
 }
+
+
+
+
+
+//void OnTriggerStay(Collider other)
+//{
+//    if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && Active)
+//    {
+//        CuttingWoodBoard = true;
+//        NoInteractionWithBoard = false;
+//        for (int i = 0; i < HitObjects.Count; i++)
+//        {
+//            Debug.Log(HitObjects[i]);
+//        }
+//    }
+//}

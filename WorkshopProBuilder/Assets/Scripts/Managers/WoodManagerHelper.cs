@@ -4,11 +4,58 @@ using System.Collections.Generic;
 
 public class WoodManagerHelper : MonoBehaviour 
 {
-    public static void RemoveLine(WoodMaterialObject boardToSplit, CutLine detachedLine)
+    public static void RemoveCutLine(WoodMaterialObject boardToSplit, CutLine detachedLine)
     {
         detachedLine.SeverConnections();
         boardToSplit.RemoveLine(detachedLine);
         Destroy(detachedLine.gameObject);
+    }
+
+    private static GameObject DeterminePiece(Node node, ref WoodMaterialObject boardToSplit)
+    {
+        GameObject objToReturn = null;
+        if (node.ConnectedPieces.Count <= 0)
+        {
+            GameObject obj = node.gameObject;
+            obj.transform.parent = null;
+            if (obj.tag == "Piece")
+            {
+                PieceController controller = obj.GetComponent<PieceController>();
+                if (controller == null)
+                {
+                    controller = obj.AddComponent<PieceController>();
+                }
+                controller.Initialize();
+            }
+            else if (obj.tag == "Leftover")
+            {
+                WoodLeftover leftoverScript = obj.GetComponent<WoodLeftover>();
+                leftoverScript.BeginDisappearing();
+            }
+            else
+            {
+                Debug.LogError(obj.name + " is not tag as Piece or Leftover");
+            }
+            objToReturn = obj;
+        }
+        else
+        {
+            GameObject obj = WoodManagerHelper.CreateSeparateBoard(node, ref boardToSplit);
+            objToReturn = obj;
+        }
+        return objToReturn;
+    }
+
+    public static List<GameObject> SplitBoard(Node baseNode, Node baseNode2, WoodMaterialObject boardToSplit, CutLine detachedLine)
+    {
+        WoodManagerHelper.RemoveCutLine(boardToSplit, detachedLine);
+
+        List<GameObject> splitPieces = new List<GameObject>();
+        splitPieces.Add(WoodManagerHelper.DeterminePiece(baseNode, ref boardToSplit));
+        splitPieces.Add(WoodManagerHelper.DeterminePiece(baseNode2, ref boardToSplit));
+        Destroy(boardToSplit.gameObject);
+
+        return splitPieces;
     }
 
     //Recursive call to get all connected nodes
@@ -19,7 +66,7 @@ public class WoodManagerHelper : MonoBehaviour
         {
             if (!nodes.Contains(c))
             {
-                RetrieveNodes(ref nodes, c);
+                WoodManagerHelper.RetrieveNodes(ref nodes, c);
             }
         }
     }
@@ -28,7 +75,7 @@ public class WoodManagerHelper : MonoBehaviour
     public static GameObject CreateSeparateBoard(Node baseNode, ref WoodMaterialObject boardToSplit)
     {
         List<Node> nodes = new List<Node>();
-        RetrieveNodes(ref nodes, baseNode);
+        WoodManagerHelper.RetrieveNodes(ref nodes, baseNode);
 
         GameObject board = new GameObject("WoodStrip");
         board.tag = "WoodStrip";

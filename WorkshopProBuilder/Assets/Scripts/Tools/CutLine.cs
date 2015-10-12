@@ -33,13 +33,10 @@ public class CutLine : MonoBehaviour
 
     void Update()
     {
-        if (lineRenderer.enabled)
+        for (int i = 0; i < Checkpoints.Count; i++)
         {
-            for (int i = 0; i < Checkpoints.Count; i++)
-            {
-                Vector3 offset = (CutType == CutLineType.ChopSawCut) ? -(Checkpoints[0].transform.right * 0.001f) : new Vector3(0.0f, 0.001f, 0.0f);
-                lineRenderer.SetPosition(i, Checkpoints[i].GetPosition() + offset);
-            }
+            Vector3 offset = (CutType == CutLineType.ChopSawCut) ? -(Checkpoints[0].transform.right * 0.001f) : new Vector3(0.0f, 0.001f, 0.0f);
+            lineRenderer.SetPosition(i, Checkpoints[i].GetPosition() + offset);
         }
     }
 
@@ -158,7 +155,7 @@ public class CutLine : MonoBehaviour
         }
     }
 
-    public float CalculateDistance(Vector3 bladePosition)
+    public float CalculateDistance(Vector3 position)
     {
         Vector3 origin = GetPreviousCheckpoint();
         Vector3 nextCheckpoint = Checkpoints[CheckpointIndex].GetPosition();
@@ -168,13 +165,13 @@ public class CutLine : MonoBehaviour
             nextCheckpoint = GetNextCheckpoint();
         }
 
-        Vector3 toBladeEdge = bladePosition - origin;
+        Vector3 toPosition = position - origin;
         Vector3 toCheckpoint = nextCheckpoint - origin;
         toCheckpoint.Normalize();
 
-        float projection = Vector3.Dot(toBladeEdge, toCheckpoint);
+        float projection = Vector3.Dot(toPosition, toCheckpoint);
         toCheckpoint = toCheckpoint * projection;
-        Vector3 rejectionVector = toBladeEdge - toCheckpoint;
+        Vector3 rejectionVector = toPosition - toCheckpoint;
 
         return rejectionVector.magnitude;
     }

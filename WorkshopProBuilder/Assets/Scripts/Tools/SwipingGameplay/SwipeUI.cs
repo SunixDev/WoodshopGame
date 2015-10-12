@@ -12,6 +12,9 @@ public class SwipeUI : MonoBehaviour
     public Button NextButton;
     public Button PreviousButton;
     public Button CompletionButton;
+    public GameObject MessagePanel;
+    public Text MessagePanelText;
+    public GameObject MessagePanelButton;
 
     void Start()
     {
@@ -71,5 +74,19 @@ public class SwipeUI : MonoBehaviour
         NextButton.interactable = false;
         PreviousButton.interactable = false;
         CompletionButton.interactable = false;
+    }
+
+    public void DisplayMessagePanelWithText(string textInPanel)
+    {
+        MessagePanel.SetActive(true);
+        MessagePanelText.text = textInPanel;
+        MessagePanelButton.SetActive(false);
+    }
+
+    public void DisplayFullMessagePanel(string textInPanel)
+    {
+        MessagePanel.SetActive(true);
+        MessagePanelText.text = textInPanel;
+        MessagePanelButton.SetActive(true);
     }
 }

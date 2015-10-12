@@ -6,6 +6,13 @@ public class ClampHeadPoint : MonoBehaviour
     public Transform ClampHead;
     public Transform MoveableHeadPoint;
     public Transform MoveableHeadObject;
+    public Vector3 Position
+    {
+        get
+        {
+            return ClampHead.position;
+        }
+    }
 
     private bool isConnected;
 
@@ -17,11 +24,6 @@ public class ClampHeadPoint : MonoBehaviour
     public bool IsClampedDown()
     {
         return isConnected;
-    }
-
-    public Vector3 ClampHeadPosition()
-    {
-        return ClampHead.position;
     }
 
     public void ClampAt(ClampPoint point)

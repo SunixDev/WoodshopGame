@@ -17,6 +17,14 @@ ModelImporter:
     100018: polySurface164
     100020: polySurface165
     100022: //RootNode
+    100024: polySurface154
+    100026: polySurface166
+    100028: polySurface172
+    100030: polySurface175
+    100032: polySurface176
+    100034: polySurface177
+    100036: polySurface178
+    100038: ProjectForSwipe
     400000: polySurface155
     400002: polySurface156
     400004: polySurface157
@@ -29,6 +37,14 @@ ModelImporter:
     400018: polySurface164
     400020: polySurface165
     400022: //RootNode
+    400024: polySurface154
+    400026: polySurface166
+    400028: polySurface172
+    400030: polySurface175
+    400032: polySurface176
+    400034: polySurface177
+    400036: polySurface178
+    400038: ProjectForSwipe
     2300000: polySurface155
     2300002: polySurface156
     2300004: polySurface157
@@ -40,6 +56,7 @@ ModelImporter:
     2300016: polySurface163
     2300018: polySurface164
     2300020: polySurface165
+    2300022: ProjectForSwipe
     3300000: polySurface155
     3300002: polySurface156
     3300004: polySurface157
@@ -51,6 +68,7 @@ ModelImporter:
     3300016: polySurface163
     3300018: polySurface164
     3300020: polySurface165
+    3300022: ProjectForSwipe
     4300000: polySurface155
     4300002: polySurface156
     4300004: polySurface157
@@ -62,6 +80,7 @@ ModelImporter:
     4300016: polySurface163
     4300018: polySurface164
     4300020: polySurface165
+    4300022: ProjectForSwipe
     9500000: //RootNode
   materials:
     importMaterials: 1

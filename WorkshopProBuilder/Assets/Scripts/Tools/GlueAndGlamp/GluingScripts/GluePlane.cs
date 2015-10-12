@@ -22,8 +22,8 @@ public class GluePlane : MonoBehaviour
     public void UpdatePlane(float currentGlueAmount)
     {
         float percentageFilled = currentGlueAmount / MaxGlueAmount;
-        if (percentageFilled > 1.0f)
-            percentageFilled = 1.0f;
+        if (percentageFilled > 1.2f)
+            percentageFilled = 1.2f;
         GlueColor.a = percentageFilled;
         objRenderer.material.color = GlueColor;
         transform.localScale = expectedScale * percentageFilled;

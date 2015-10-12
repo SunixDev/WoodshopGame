@@ -6,9 +6,22 @@ public class SnapPiece : MonoBehaviour
 {
     public List<SnapPoint> SnapPoints;
     public Vector3 ConnectedLocalRotation;
+    public Vector3 ConnectedLocalPosition;
+    public bool IsAttached
+    {
+        get
+        {
+            bool attached = false;
+            for (int i = 0; i < SnapPoints.Count && !attached; i++)
+            {
+                attached = SnapPoints[i].IsConnected;
+            }
+            return attached;
+        }
+    }
 
-    private List<SnapPiece> PiecesConnectedTo;
-    private bool AllPointsConnected
+    //private List<SnapPiece> PiecesConnectedTo;
+    public bool AllPointsConnected
     {
         get
         {
@@ -23,7 +36,7 @@ public class SnapPiece : MonoBehaviour
 
 	void Awake () 
     {
-        PiecesConnectedTo = new List<SnapPiece>();
+        //PiecesConnectedTo = new List<SnapPiece>();
 	}
 
     public void SnapTo(Vector3 movementVector)
@@ -34,6 +47,11 @@ public class SnapPiece : MonoBehaviour
     public void RotateToLocalRotation()
     {
         transform.localRotation = Quaternion.Euler(ConnectedLocalRotation);
+    }
+
+    public void MoveToLocalLocation()
+    {
+        transform.localPosition = ConnectedLocalPosition;
     }
 
     public List<SnapPoint> GetAvailableSnapPoints()

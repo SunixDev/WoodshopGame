@@ -11,6 +11,25 @@ public class WoodPiece : MonoBehaviour
     public List<ClampPoint> ClampPoints;
     public List<GlueBox> GlueBoxes;
     public MeshCollider objMeshCollider;
+    public bool CanConnect
+    {
+        get
+        {
+            if (GlueBoxes.Count <= 0)
+            {
+                return true;
+            }
+            else
+            {
+                bool canConnect = true;
+                for (int i = 0; i < GlueBoxes.Count && canConnect; i++)
+                {
+                    canConnect = GlueBoxes[i].ReadyToConnect;
+                }
+                return canConnect;
+            }
+        }
+    }
 
     public Vector3 Position
     {

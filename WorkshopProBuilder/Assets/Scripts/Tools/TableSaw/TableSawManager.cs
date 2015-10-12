@@ -33,16 +33,9 @@ public class TableSawManager : MonoBehaviour, IToolManager
 	void Start ()
     {
         GameRuler.AssignManager(this);
-        AvailableWoodMaterial = GameManager.instance.GetNecessaryMaterials(CutLineType.TableSawCut);
-        LinesToCut = new List<CutLine>();
-        foreach (GameObject go in AvailableWoodMaterial)
+        foreach (GameObject wood in AvailableWoodMaterial)
         {
-            WoodMaterialObject wood = go.GetComponent<WoodMaterialObject>();
-            LinesToCut.AddRange(wood.RetrieveLines(CutLineType.TableSawCut, GameManager.instance.GetStep()));
-            BoardController controller = go.AddComponent<BoardController>();
-            controller.Moveable = true;
-            controller.WoodObject = wood;
-            go.SetActive(false);
+            wood.SetActive(false);
         }
         AvailableWoodMaterial[currentPieceIndex].SetActive(true);
         currentBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();
@@ -53,34 +46,74 @@ public class TableSawManager : MonoBehaviour, IToolManager
     public void SplitMaterial(CutLine lineToRemove)
     {
         WoodMaterialObject board = AvailableWoodMaterial[currentPieceIndex].GetComponent<WoodMaterialObject>();
+        BoardController previousBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();
         LinesToCut.Remove(lineToRemove);
         AvailableWoodMaterial.RemoveAt(currentPieceIndex);
-        GameManager.instance.WoodManager.SplitBoard(lineToRemove.GetFirstBaseNode(),
+        List<GameObject> pieces = WoodManagerHelper.SplitBoard(lineToRemove.GetFirstBaseNode(),
                                                     lineToRemove.GetSecondBaseNode(),
                                                     board, lineToRemove);
 
-        GameManager.instance.WoodManager.HideAllPieces();
-
-        if (LinesToCut.Count != 0)
+        bool pieceAdded = false;
+        foreach (GameObject piece in pieces)
         {
-            AvailableWoodMaterial = GameManager.instance.GetNecessaryMaterials(CutLineType.TableSawCut);
-            foreach (GameObject go in AvailableWoodMaterial)
+            WoodMaterialObject boardPiece = piece.GetComponent<WoodMaterialObject>();
+            if (boardPiece != null)
             {
-                if (go.GetComponent<BoardController>() == null)
+                bool lineFound = false;
+                for (int i = 0; i < LinesToCut.Count && !lineFound; i++)
                 {
-                    WoodMaterialObject wood = go.GetComponent<WoodMaterialObject>();
-                    BoardController controller = go.AddComponent<BoardController>();
-                    controller.Moveable = true;
-                    controller.WoodObject = wood;
+                    lineFound = boardPiece.ContainsLine(LinesToCut[i]);
                 }
-                go.SetActive(false);
+                if (lineFound)
+                {
+                    BoardController controller = piece.AddComponent<BoardController>();
+                    controller.Moveable = true;
+                    controller.WoodObject = boardPiece;
+                    controller.MaxLimit_X = previousBoardController.MaxLimit_X;
+                    controller.MaxLimit_Z = previousBoardController.MaxLimit_Z;
+                    controller.MinLimit_X = previousBoardController.MinLimit_X;
+                    controller.MinLimit_Z = previousBoardController.MinLimit_Z;
+                    AvailableWoodMaterial.Add(piece);
+                    if (!pieceAdded)
+                    {
+                        pieceAdded = true;
+                        int index = AvailableWoodMaterial.IndexOf(piece);
+                        currentPieceIndex = index;
+                        AvailableWoodMaterial[currentPieceIndex].SetActive(true);
+                        currentBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();
+                    }
+                    else
+                    {
+                        piece.SetActive(false);
+                        piece.transform.position = Vector3.zero;
+                        piece.transform.rotation = Quaternion.identity;
+                    }
+                }
+                else
+                {
+                    Destroy(piece);
+                }
             }
-            currentPieceIndex = 0;
-            AvailableWoodMaterial[currentPieceIndex].SetActive(true);
-            currentBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();
-            SetupForCutting();
-            PlacePiece();
+
+            if (!pieceAdded && AvailableWoodMaterial.Count > 0)
+            {
+                currentPieceIndex = 0;
+                AvailableWoodMaterial[currentPieceIndex].SetActive(true);
+                currentBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();
+                SetupForCutting();
+                PlacePiece();
+            }
+            SawBlade.TurnOff();
+            UI_Manager.ChangeSawButtons(false);
+        }
+
+        if (LinesToCut.Count > 0)
+        {
             UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
+        }
+        else
+        {
+            Debug.Log("All Lines Cut");
         }
     }
 
@@ -112,14 +145,20 @@ public class TableSawManager : MonoBehaviour, IToolManager
 
     public void SwitchToNextPiece()
     {
-        SwitchPiece(currentPieceIndex + 1);
-        UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
+        if (LinesToCut.Count > 0)
+        {
+            SwitchPiece(currentPieceIndex + 1);
+            UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
+        }
     }
 
     public void SwitchToPreviousPiece()
     {
-        SwitchPiece(currentPieceIndex - 1);
-        UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
+        if (LinesToCut.Count > 0)
+        {
+            SwitchPiece(currentPieceIndex - 1);
+            UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
+        }
     }
 
     private void SwitchPiece(int indexToSwitchTo)
@@ -189,9 +228,10 @@ public class TableSawManager : MonoBehaviour, IToolManager
             AvailableWoodMaterial[currentPieceIndex].transform.rotation = Quaternion.identity;
             PlacePiece();
             GameCamera.ChangeLookAtPoint(CameraSawLookAtPoint);
-            GameCamera.ChangeDistanceVariables(1.5f, 0.5f, 5.0f);
-            GameCamera.ChangeVerticalRotationLimit(10.0f, 80.0f);
+            GameCamera.ChangeDistanceVariables(1.5f, 0.8f, 3.0f);
+            GameCamera.ChangeVerticalRotationLimit(60.0f, 80.0f);
             GameCamera.ChangeAngle(0.0f, 45.0f);
+            GameCamera.PanSensitivity = 1.0f;
         }
         if (currentAction != ActionState.ChangingCamera)
         {
@@ -218,7 +258,8 @@ public class TableSawManager : MonoBehaviour, IToolManager
             GameCamera.ChangeLookAtPoint(CameraRulerLookAtPoint);
             GameCamera.ChangeDistanceVariables(1.0f, 0.1f, 2.0f);
             GameCamera.ChangeVerticalRotationLimit(0.0f, 180.0f);
-            GameCamera.ChangeAngle(0.0f, 90.0f);
+            GameCamera.ChangeAngle(0.0f, 89.5f);
+            GameCamera.PanSensitivity = 0.5f;
         }
         GameCamera.EnableRotation(false);
         GameCamera.EnableMovement(false);
@@ -282,3 +323,16 @@ public class TableSawManager : MonoBehaviour, IToolManager
         return LinesToCut[nearestLineIndex];
     }
 }
+
+
+//AvailableWoodMaterial = GameManager.instance.GetNecessaryMaterials(CutLineType.TableSawCut);
+//LinesToCut = new List<CutLine>();
+//foreach (GameObject go in AvailableWoodMaterial)
+//{
+//    WoodMaterialObject wood = go.GetComponent<WoodMaterialObject>();
+//    LinesToCut.AddRange(wood.RetrieveLines(CutLineType.TableSawCut, GameManager.instance.GetStep()));
+//    BoardController controller = go.AddComponent<BoardController>();
+//    controller.Moveable = true;
+//    controller.WoodObject = wood;
+//    go.SetActive(false);
+//}

@@ -36,7 +36,7 @@ public class BandSawManager : MonoBehaviour
     public void SplitMaterial(CutLine lineToRemove)
     {
         WoodMaterialObject woodBoard = WoodToCut[currentPieceIndex].GetComponent<WoodMaterialObject>();
-        List<GameObject> pieces = GameManager.instance.WoodManager.SplitBoard(lineToRemove.GetFirstBaseNode(),
+        List<GameObject> pieces = WoodManagerHelper.SplitBoard(lineToRemove.GetFirstBaseNode(),
                                                     lineToRemove.GetSecondBaseNode(),
                                                     woodBoard, lineToRemove);
         foreach (GameObject piece in pieces)

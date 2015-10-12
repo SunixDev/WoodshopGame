@@ -11,6 +11,10 @@ public class BoardController : MonoBehaviour
     public Rigidbody objRigidbody { get; set; }
     public Transform objTransform { get; set; }
     public WoodMaterialObject WoodObject { get; set; }
+    public float MaxLimit_X;
+    public float MinLimit_X;
+    public float MaxLimit_Z;
+    public float MinLimit_Z;
 
     private bool selected = false;
 
@@ -135,6 +139,16 @@ public class BoardController : MonoBehaviour
         previousPosition = position;
         nextPosition = DetermineRestrictions(nextPosition);
         objRigidbody.position += nextPosition;
+        if (objRigidbody.position.x > MaxLimit_X || objRigidbody.position.x < MinLimit_X)
+        {
+            float x = objRigidbody.position.x;
+            objRigidbody.position = new Vector3(Mathf.Clamp(x, MinLimit_X, MaxLimit_X), objRigidbody.position.y, objRigidbody.position.z);
+        }
+        if (objRigidbody.position.z > MaxLimit_Z || objRigidbody.position.z < MinLimit_Z)
+        {
+            float z = objRigidbody.position.z;
+            objRigidbody.position = new Vector3(objRigidbody.position.x, objRigidbody.position.y, Mathf.Clamp(z, MinLimit_Z, MaxLimit_Z));
+        }
     }
 
 #region EventSubscriptions

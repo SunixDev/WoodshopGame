@@ -68,7 +68,7 @@ public class TableSawCut : MonoBehaviour
             {
                 SwitchLine();
 
-                if (SawBlade.MadeContactWithBoard && SawBlade.Active)
+                if (SawBlade.CuttingWoodBoard && SawBlade.SawBladeActive)
                 {
                     Vector3 origin = SawBlade.EdgePosition() + new Vector3(0.0f, 0.5f, 0.0f);
                     Ray ray = new Ray(origin, Vector3.down);
@@ -79,7 +79,7 @@ public class TableSawCut : MonoBehaviour
                     }
                 }
             }
-            else if (CurrentState == CutState.Cutting && SawBlade.Active)
+            else if (CurrentState == CutState.Cutting && SawBlade.SawBladeActive)
             {
                 if (cuttingAlongLine)
                 {
@@ -91,21 +91,10 @@ public class TableSawCut : MonoBehaviour
                     else
                     {
                         float pushRate = TrackPushRate();
-                        Debug.Log("Push Rate: " + pushRate);
-                        if (pushRate == 0)
-                        {
-                            timeStalling += Time.deltaTime;
-                            if (timeStalling >= MaxStallTime)
-                            {
-                                //Wood burnt, Start over
-                            }
-                        }
-                        else
-                        {
-                            timeStalling = 0.0f;
-                            //Calculate push rate is within consistent rate
-                            //Lose points if too slow or too fast
-                        }
+                        Debug.Log("Push Rate: " + (pushRate * 100));
+                        timeStalling = 0.0f;
+                        //Calculate push rate is within consistent rate
+                        //Lose points if too slow or too fast
                     }
                 }
                 else
@@ -137,12 +126,27 @@ public class TableSawCut : MonoBehaviour
 
     void OnDisable()
     {
-        if(currentLine != null)
+        if (currentLine != null)
         {
-        currentLine.DisplayLine(false, true);
-        currentLine = null;
-            }
+            currentLine.DisplayLine(false, true);
+            currentLine = null;
+        }
         CurrentState = CutState.ReadyToCut;
         SawBlade.ResetEdgePosition();
     }
 }
+
+
+
+//if (pushRate == 0)
+//{
+//    timeStalling += Time.deltaTime;
+//    if (timeStalling >= MaxStallTime)
+//    {
+//        //Wood burnt, Start over
+//    }
+//}
+//else
+//{
+
+//}

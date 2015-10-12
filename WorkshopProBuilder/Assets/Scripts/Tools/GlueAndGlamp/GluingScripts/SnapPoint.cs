@@ -4,6 +4,7 @@ using System.Collections;
 public class SnapPoint : MonoBehaviour 
 {
     public SnapPiece ParentSnapPiece;
+    public GlueBox RelatedGlueBox;
     public string ConnectionID = "Default";
     public bool CanConnect = true;
     public bool isActive { get; set; }
@@ -32,16 +33,13 @@ public class SnapPoint : MonoBehaviour
         return Vector3.Distance(CurrentPosition, otherPoint.CurrentPosition);
     }
 
-    public void ConnectToPoint(SnapPoint otherPoint)
+    public void ConnectToPoint(SnapPoint otherPoint, Transform center)
     {
         IsConnected = true;
         otherPoint.IsConnected = true;
+        ParentSnapPiece.gameObject.transform.parent = center;
         ParentSnapPiece.RotateToLocalRotation();
-        Vector3 nextPosition = Vector3.MoveTowards(CurrentPosition, otherPoint.CurrentPosition, 1.0f);
-        float magnitude = Vector3.Magnitude(nextPosition - CurrentPosition);
-        Vector3 direction = Vector3.Normalize(nextPosition - CurrentPosition);
-        Vector3 totalMovement = (direction * magnitude);
-        ParentSnapPiece.SnapTo(totalMovement);
+        ParentSnapPiece.MoveToLocalLocation();
     }
 
     public void DisplayPoint()
@@ -54,3 +52,9 @@ public class SnapPoint : MonoBehaviour
         GetComponent<MeshRenderer>().enabled = false;
     }
 }
+
+//Vector3 nextPosition = Vector3.MoveTowards(CurrentPosition, otherPoint.CurrentPosition, 1.0f);
+//float magnitude = Vector3.Magnitude(nextPosition - CurrentPosition);
+//Vector3 direction = Vector3.Normalize(nextPosition - CurrentPosition);
+//Vector3 totalMovement = (direction * magnitude);
+//ParentSnapPiece.SnapTo(totalMovement);

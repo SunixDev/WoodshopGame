@@ -10,7 +10,7 @@ public class WoodMaterialManager : MonoBehaviour
     public List<GameObject> SplitBoard(Node baseNode, Node baseNode2, WoodMaterialObject boardToSplit, CutLine detachedLine)
     {
         WoodMaterials.Remove(boardToSplit.gameObject);
-        WoodManagerHelper.RemoveLine(boardToSplit, detachedLine);
+        WoodManagerHelper.RemoveCutLine(boardToSplit, detachedLine);
 
         List<GameObject> splitPieces = new List<GameObject>();
         splitPieces.Add(DeterminePiece(baseNode, ref boardToSplit));
@@ -110,63 +110,3 @@ public class WoodMaterialManager : MonoBehaviour
         woodMaterial.SetActive(false);
     }
 }
-
-
-//public List<GameObject> RetrieveAvailablePieces()
-//{
-//    List<GameObject> pieces = new List<GameObject>();
-//    foreach (GameObject piece in WoodMaterials)
-//    {
-//        if (piece.tag == "Piece")
-//        {
-//            pieces.Add(piece);
-//        }
-//    }
-//    return pieces;
-//}
-
-
-//private static WoodMaterialManager _instance;
-//public static WoodMaterialManager instance
-//{
-//    get
-//    {
-//        return _instance;
-//    }
-//}
-
-//void Awake()
-//{
-//    if (_instance == null)
-//    {
-//        _instance = this;
-//        DontDestroyOnLoad(gameObject);
-//    }
-//    else
-//    {
-//        if (this != _instance)
-//        {
-//            Destroy(this.gameObject);
-//        }
-//    }
-//}
-
-
-
-
-//List<AnchorPoint> allPoints = pieceOne.AnchorPoints;
-//allPoints.AddRange(pieceTwo.AnchorPoints);
-//pieceOne.gameObject.GetComponent<PieceController>();
-
-//GameObject obj = new GameObject();
-//Bounds bounds = new Bounds(pieceOne.gameObject.transform.position, Vector3.zero);
-//bounds.Encapsulate(pieceTwo.gameObject.transform.position);
-//obj.transform.position = bounds.center;
-
-//PieceController controller = obj.AddComponent<PieceController>();
-//controller.Initialize();
-
-//PositionSnap snapping = obj.AddComponent<PositionSnap>();
-//snapping.Initialize(controller);
-//controller.enabled = true;
-//snapping.enabled = true;

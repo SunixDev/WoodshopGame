@@ -69,7 +69,7 @@ public class ChopSawCut : MonoBehaviour
             {
                 SwitchLine();
 
-                if (SawBlade.MadeContactWithBoard && SawBlade.Active)
+                if (SawBlade.CuttingWoodBoard && SawBlade.SawBladeActive)
                 {
                     Vector3 origin = SawBlade.EdgePosition() + new Vector3(0.0f, 0.5f, 0.0f);
                     Ray ray = new Ray(origin, Vector3.down);
@@ -81,7 +81,7 @@ public class ChopSawCut : MonoBehaviour
                     }
                 }
             }
-            else if (CurrentState == CutState.Cutting && SawBlade.Active)
+            else if (CurrentState == CutState.Cutting && SawBlade.SawBladeActive)
             {
                 if (cuttingAlongLine)
                 {

@@ -68,7 +68,7 @@ public class DadoCutting : MonoBehaviour
             {
                 SwitchDado();
 
-                if (SawBlade.MadeContactWithBoard && SawBlade.Active)
+                if (SawBlade.CuttingWoodBoard && SawBlade.SawBladeActive)
                 {
                     CurrentState = CutState.ReadyToCut;
                     manager.EnableBoardPhysics(false);
@@ -80,7 +80,7 @@ public class DadoCutting : MonoBehaviour
                 CurrentState = CutState.Cutting;
                 manager.RestrictCurrentBoardMovement(false, true);
             }
-            else if (CurrentState == CutState.Cutting && SawBlade.Active)
+            else if (CurrentState == CutState.Cutting && SawBlade.SawBladeActive)
             {
 
             }
