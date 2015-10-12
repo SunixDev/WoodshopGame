@@ -14,7 +14,7 @@ public class CutLine : MonoBehaviour
     private bool CutBackwards = false;
     private int CheckpointIndex = 0;
 
-    void Start()
+    void Awake()
     {
         lineRenderer = gameObject.GetComponent<LineRenderer>();
         if (gameObject.GetComponent<LineRenderer>() == null)
@@ -28,7 +28,10 @@ public class CutLine : MonoBehaviour
             Vector3 offset = (CutType == CutLineType.ChopSawCut) ? -(Checkpoints[0].transform.right * 0.001f) : new Vector3(0.0f, 0.001f, 0.0f);
             lineRenderer.SetPosition(i, Checkpoints[i].GetPosition() + offset);
         }
-        lineRenderer.enabled = false;
+        if (CutType != CutLineType.CurvatureCut)
+        {
+            lineRenderer.enabled = false;
+        }
     }
 
     void Update()
@@ -43,6 +46,18 @@ public class CutLine : MonoBehaviour
     public Vector3 GetCurrentCheckpointPosition()
     {
         return Checkpoints[CheckpointIndex].GetPosition();
+    }
+
+    public void ChangeColor(Color color)
+    {
+        lineRenderer.SetColors(color, color);
+        lineRenderer.material.color = color;
+    }
+
+    public void ResetColor(Color color)
+    {
+        lineRenderer.SetColors(color, color);
+        lineRenderer.material.color = color;
     }
 
     public void SeverConnections()
@@ -87,16 +102,23 @@ public class CutLine : MonoBehaviour
             lineRenderer = gameObject.GetComponent<LineRenderer>();
         }
 
-        lineRenderer.enabled = display;
+        if (CutType == CutLineType.CurvatureCut)
+        {
+            lineRenderer.enabled = true;
+        }
+        else
+        {
+            lineRenderer.enabled = display;
+        }
         if (LineMark != null)
         {
             LineMark.SetActive(showMark);
         }
-
     }
 
     public void UpdateLine(Vector3 bladePosition)
     {
+        Debug.Log("CheckpointIndex: " + CheckpointIndex);
         if (CutType == CutLineType.TableSawCut)
         {
             Vector3 difference = Checkpoints[CheckpointIndex].GetPosition() - bladePosition;
@@ -115,7 +137,7 @@ public class CutLine : MonoBehaviour
         }
         else if (CutType == CutLineType.CurvatureCut)
         {
-            float validDistance = 0.001f;
+            float validDistance = 0.005f;
             float distance = Vector3.Distance(Checkpoints[CheckpointIndex].GetPosition(), bladePosition);
             if (distance <= validDistance)
             {

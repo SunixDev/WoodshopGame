@@ -31,6 +31,7 @@ public class CameraControl : MonoBehaviour
     //public PanType PanningType = PanType.XZ_Plane;
     //public ZoomType ZoomInType = ZoomType.ZoomToLookAt;
     public CameraType type = CameraType.Overlook;
+    public PanType panningType = PanType.XZ_Plane;
 
     [Header("Speed Input")]
     [Range(5.0f, 20.0f)]
@@ -199,14 +200,14 @@ public class CameraControl : MonoBehaviour
                 {
                     Vector3 deltaPosition = currentPosition - previousFingerPosition;
                     deltaPosition = deltaPosition.normalized * (PanSensitivity * Time.deltaTime);
-                    if (type == CameraType.Overlook)
+                    if (panningType == PanType.XZ_Plane)
                     {
                         lookAtPointOffset += (Quaternion.Euler(new Vector3(0.0f, xMovement, 0.0f)) * new Vector3(-deltaPosition.x, 0.0f, -deltaPosition.y));
                     }
                     else
                     {
                         Vector3 movement = transform.rotation * new Vector3(-deltaPosition.x, -deltaPosition.y, 0.0f);
-                        transform.position += movement;
+                        lookAtPointOffset += movement;
                     }
                     previousFingerPosition = currentPosition;
                 }

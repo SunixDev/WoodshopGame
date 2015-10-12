@@ -15,6 +15,7 @@ public class ChopSawUI : MonoBehaviour {
     public Button RotateClockwiseButton;
     public Button RotateCounterClockwiseButton;
     public Button ResetRotationButton;
+    public GameObject PlansPanel;
 
     private bool SawButtonsActive = true;
 
@@ -22,6 +23,12 @@ public class ChopSawUI : MonoBehaviour {
     {
         SelectedButton.GetComponent<Image>().color = SelectedButtonColor;
         SelectedButton.GetComponent<Button>().enabled = false;
+        PlansPanel.SetActive(false);
+    }
+
+    public void DisplayPlans(bool showPlans)
+    {
+        PlansPanel.SetActive(showPlans);
     }
 
     public void SwitchActiveButton(GameObject buttonToUse)

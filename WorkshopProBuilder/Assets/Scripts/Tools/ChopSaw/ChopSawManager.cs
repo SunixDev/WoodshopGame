@@ -194,13 +194,13 @@ public class ChopSawManager : MonoBehaviour, IToolManager
 
         AvailableWoodMaterial[currentPieceIndex].SetActive(true);
         currentBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();
-        if (currentAction == ActionState.OnSaw || previousAction == ActionState.OnSaw)
+        if (currentAction == ActionState.OnSaw || (previousAction == ActionState.OnSaw && currentAction == ActionState.ChangingCamera))
         {
             EnableCurrentBoardMovement(true);
             RestrictCurrentBoardMovement(false, false);
             PlacePieceAtSpawnPoint(new Vector3(0.0f, 0.0f, -3.0f));
         }
-        else if (currentAction == ActionState.UsingRuler || previousAction == ActionState.UsingRuler)
+        else if (currentAction == ActionState.UsingRuler || (previousAction == ActionState.UsingRuler && currentAction == ActionState.ChangingCamera))
         {
             EnableCurrentBoardMovement(false);
             PlacePieceAtSpawnPoint(new Vector3(-3.0f, 0.0f, 0.0f));

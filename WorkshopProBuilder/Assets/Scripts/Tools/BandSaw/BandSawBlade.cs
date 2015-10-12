@@ -24,9 +24,11 @@ public class BandSawBlade : MonoBehaviour
     }
 
     private Vector3 originalBladePosition;
+    private List<GameObject> HitObjects;
 
     void Awake()
     {
+        HitObjects = new List<GameObject>();
         originalBladePosition = transform.position;
         NoInteractionWithBoard = true;
         CuttingWoodBoard = false;
@@ -36,28 +38,24 @@ public class BandSawBlade : MonoBehaviour
             TurnOff();
     }
 
-    void OnTriggerEnter(Collider other)
+    void Update()
     {
-        if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && SawActive)
+        if (SawActive)
         {
-            CuttingWoodBoard = true;
-            NoInteractionWithBoard = false;
-            Ray ray = new Ray(BladePoint + new Vector3(0.0f, 1.0f, 0.0f), Vector3.down);
+            Ray ray = new Ray(BladePoint + new Vector3(0.0f, 0.1f, 0.0f), Vector3.down);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Piece" || hit.collider.tag == "Leftover" || hit.collider.tag == "DadoBlock"))
             {
                 transform.position = hit.point;
+                CuttingWoodBoard = true;
+                NoInteractionWithBoard = false;
             }
-        }
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && SawActive)
-        {
-            CuttingWoodBoard = false;
-            NoInteractionWithBoard = true;
-            ResetEdgePosition();
+            else
+            {
+                ResetEdgePosition();
+                CuttingWoodBoard = false;
+                NoInteractionWithBoard = true;
+            }
         }
     }
 
@@ -80,3 +78,53 @@ public class BandSawBlade : MonoBehaviour
         transform.position = originalBladePosition;
     }
 }
+
+//void OnTriggerEnter(Collider other)
+//{
+//    if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && SawActive)
+//    {
+//        Ray ray = new Ray(BladePoint + new Vector3(0.0f, 1.0f, 0.0f), Vector3.down);
+//        RaycastHit hit;
+//        if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Piece" || hit.collider.tag == "Leftover" || hit.collider.tag == "DadoBlock"))
+//        {
+//            transform.position = hit.point;
+//            CuttingWoodBoard = true;
+//            NoInteractionWithBoard = false;
+//            if(!HitObjects.Contains(other.gameObject))
+//            {
+//                HitObjects.Add(other.gameObject);
+//            }
+//        }
+//    }
+//}
+
+//void OnTriggerExit(Collider other)
+//{
+//    if ((other.tag == "Piece" || other.tag == "Leftover" || other.tag == "DadoBlock") && SawActive)
+//    {
+//        Ray ray = new Ray(BladePoint + new Vector3(0.0f, 1.0f, 0.0f), Vector3.down);
+//        RaycastHit hit;
+//        bool otherColliderExited = true;
+//        if (Physics.Raycast(ray, out hit))
+//        {
+//            if (hit.collider.tag == "Piece" || hit.collider.tag == "Leftover" || hit.collider.tag == "DadoBlock")
+//            {
+//                otherColliderExited = false;
+//            }
+//        }
+//        if (otherColliderExited)
+//        {
+//            if (HitObjects.Contains(other.gameObject))
+//            {
+//                HitObjects.Remove(other.gameObject);
+//            }
+//            if (HitObjects.Count == 0)
+//            {
+//                CuttingWoodBoard = false;
+//                NoInteractionWithBoard = true;
+//                ResetEdgePosition();
+//            }
+
+//        }
+//    }
+//}

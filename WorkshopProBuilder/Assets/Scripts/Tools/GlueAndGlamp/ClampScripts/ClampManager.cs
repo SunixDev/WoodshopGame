@@ -98,10 +98,10 @@ public class ClampManager : MonoBehaviour
         }
     }
 
-    public void RotateClampOrientation()
-    {
-        currentClamp.RotateAtPoint(90.0f);
-    }
+    //public void RotateClampOrientation()
+    //{
+    //    currentClamp.RotateAtPoint(90.0f);
+    //}
 
     public void SetUpClampMovement()
     {

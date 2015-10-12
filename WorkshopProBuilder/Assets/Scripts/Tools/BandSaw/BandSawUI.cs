@@ -7,12 +7,18 @@ public class BandSawUI : MonoBehaviour
     public Button ReviewPlansButton;
     public Button StartSawButton;
     public Button StopSawButton;
+    public GameObject PlansPanel;
 
     private bool SawButtonsActive = true;
 
     void Start()
     {
+        PlansPanel.SetActive(false);
+    }
 
+    public void DisplayPlans(bool showPlans)
+    {
+        PlansPanel.SetActive(showPlans);
     }
 
     public void ChangeSawButtons(bool bladeIsActive)

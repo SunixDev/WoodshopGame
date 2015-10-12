@@ -11,12 +11,19 @@ public class ClampUI : MonoBehaviour
     public GameObject InfoPanel;
     public Text InfoPanelText;
     public Button InfoPanelButton;
+    public GameObject PlansPanel;
 
     void Start()
     {
         SelectedButton.GetComponent<Image>().color = SelectedButtonColor;
         SelectedButton.GetComponent<Button>().enabled = false;
         InfoPanel.SetActive(false);
+        PlansPanel.SetActive(false);
+    }
+
+    public void DisplayPlans(bool showPlans)
+    {
+        PlansPanel.SetActive(showPlans);
     }
 
     public void SwitchActiveButton(GameObject buttonToUse)

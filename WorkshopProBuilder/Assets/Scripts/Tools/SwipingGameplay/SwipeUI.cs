@@ -15,11 +15,18 @@ public class SwipeUI : MonoBehaviour
     public GameObject MessagePanel;
     public Text MessagePanelText;
     public GameObject MessagePanelButton;
+    public GameObject PlansPanel;
 
     void Start()
     {
         SelectedButton.GetComponent<Image>().color = SelectedButtonColor;
         SelectedButton.GetComponent<Button>().enabled = false;
+        PlansPanel.SetActive(false);
+    }
+
+    public void DisplayPlans(bool showPlans)
+    {
+        PlansPanel.SetActive(showPlans);
     }
 
     public void SwitchActiveButton(GameObject buttonToUse)

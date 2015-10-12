@@ -50,6 +50,12 @@ public class PieceController : MonoBehaviour
         }
     }
 
+    public void ResetSelection()
+    {
+        Moveable = false;
+        Selected = false;
+    }
+
     public void OnTouch(Gesture gesture)
     {
         Selected = (gesture.pickedObject == gameObject);

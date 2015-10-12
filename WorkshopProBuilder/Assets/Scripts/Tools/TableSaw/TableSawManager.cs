@@ -210,13 +210,6 @@ public class TableSawManager : MonoBehaviour, IToolManager
 
     public void SwitchScene(string level)
     {
-        foreach (GameObject go in AvailableWoodMaterial)
-        {
-            if (go.GetComponent<BoardController>())
-            {
-                Destroy(go.GetComponent<BoardController>());
-            }
-        }
         Application.LoadLevel(level);
     }
 
@@ -230,7 +223,7 @@ public class TableSawManager : MonoBehaviour, IToolManager
             GameCamera.ChangeLookAtPoint(CameraSawLookAtPoint);
             GameCamera.ChangeDistanceVariables(1.5f, 0.8f, 3.0f);
             GameCamera.ChangeVerticalRotationLimit(60.0f, 80.0f);
-            GameCamera.ChangeAngle(0.0f, 45.0f);
+            GameCamera.ChangeAngle(0.0f, 60.0f);
             GameCamera.PanSensitivity = 1.0f;
         }
         if (currentAction != ActionState.ChangingCamera)

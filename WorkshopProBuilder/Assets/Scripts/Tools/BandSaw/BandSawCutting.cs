@@ -9,9 +9,10 @@ public class BandSawCutting : MonoBehaviour
     public float ValidCutOffset = 0.005f;
     public float MaxStallTime = 3.0f;
     //public float PushRateOffset = 0.001;
+    public Color SelectedLineColor;
+    public Color NotSelectedLineColor;
     public CutState CurrentState { get; set; }
 
-    private int numberOfLinesToCut;
     private CutLine currentLine;
     private bool cuttingAlongLine;
     private Vector3 previousBoardPosition;
@@ -24,65 +25,99 @@ public class BandSawCutting : MonoBehaviour
         timeStalling = 0.0f;
         CurrentState = CutState.ReadyToCut;
 	}
+
+    private void SwitchLine()
+    {
+        CutLine nearestLine = manager.GetNearestLine(Blade.transform.position);
+        nearestLine.ChangeColor(SelectedLineColor);
+        if (currentLine != null && currentLine != nearestLine)
+        {
+            currentLine.ResetColor(NotSelectedLineColor);
+        }
+        currentLine = nearestLine;
+    }
+
+    private void StartWoodCutting()
+    {
+        currentLine.DetermineCutDirection(Blade.transform.position);
+
+        float distanceFromBlade = currentLine.CalculateDistance(Blade.transform.position);
+        Debug.Log("distanceFromBlade: " + distanceFromBlade);
+        cuttingAlongLine = (distanceFromBlade <= ValidCutOffset);
+
+        previousBoardPosition = manager.GetCurrentBoardPosition();
+        CurrentState = CutState.Cutting;
+    }
+
+    private float TrackPushRate()
+    {
+        Vector3 currentPosition = manager.GetCurrentBoardPosition();
+        Vector3 deltaVector = currentPosition - previousBoardPosition;
+        previousBoardPosition = currentPosition;
+        return deltaVector.magnitude;
+    }
 	
 	void Update () 
     {
         #region CuttingCode
-        //if (CurrentState == CutState.ReadyToCut && Blade.Active && Blade.CuttingWoodBoard)
-        //{
-        //    Vector3 origin = Blade.BladePoint + new Vector3(0.0f, 0.3f, 0.0f);
-        //    Ray ray = new Ray(origin, Vector3.down);
-        //    RaycastHit hit;
-        //    if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Piece" || hit.collider.tag == "Leftover"))
-        //    {
-        //        CurrentState = CutState.Cutting;
-        //        currentLine = manager.GetNearestLine(hit.point);
-        //        Blade.BladePoint = hit.point;
-        //    }
-        //}
-        //else if (state == CutState.Cutting)
-        //{
-        //    if (CuttingFirstCheckpoint())
-        //    {
-        //        if (PassedCurrentCheckpoint())
-        //        {
-        //            currentLine.UpdateToNextCheckpoint();
-        //            previousCheckpointPosition = currentLine.GetCurrentCheckpoint().GetPosition();
-        //        }
-        //    }
-        //    else if ((CuttingConnectedCheckpoint() || CuttingLastCheckpoint()))
-        //    {
-        //        if (PassedCurrentCheckpoint())
-        //        {
-        //            currentLine.UpdateToNextCheckpoint();
-        //            if (currentLine.GetCurrentCheckpoint() == null)
-        //            {
-        //                state = CutState.EndOfCut;
-        //                boardBeingCut.GetComponent<BoardController>().Moveable = false;
-        //            }
-        //        }
-        //    }
-        //}
-        //else if (state == CutState.EndOfCut)
-        //{
-        //    float distance = Vector3.Distance(currentLine.GetPreviousCheckpoint().GetPosition(), BladeEdge.position);
-        //    if (distance <= 0.01f)
-        //    {
-        //        boardBeingCut.transform.position += new Vector3(0.0f, 0.0f, 0.08f * Time.deltaTime);
-        //    }
-        //    else
-        //    {
-        //        cuttingAlongLine = false;
-        //        boardBeingCut.transform.position += new Vector3(0.0f, 0.0f, 0.08f * Time.deltaTime);
-        //        boardBeingCut.GetComponent<BoardController>().RotationPoint = null;
-        //        state = CutState.ReadyToCut;
-        //        LinesToCut.Remove(currentLine);
-        //        WoodManager.SplitBoard(currentLine.GetFirstBaseNode(), currentLine.GetSecondBaseNode(), boardBeingCut, currentLine);
-        //        currentLine = null;
-        //        boardBeingCut = null;
-        //        BladeEdge.position = originalBladeEdgePosition;
-        //    }
-        //}
+        if (manager.WoodToCut.Count > 0)
+        {
+            if (CurrentState == CutState.ReadyToCut)
+            {
+                SwitchLine();
+
+                if (Blade.CuttingWoodBoard && Blade.SawActive)
+                {
+                    Vector3 origin = Blade.transform.position + new Vector3(0.0f, 0.1f, 0.0f);
+                    Ray ray = new Ray(origin, Vector3.down);
+                    RaycastHit hit;
+                    if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Piece" || hit.collider.tag == "Leftover" || hit.collider.tag == "Dado"))
+                    {
+                        StartWoodCutting();
+                    }
+                }
+            }
+            else if (CurrentState == CutState.Cutting && Blade.SawActive)
+            {
+                if (cuttingAlongLine)
+                {
+                    currentLine.UpdateLine(Blade.transform.position);
+                    if (currentLine.LineIsCut())
+                    {
+                        CurrentState = CutState.EndOfCut;
+                    }
+                    else
+                    {
+                        float pushRate = TrackPushRate();
+                        //Debug.Log("Push Rate: " + (pushRate * 100));
+                        timeStalling = 0.0f;
+                        //Calculate push rate is within consistent rate
+                        //Lose points if too slow or too fast
+                    }
+                }
+                else
+                {
+                    //Decrease value by certain amount until zero and need to start over
+                    if (Blade.NoInteractionWithBoard)
+                    {
+                        CurrentState = CutState.ReadyToCut;
+                        Blade.ResetEdgePosition();
+                        currentLine = null;
+                    }
+                }
+            }
+            else if (CurrentState == CutState.EndOfCut)
+            {
+                if (!Blade.CuttingWoodBoard && Blade.NoInteractionWithBoard)
+                {
+                    manager.SplitMaterial(currentLine);
+                    cuttingAlongLine = false;
+                    currentLine = null;
+                    Blade.ResetEdgePosition();
+                    CurrentState = CutState.ReadyToCut;
+                }
+            }
+        }
         #endregion
 	}
 }

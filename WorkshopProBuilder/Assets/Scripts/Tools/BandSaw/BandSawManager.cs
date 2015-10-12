@@ -9,10 +9,10 @@ public class BandSawManager : MonoBehaviour
     public BandSawUI UI_Manager;
 
     private int currentPieceIndex = 0;
-    private BoardController currentBoardController;
 
 	void Start () 
     {
+        UI_Manager.ChangeSawButtons(false);
         foreach (GameObject woodMat in WoodToCut)
         {
             WoodMaterialObject wood = woodMat.GetComponent<WoodMaterialObject>();
@@ -20,73 +20,87 @@ public class BandSawManager : MonoBehaviour
             {
                 if (line.CutType == CutLineType.CurvatureCut)
                 {
-                    line.DisplayLine(true, false);
+                    line.lineRenderer.enabled = true;
                 }
             }
-            BoardController controller = woodMat.AddComponent<BoardController>();
-            controller.Moveable = true;
-            controller.WoodObject = wood;
             woodMat.SetActive(false);
         }
         WoodToCut[currentPieceIndex].SetActive(true);
-        currentBoardController = WoodToCut[currentPieceIndex].GetComponent<BoardController>();
         PlacePiece();
-	}
+    }
 
     public void SplitMaterial(CutLine lineToRemove)
     {
-        WoodMaterialObject woodBoard = WoodToCut[currentPieceIndex].GetComponent<WoodMaterialObject>();
-        List<GameObject> pieces = WoodManagerHelper.SplitBoard(lineToRemove.GetFirstBaseNode(),
-                                                    lineToRemove.GetSecondBaseNode(),
-                                                    woodBoard, lineToRemove);
-        foreach (GameObject piece in pieces)
+        if (WoodToCut.Count > 0)
         {
-            if (piece.tag == "Piece")
+            WoodMaterialObject woodBoard = WoodToCut[currentPieceIndex].GetComponent<WoodMaterialObject>();
+            List<GameObject> pieces = WoodManagerHelper.SplitBoard(lineToRemove.GetFirstBaseNode(),
+                                                        lineToRemove.GetSecondBaseNode(),
+                                                        woodBoard, lineToRemove);
+            foreach (GameObject piece in pieces)
             {
-                WoodToCut[currentPieceIndex] = null;
-                Destroy(piece);
-                NextPiece();
+                if (piece.tag == "Piece")
+                {
+                    WoodToCut.RemoveAt(currentPieceIndex);
+                    Destroy(piece);
+                    NextPiece();
+                }
+                else
+                {
+                    Rigidbody physics = piece.AddComponent<Rigidbody>();
+                    physics.useGravity = true;
+                    BandSawPieceController controller = piece.AddComponent<BandSawPieceController>();
+                    controller.Moveable = true;
+                    WoodToCut[currentPieceIndex] = piece;
+                    PlacePiece();
+                }
             }
-            else
-            {
-                WoodToCut[currentPieceIndex] = piece;
-                currentBoardController = WoodToCut[currentPieceIndex].GetComponent<BoardController>();
-                PlacePiece();
-            }
+        }
+        else
+        {
+            Debug.Log("All lines cut");
         }
     }
 
     private void NextPiece()
     {
-        currentPieceIndex++;
-        WoodToCut[currentPieceIndex].SetActive(true);
-        currentBoardController = WoodToCut[currentPieceIndex].GetComponent<BoardController>();
-        PlacePiece();
+        if (WoodToCut.Count > 0)
+        {
+            WoodToCut[currentPieceIndex].SetActive(true);
+            PlacePiece();
+        }
     }
 
     public void PlacePiece()
     {
-        WoodToCut[currentPieceIndex].transform.position = PlacementFromBlade.position + new Vector3(0.0f, 0.0f, -3.0f);
-        Ray ray = new Ray(PlacementFromBlade.position, -Vector3.forward);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
-        {
-            float distance = (hit.point - PlacementFromBlade.position).magnitude;
-            WoodToCut[currentPieceIndex].transform.position += (distance * Vector3.forward);
-        }
+        WoodToCut[currentPieceIndex].transform.rotation = Quaternion.identity;
+        WoodToCut[currentPieceIndex].transform.position = PlacementFromBlade.position;// +new Vector3(0.0f, 0.0f, -2.0f);
+        //Ray ray = new Ray(PlacementFromBlade.position, -Vector3.forward);
+        //RaycastHit hit;
+        //if (Physics.Raycast(ray, out hit))
+        //{
+        //    float distance = (hit.point - PlacementFromBlade.position).magnitude;
+        //    WoodToCut[currentPieceIndex].transform.position += (distance * Vector3.forward);
+        //}
+    }
+
+    public Vector3 GetCurrentBoardPosition()
+    {
+        return WoodToCut[currentPieceIndex].transform.position;
     }
 
     public bool AllLinesOnBoardAreCut()
     {
         WoodMaterialObject wood = WoodToCut[currentPieceIndex].GetComponent<WoodMaterialObject>();
+        int linesCut = 0;
         foreach (CutLine line in wood.LinesToCut)
         {
             if (line.CutType == CutLineType.CurvatureCut)
             {
-                line.DisplayLine(true, false);
+                linesCut++;
             }
         }
-        return currentPieceIndex == WoodToCut.Count;
+        return linesCut == 0;
     }
 
     public bool AllPiecesAreCut()
@@ -103,13 +117,26 @@ public class BandSawManager : MonoBehaviour
         for (int i = 0; i < lines.Count && !lineFound; i++)
         {
             CutLine currentLine = lines[i];
-            float firstDistance = Vector3.Distance(fromPosition, currentLine.Checkpoints[0].GetPosition());
-            float lastDistance = Vector3.Distance(fromPosition, currentLine.Checkpoints[currentLine.Checkpoints.Count - 1].GetPosition());
-
-            if (i == 0 || firstDistance < smallestDistance || lastDistance < smallestDistance)
+            if (currentLine.CutType == CutLineType.CurvatureCut)
             {
-                nearestLineIndex = i;
-                smallestDistance = (firstDistance < smallestDistance) ? firstDistance : lastDistance;
+                float firstDistance = Vector3.Distance(fromPosition, currentLine.Checkpoints[0].GetPosition());
+                float lastDistance = Vector3.Distance(fromPosition, currentLine.Checkpoints[currentLine.Checkpoints.Count - 1].GetPosition());
+
+                
+
+                if (nearestLineIndex == -1 || firstDistance < smallestDistance || lastDistance < smallestDistance)
+                {
+                    if (nearestLineIndex == -1)
+                    {
+                        smallestDistance = (firstDistance < lastDistance) ? firstDistance : lastDistance;
+                    }
+                    else
+                    {
+                        smallestDistance = (firstDistance < smallestDistance) ? firstDistance : smallestDistance;
+                        smallestDistance = (lastDistance < smallestDistance) ? lastDistance : smallestDistance;
+                    }
+                    nearestLineIndex = i;
+                }
             }
         }
         return lines[nearestLineIndex];
@@ -137,3 +164,23 @@ public class BandSawManager : MonoBehaviour
 //{
 //    Debug.Log("No pieces are available");
 //}
+
+
+//foreach (GameObject woodMat in WoodToCut)
+//{
+//    WoodMaterialObject wood = woodMat.GetComponent<WoodMaterialObject>();
+//    foreach (CutLine line in wood.LinesToCut)
+//    {
+//        if (line.CutType == CutLineType.CurvatureCut)
+//        {
+//            line.DisplayLine(true, false);
+//        }
+//    }
+//    BoardController controller = woodMat.AddComponent<BoardController>();
+//    controller.Moveable = true;
+//    controller.WoodObject = wood;
+//    woodMat.SetActive(false);
+//}
+//WoodToCut[currentPieceIndex].SetActive(true);
+//currentBoardController = WoodToCut[currentPieceIndex].GetComponent<BoardController>();
+//PlacePiece();
