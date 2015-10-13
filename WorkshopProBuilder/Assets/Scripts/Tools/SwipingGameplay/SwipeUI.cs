@@ -17,10 +17,11 @@ public class SwipeUI : MonoBehaviour
     public GameObject MessagePanelButton;
     public GameObject PlansPanel;
 
-    void Start()
+    void Awake()
     {
         SelectedButton.GetComponent<Image>().color = SelectedButtonColor;
         SelectedButton.GetComponent<Button>().enabled = false;
+        MessagePanel.SetActive(false);
         PlansPanel.SetActive(false);
     }
 

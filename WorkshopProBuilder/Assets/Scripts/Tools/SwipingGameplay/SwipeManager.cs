@@ -12,7 +12,6 @@ public class SwipeManager : MonoBehaviour
     public Material SandingMaterial;
     public Material LaqcuerMaterial;
     public SwipeUI UI_Manager;
-    public string NextScene;
     public bool PieceRotationEnabled { get; set; }
 
     private int currentPieceIndex = 0;
@@ -22,6 +21,7 @@ public class SwipeManager : MonoBehaviour
 
     void Start()
     {
+        UI_Manager.DisplayPlans(true);
         PieceRotationEnabled = false;
         Material selectedMaterial = PaintingMaterial;
         if (SwipeGameplayManager.type == SwipeGameType.Sanding)
@@ -95,8 +95,25 @@ public class SwipeManager : MonoBehaviour
             }
             if (scansComplete)
             {
-                //Get score from each scan for points
-                UI_Manager.DisplayFullMessagePanel("All pieces are done. Go to the next step");
+                float totalScore = 0;
+                for (int i = 0; i < textureScans.Count; i++)
+                {
+                    totalScore += textureScans[i].GetPercentageCorrect();
+                }
+                float overallScore = totalScore / textureScans.Count;
+                GameManager.instance.ApplyScore(overallScore);
+                if (overallScore >= 90.0f)
+                {
+                    UI_Manager.DisplayFullMessagePanel("Excellent!\nYou work was detailed and thorough. The end result is well done.");
+                }
+                else if (overallScore < 90.0f && overallScore >= 80.0f)
+                {
+                    UI_Manager.DisplayFullMessagePanel("Good job!\nSome minor issues here and there, but nothing to be worried about");
+                }
+                else
+                {
+                    UI_Manager.DisplayFullMessagePanel("Good enough.\nLooks like you missed several spots. Be a bit more thorough next time.");
+                }
                 scanning = false;
             }
         }
@@ -115,9 +132,9 @@ public class SwipeManager : MonoBehaviour
         }
     }
 
-    public void GoToNextScene()
+    public void GoToNextScene(string nextScene)
     {
-        Application.LoadLevel(NextScene);
+        Application.LoadLevel(nextScene);
     }
 
     void OnEnable()

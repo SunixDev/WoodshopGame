@@ -23,15 +23,19 @@ public class TableSawManager : MonoBehaviour, IToolManager
     public Blade SawBlade;
     public Ruler GameRuler;
     public TableSawCut CutGameplay;
+    public bool StillCutting { get; set; }
 
     private int currentPieceIndex = 0;
     private Transform currentSpawnPoint;
     private ActionState currentAction = ActionState.None;
     private ActionState previousAction = ActionState.None;
     private BoardController currentBoardController;
+    private float cumulativeLineScore = 0.0f;
 
 	void Start ()
     {
+        UI_Manager.DisplayPlans(true);
+        StillCutting = true;
         GameRuler.AssignManager(this);
         foreach (GameObject wood in AvailableWoodMaterial)
         {
@@ -42,6 +46,40 @@ public class TableSawManager : MonoBehaviour, IToolManager
         UI_Manager.UpdateSelectionButtons(currentPieceIndex, AvailableWoodMaterial.Count);
         SetupForCutting();
 	}
+
+    public void StopGameDueToLowScore(string message)
+    {
+        StillCutting = false;
+        UI_Manager.InfoPanel.SetActive(true);
+        UI_Manager.InfoText.text = message + "\nStart the project all over again with new materials.";
+        UI_Manager.HideButton.gameObject.SetActive(false);
+        UI_Manager.StartOverButton.gameObject.SetActive(true);
+        UI_Manager.NextSceneButton.gameObject.SetActive(false);
+    }
+
+    public void DisplayScore(FeedRate rateTracker)
+    {
+        UI_Manager.InfoPanel.SetActive(true);
+        float lineScore = rateTracker.GetLineScore();
+        cumulativeLineScore += lineScore;
+        string result = "";
+        if (lineScore >= 90.0f)
+        {
+            result += "Excellent! That was a perfect cut.";
+        }
+        else if (lineScore < 90.0f && lineScore >= 75.0f)
+        {
+            result += "Well done! It's a bit rough, but a clean cut regardless.";
+        }
+        else
+        {
+            result += "Not bad, but you can do a much better job. Remember to cut at a consistent rate and near the line.";
+        }
+        UI_Manager.InfoText.text = result;
+        UI_Manager.HideButton.gameObject.SetActive(true);
+        UI_Manager.StartOverButton.gameObject.SetActive(false);
+        UI_Manager.NextSceneButton.gameObject.SetActive(false);
+    }
 
     public void SplitMaterial(CutLine lineToRemove)
     {
@@ -113,7 +151,14 @@ public class TableSawManager : MonoBehaviour, IToolManager
         }
         else
         {
-            Debug.Log("All Lines Cut");
+            UI_Manager.InfoPanel.SetActive(true);
+            UI_Manager.InfoText.text = "All of the lines are cut. \nOn to the next step.";
+            UI_Manager.HideButton.gameObject.SetActive(false);
+            UI_Manager.StartOverButton.gameObject.SetActive(false);
+            UI_Manager.NextSceneButton.gameObject.SetActive(true);
+            StillCutting = false;
+            float percentage = cumulativeLineScore / LinesToCut.Count;
+            GameManager.instance.ApplyScore(percentage);
         }
     }
 

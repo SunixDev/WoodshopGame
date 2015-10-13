@@ -30,8 +30,9 @@ public class SnapPieceGameManager : MonoBehaviour
     private float TotalPercentage = 0.0f;
     private int TotalPiecesConnected = 0;
 
-    void Awake()
+    void Start()
     {
+        UI_Manager.DisplayPlans(true);
         SnapPiece initialPiece = PiecesToConnect[0];
         initialPiece.gameObject.SetActive(true);
         Destroy(initialPiece.gameObject.GetComponent<PieceController>());
@@ -149,21 +150,28 @@ public class SnapPieceGameManager : MonoBehaviour
             UI_Manager.InfoPanel.SetActive(true);
             UI_Manager.SceneButton.gameObject.SetActive(true);
             float overall = (TotalPercentage / Glues.Count);
-            //apply to score in game manager
+            GameManager.instance.ApplyScore(overall);
             if (Total_MinimumGlues == 0 && Total_TooMuchGlues == 0)
             {
                 UI_Manager.InfoText.text = "Results:\nExcellent gluing skills. Every piece was put together with the perfect amount of glue.\nOn to the next step.";
             }
             else
             {
-                UI_Manager.InfoText.text = "Results:\n" + Total_PerfectGlues + " areas had the right amount of glue.\n" +
-                                           Total_MinimumGlues + " areas needed more glue.\n" +
-                                           Total_TooMuchGlues + " areas had too much glue and bubbled out the seams." +
+                string praiseText = "";
+                if(Total_PerfectGlues > (Total_MinimumGlues + Total_TooMuchGlues))
+                {
+                    praiseText = "Nice job putting the pieces together. A little bit of clean up and this will look nice.";
+                }
+                else if (Total_PerfectGlues <= (Total_MinimumGlues + Total_TooMuchGlues))
+                {
+                    praiseText = "Not bad, but you need more practice in how much glue you add.";
+                }
+                UI_Manager.InfoText.text = praiseText + "Here are the results:\n" + 
+                                           "Areas with the perfect amount of glue: " + Total_PerfectGlues +
+                                           "\nAreas that needed a bit more glue: " + Total_MinimumGlues +
+                                           "\nAreas with too much glue that bubbled out the edges: " + Total_TooMuchGlues +
                                            "\nOn to the next step";
             }
-            Total_PerfectGlues = 0;
-            Total_MinimumGlues = 0;
-            Total_TooMuchGlues = 0;
         }
     }
 

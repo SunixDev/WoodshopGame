@@ -15,11 +15,17 @@ public class ChopSawUI : MonoBehaviour {
     public Button RotateClockwiseButton;
     public Button RotateCounterClockwiseButton;
     public Button ResetRotationButton;
+
     public GameObject PlansPanel;
+    public GameObject InfoPanel;
+    public Text InfoText;
+    public Button HideButton;
+    public Button StartOverButton;
+    public Button NextSceneButton;
 
     private bool SawButtonsActive = true;
 
-    void Start()
+    void Awake()
     {
         SelectedButton.GetComponent<Image>().color = SelectedButtonColor;
         SelectedButton.GetComponent<Button>().enabled = false;
@@ -29,6 +35,11 @@ public class ChopSawUI : MonoBehaviour {
     public void DisplayPlans(bool showPlans)
     {
         PlansPanel.SetActive(showPlans);
+    }
+
+    public void DisplayInfo(bool showPlans)
+    {
+        InfoPanel.SetActive(showPlans);
     }
 
     public void SwitchActiveButton(GameObject buttonToUse)

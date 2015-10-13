@@ -2,11 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameManager : MonoBehaviour 
+public class GameManager : MonoBehaviour
 {
-    //public Project CurrentProject;
-    //public Inventory PlayerInventory;
-    //public WoodMaterialManager WoodManager;
+    public float ProjectValue;
+
+    private float totalScorePercentage;
+    private float numberOfSteps;
 
     private static GameManager _instance;
     public static GameManager instance
@@ -31,94 +32,32 @@ public class GameManager : MonoBehaviour
                 Destroy(this.gameObject);
             }
         }
-
-        //if (PlayerInventory == null)
-        //{
-        //    PlayerInventory = GetComponent<Inventory>();
-        //}
-        //if (WoodManager == null)
-        //{
-        //    WoodManager = GetComponent<WoodMaterialManager>();
-        //}
     }
 
-    public int GetStep()
+    public void ResetScore()
     {
-        return -1;// CurrentProject.GetCurrentStepIndex();
+        totalScorePercentage = 0;
+        numberOfSteps = 0;
     }
 
-    public List<GameObject> GetNecessaryMaterials(CutLineType cutType)
+    public void ApplyScore(float percentageScore)
     {
-        //int currentStep = CurrentProject.GetCurrentStepIndex();
-        //List<GameObject> allMaterials = WoodManager.GetPiecesByLine(cutType);
-        //List<GameObject> allValidMaterials = new List<GameObject>();
-        //foreach (GameObject go in allMaterials)
-        //{
-        //    List<CutLine> lines = go.GetComponent<WoodMaterialObject>().LinesToCut;
-        //    foreach (CutLine line in lines)
-        //    {
-        //        StepID stepID = line.GetComponent<StepID>();
-        //        if (stepID != null)
-        //        {
-        //            if (stepID.UsedInStep(currentStep))
-        //            {
-        //                allValidMaterials.Add(go);
-        //                break;
-        //            }
-        //        }
-        //    }
-        //}
-        return null;
+        totalScorePercentage += percentageScore;
+        numberOfSteps++;
     }
 
-    public List<GameObject> GetMaterialsWithDadoCuts()
+    public float CalculateCurrentValue()
     {
-        //int currentStep = CurrentProject.GetCurrentStepIndex();
-        //List<GameObject> allMaterials = WoodManager.GetAllWoodMaterials();
-        //List<GameObject> allValidMaterials = new List<GameObject>();
-        //foreach (GameObject go in allMaterials)
-        //{
-        //    if (go.GetComponent<WoodMaterialObject>() != null)
-        //    {
-        //        List<DadoBlock> dadoCuts = go.GetComponent<WoodMaterialObject>().DadosToCut;
-        //        foreach (DadoBlock dadoCut in dadoCuts)
-        //        {
-        //            StepID stepID = dadoCut.GetComponent<StepID>();
-        //            if (stepID != null)
-        //            {
-        //                if (stepID.UsedInStep(currentStep))
-        //                {
-        //                    allValidMaterials.Add(go);
-        //                    break;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-        return null;// allValidMaterials;
-    }
-
-    public List<GameObject> GetNecessaryPieces()
-    {
-        //int currentStep = CurrentProject.GetCurrentStepIndex();
-        //List<GameObject> allMaterials = WoodManager.GetRevealedPieces();
-        //List<GameObject> allValidMaterials = new List<GameObject>();
-
-        //foreach (GameObject go in allMaterials)
-        //{
-        //    List<StepID> steps = new List<StepID>(go.GetComponents<StepID>());
-        //    bool found = false;
-        //    for (int i = 0; i < steps.Count && !found; i++)
-        //    {
-        //        if (steps[i].UsedInStep(currentStep))
-        //        {
-        //            found = true;
-        //            allValidMaterials.Add(go);
-        //        }
-        //    }
-        //}
-
-        return null;//allValidMaterials;
+        if (numberOfSteps == 0)
+        {
+            return ProjectValue;
+        }
+        else
+        {
+            float percentage = totalScorePercentage / numberOfSteps;
+            float valueFromPercentage = ProjectValue * (percentage / 100.0f);
+            return valueFromPercentage;
+        }
     }
 
     public void OnApplicationQuit()
@@ -126,3 +65,99 @@ public class GameManager : MonoBehaviour
         _instance = null;
     }
 }
+
+
+//if (PlayerInventory == null)
+//{
+//    PlayerInventory = GetComponent<Inventory>();
+//}
+//if (WoodManager == null)
+//{
+//    WoodManager = GetComponent<WoodMaterialManager>();
+//}
+
+
+//public Project CurrentProject;
+//public Inventory PlayerInventory;
+//public WoodMaterialManager WoodManager;
+
+
+
+//public int GetStep()
+//    {
+//        return -1;// CurrentProject.GetCurrentStepIndex();
+//    }
+
+//    public List<GameObject> GetNecessaryMaterials(CutLineType cutType)
+//    {
+//        int currentStep = CurrentProject.GetCurrentStepIndex();
+//        List<GameObject> allMaterials = WoodManager.GetPiecesByLine(cutType);
+//        List<GameObject> allValidMaterials = new List<GameObject>();
+//        foreach (GameObject go in allMaterials)
+//        {
+//            List<CutLine> lines = go.GetComponent<WoodMaterialObject>().LinesToCut;
+//            foreach (CutLine line in lines)
+//            {
+//                StepID stepID = line.GetComponent<StepID>();
+//                if (stepID != null)
+//                {
+//                    if (stepID.UsedInStep(currentStep))
+//                    {
+//                        allValidMaterials.Add(go);
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//        return null;
+//    }
+
+//    public List<GameObject> GetMaterialsWithDadoCuts()
+//    {
+//        int currentStep = CurrentProject.GetCurrentStepIndex();
+//        List<GameObject> allMaterials = WoodManager.GetAllWoodMaterials();
+//        List<GameObject> allValidMaterials = new List<GameObject>();
+//        foreach (GameObject go in allMaterials)
+//        {
+//            if (go.GetComponent<WoodMaterialObject>() != null)
+//            {
+//                List<DadoBlock> dadoCuts = go.GetComponent<WoodMaterialObject>().DadosToCut;
+//                foreach (DadoBlock dadoCut in dadoCuts)
+//                {
+//                    StepID stepID = dadoCut.GetComponent<StepID>();
+//                    if (stepID != null)
+//                    {
+//                        if (stepID.UsedInStep(currentStep))
+//                        {
+//                            allValidMaterials.Add(go);
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return null;// allValidMaterials;
+//    }
+
+//    public List<GameObject> GetNecessaryPieces()
+//    {
+//        int currentStep = CurrentProject.GetCurrentStepIndex();
+//        List<GameObject> allMaterials = WoodManager.GetRevealedPieces();
+//        List<GameObject> allValidMaterials = new List<GameObject>();
+
+//        foreach (GameObject go in allMaterials)
+//        {
+//            List<StepID> steps = new List<StepID>(go.GetComponents<StepID>());
+//            bool found = false;
+//            for (int i = 0; i < steps.Count && !found; i++)
+//            {
+//                if (steps[i].UsedInStep(currentStep))
+//                {
+//                    found = true;
+//                    allValidMaterials.Add(go);
+//                }
+//            }
+//        }
+
+//        return null;//allValidMaterials;
+//    }

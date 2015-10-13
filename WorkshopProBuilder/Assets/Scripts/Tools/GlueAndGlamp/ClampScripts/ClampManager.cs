@@ -23,6 +23,7 @@ public class ClampManager : MonoBehaviour
 
 	void Start () 
     {
+        UI_Manager.DisplayPlans(true);
         GameCamera.MovementEnabled = false;
         if (PlayerPrefs.HasKey(keyForDryingTime))
         {

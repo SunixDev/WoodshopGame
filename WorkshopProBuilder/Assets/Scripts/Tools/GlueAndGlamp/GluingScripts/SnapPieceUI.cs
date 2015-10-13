@@ -15,7 +15,7 @@ public class SnapPieceUI : MonoBehaviour
     public Image InfoImage;
     public GameObject PlansPanel;
 
-    void Start()
+    void Awake()
     {
         SelectedButton.GetComponent<Image>().color = SelectedButtonColor;
         SelectedButton.GetComponent<Button>().enabled = false;

@@ -84,6 +84,8 @@
     <Compile Include="Assets\Scripts\Enums\ToolType.cs" />
     <Compile Include="Assets\Scripts\Enums\WoodMaterialType.cs" />
     <Compile Include="Assets\Scripts\Enums\WorkMaterial.cs" />
+    <Compile Include="Assets\Scripts\FeedRateScripts\FeedRate.cs" />
+    <Compile Include="Assets\Scripts\FeedRateScripts\FeedRateBar.cs" />
     <Compile Include="Assets\Scripts\LineMark.cs" />
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
     <Compile Include="Assets\Scripts\Managers\Inventory.cs" />

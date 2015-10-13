@@ -118,7 +118,7 @@ public class CutLine : MonoBehaviour
 
     public void UpdateLine(Vector3 bladePosition)
     {
-        Debug.Log("CheckpointIndex: " + CheckpointIndex);
+        //Debug.Log("CheckpointIndex: " + CheckpointIndex);
         if (CutType == CutLineType.TableSawCut)
         {
             Vector3 difference = Checkpoints[CheckpointIndex].GetPosition() - bladePosition;

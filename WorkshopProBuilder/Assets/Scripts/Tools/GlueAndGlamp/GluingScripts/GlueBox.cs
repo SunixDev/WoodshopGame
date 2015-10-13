@@ -41,18 +41,19 @@ public class GlueBox : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f));
             if (Physics.Raycast(ray, out hit) && hit.collider == objCollider && previousHitPoint != hit.point)
             {
-                currentGlueAmount += GlueApplicationRate * Time.deltaTime;
+                if(currentGlueAmount <= (MaxGlueAmountBeforeTooMuch * 2.0f))
+                {
+                    currentGlueAmount += GlueApplicationRate * Time.deltaTime;
+                }
                 if (currentGlueAmount >= MinValueToActivatePointAndLowScore && !minimumGlueAmountReached)
                 {
                     ReadyToConnect = true;
                     minimumGlueAmountReached = true;
                     PointToActivate.CanConnect = true;
-                    Debug.Log("Minimum Reached");
                 }
                 if (currentGlueAmount >= MinValueForPerfectScore && currentGlueAmount < MaxGlueAmountBeforeTooMuch && !perfectGlueAmountReached)
                 {
                     perfectGlueAmountReached = true;
-                    Debug.Log("Perfect Score Reached");
                 }
                 foreach (GluePlane p in GluingPlanes)
                 {
@@ -65,6 +66,11 @@ public class GlueBox : MonoBehaviour
 
     public float GetTotalGlueApplied()
     {
+        if (currentGlueAmount > MaxGlueAmountBeforeTooMuch)
+        {
+            float amountPassedMax = currentGlueAmount - MaxGlueAmountBeforeTooMuch;
+            return MaxGlueAmountBeforeTooMuch - amountPassedMax;
+        }
         return currentGlueAmount;
     }
 

@@ -19,7 +19,6 @@ public class SnapPoint : MonoBehaviour
 
     void Start()
     {
-        HidePoint();
         isActive = false;
     }
 

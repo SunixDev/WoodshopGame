@@ -8,19 +8,26 @@ public class TableSawCut : MonoBehaviour
     public Blade SawBlade;
     public float ValidCutOffset = 0.005f;
     public float MaxStallTime = 3.0f;
-    //public float PushRateOffset = 0.001;
+    public FeedRate FeedRateTracker;
     public CutState CurrentState { get; set; }
 
-    private CutLine currentLine;
-    private bool cuttingAlongLine;
+    private CutLine currentLine = null;
+    private bool cuttingAlongLine = false;
+    private Vector3 currentPiecePosition;
     private Vector3 previousPiecePosition;
-    private float timeStalling;
+    
+    private float playerFeedRate = 0.0f;
+    private float playerSmoothingVelocity = 0.0f;
+
+    private float totalTimePassed = 0.0f;
+    private float timeUpdateFrequency = 0.1f;
+
+    private float totalTimeStalling = 0.0f;
+
+    private float timeNotCuttingLine = 0.0f;
 
     void Start()
     {
-        currentLine = null;
-        cuttingAlongLine = false;
-        timeStalling = 0.0f;
         CurrentState = CutState.ReadyToCut;
     }
 
@@ -45,25 +52,51 @@ public class TableSawCut : MonoBehaviour
 
         float distanceFromBlade = currentLine.CalculateDistance(SawBlade.EdgePosition());
         cuttingAlongLine = (distanceFromBlade <= ValidCutOffset);
+        if (cuttingAlongLine && distanceFromBlade >= 0.003f)
+        {
+            FeedRateTracker.ReduceScoreDirectly(0.5f);
+        }
+        else if (!cuttingAlongLine)
+        {
+            FeedRateTracker.ReduceScoreDirectly(3.0f);
+        }
 
         manager.RestrictCurrentBoardMovement(false, true);
         previousPiecePosition = manager.GetCurrentBoardPosition();
         CurrentState = CutState.Cutting;
+        totalTimePassed = 0.0f;
     }
 
     private float TrackPushRate()
     {
-        Vector3 currentPosition = manager.GetCurrentBoardPosition();
-        Vector3 deltaVector = currentPosition - previousPiecePosition;
-        previousPiecePosition = currentPosition;
-        return deltaVector.magnitude;
+        Vector3 deltaVector = currentPiecePosition - previousPiecePosition;
+        deltaVector = new Vector3(deltaVector.x, 0.0f, deltaVector.z);
+        float unitsPerSecond = deltaVector.magnitude / Time.deltaTime;
+        return Mathf.SmoothDamp(playerFeedRate, unitsPerSecond, ref playerSmoothingVelocity, 0.3f);
+    }
+
+    private void UpdateFeedRateDate()
+    {
+        if (SawBlade.SawBladeActive)
+        {
+            playerFeedRate = TrackPushRate();
+        }
+        else
+        {
+            playerFeedRate = 0.0f;
+        }
+        FeedRateTracker.UpdateDataDisplay(playerFeedRate);
     }
 
     void Update()
     {
         #region CuttingCode
-        if (manager.LinesToCut.Count > 0)
+        if (manager.StillCutting)
         {
+            currentPiecePosition = manager.GetCurrentBoardPosition();
+            totalTimePassed += Time.deltaTime;
+            UpdateFeedRateDate();
+            
             if (CurrentState == CutState.ReadyToCut)
             {
                 SwitchLine();
@@ -90,22 +123,47 @@ public class TableSawCut : MonoBehaviour
                     }
                     else
                     {
-                        float pushRate = TrackPushRate();
-                        Debug.Log("Push Rate: " + (pushRate * 100));
-                        timeStalling = 0.0f;
-                        //Calculate push rate is within consistent rate
-                        //Lose points if too slow or too fast
+                        if (totalTimePassed >= timeUpdateFrequency)
+                        {
+                            totalTimePassed = 0.0f;
+                            FeedRateTracker.UpdateScoreWithRate(playerFeedRate);
+                        }
+                        if (FeedRateTracker.RateTooSlow || FeedRateTracker.RateTooFast)
+                        {
+                            totalTimeStalling += Time.deltaTime;
+                            if (totalTimeStalling >= MaxStallTime && FeedRateTracker.RateTooSlow)
+                            {
+                                manager.StopGameDueToLowScore("You were cutting too slow, now the wood is burnt.");
+                            }
+                            else if (totalTimeStalling >= 1.0f && FeedRateTracker.RateTooFast)
+                            {
+                                manager.StopGameDueToLowScore("You were cutting too fast and caused the saw to bind.");
+                            }
+                        }
                     }
                 }
                 else
                 {
-                    //Decrease value by certain amount until zero and need to start over
                     if (SawBlade.NoInteractionWithBoard)
                     {
+                        timeNotCuttingLine = 0.0f;
                         CurrentState = CutState.ReadyToCut;
                         SawBlade.ResetEdgePosition();
                         currentLine = null;
                         manager.RestrictCurrentBoardMovement(false, false);
+                    }
+                    else
+                    {
+                        timeNotCuttingLine += Time.deltaTime;
+                        if (totalTimePassed >= timeUpdateFrequency)
+                        {
+                            totalTimePassed = 0.0f;
+                            FeedRateTracker.ReduceScoreDirectly(1.0f);
+                        }
+                        if (timeNotCuttingLine >= MaxStallTime)
+                        {
+                            manager.StopGameDueToLowScore("You were not cutting along the line, and now the board is ruined.");
+                        }
                     }
                 }
             }
@@ -113,13 +171,20 @@ public class TableSawCut : MonoBehaviour
             {
                 if (!SawBlade.CuttingWoodBoard && SawBlade.NoInteractionWithBoard)
                 {
+                    manager.DisplayScore(FeedRateTracker);
                     manager.SplitMaterial(currentLine);
                     cuttingAlongLine = false;
                     currentLine = null;
                     SawBlade.ResetEdgePosition();
                     CurrentState = CutState.ReadyToCut;
+                    FeedRateTracker.ResetFeedRate();
                 }
             }
+        }
+        previousPiecePosition = currentPiecePosition;
+        if (FeedRateTracker.GetLineScore() <= 0.0f)
+        {
+            manager.StopGameDueToLowScore("This cut is too messed up to keep going.");
         }
         #endregion
     }
@@ -135,18 +200,3 @@ public class TableSawCut : MonoBehaviour
         SawBlade.ResetEdgePosition();
     }
 }
-
-
-
-//if (pushRate == 0)
-//{
-//    timeStalling += Time.deltaTime;
-//    if (timeStalling >= MaxStallTime)
-//    {
-//        //Wood burnt, Start over
-//    }
-//}
-//else
-//{
-
-//}

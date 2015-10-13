@@ -33,12 +33,10 @@ public class DadoCutManager : MonoBehaviour
 	void Start () 
     {
         BladeControl.Moveable = false;
-        AvailableWoodMaterial = GameManager.instance.GetMaterialsWithDadoCuts();
         DadosToCut = new List<DadoBlock>();
         foreach (GameObject go in AvailableWoodMaterial)
         {
             WoodMaterialObject wood = go.GetComponent<WoodMaterialObject>();
-            DadosToCut.AddRange(wood.RetrieveDadoCuts(GameManager.instance.GetStep()));
             BoardController controller = go.AddComponent<BoardController>();
             controller.Moveable = true;
             controller.WoodObject = wood;
@@ -47,7 +45,7 @@ public class DadoCutManager : MonoBehaviour
         foreach (DadoBlock dadoBlock in DadosToCut)
         {
             MeshRenderer meshRenderer = dadoBlock.GetComponent<MeshRenderer>();
-            meshRenderer.material.color = Color.white;
+            meshRenderer.material.color = Color.green;
         }
         AvailableWoodMaterial[currentPieceIndex].SetActive(true);
         currentBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();

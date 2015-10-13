@@ -104,6 +104,10 @@ public class Ruler : MonoBehaviour
         {
             float distanceToLine = line.CalculateDistance(markPosition);
             closeToLine = (distanceToLine < OffsetFromLine);
+            if (closeToLine)
+            {
+                Debug.Log(distanceToLine);
+            }
         }
         else if (line.CutType == CutLineType.ChopSawCut)
         {
