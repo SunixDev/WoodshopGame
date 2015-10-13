@@ -146,6 +146,23 @@ public class CutLine : MonoBehaviour
         }
     }
 
+    public void UpdateLine(Vector3 bladePosition, float validDistance)
+    {
+        if (CutType == CutLineType.CurvatureCut)
+        {
+            float distance = Vector3.Distance(Checkpoints[CheckpointIndex].GetPosition(), bladePosition);
+            if (distance <= validDistance)
+            {
+                UpdateToNextCheckpoint();
+            }
+        }
+    }
+
+    public void Reset()
+    {
+        CheckpointIndex = (CutBackwards) ? Checkpoints.Count - 1 : 0;
+    }
+
     public void DetermineCutDirection(Vector3 position)
     {
         Vector3 firstPosition = Checkpoints[0].GetPosition();

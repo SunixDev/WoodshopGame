@@ -7,21 +7,24 @@ public class BandSawCutting : MonoBehaviour
     public BandSawManager manager;
     public BandSawBlade Blade;
     public float ValidCutOffset = 0.005f;
-    public float MaxStallTime = 3.0f;
-    //public float PushRateOffset = 0.001;
     public Color SelectedLineColor;
     public Color NotSelectedLineColor;
     public CutState CurrentState { get; set; }
 
     private CutLine currentLine;
-    private bool cuttingAlongLine;
     private Vector3 previousBoardPosition;
     private float timeStalling;
+    private float lineScore = 100.0f;
+
+    private float totalTimeNotCuttingLine = 0.0f;
+    private float MaxTimeAwayFromLine = 2.0f;
+
+    private float totalTimePassed = 0.0f;
+    private float timeUpdateFrequency = 0.1f;
 
 	void Start () 
     {
         currentLine = null;
-        cuttingAlongLine = false;
         timeStalling = 0.0f;
         CurrentState = CutState.ReadyToCut;
 	}
@@ -40,28 +43,17 @@ public class BandSawCutting : MonoBehaviour
     private void StartWoodCutting()
     {
         currentLine.DetermineCutDirection(Blade.transform.position);
-
-        float distanceFromBlade = currentLine.CalculateDistance(Blade.transform.position);
-        Debug.Log("distanceFromBlade: " + distanceFromBlade);
-        cuttingAlongLine = (distanceFromBlade <= ValidCutOffset);
-
         previousBoardPosition = manager.GetCurrentBoardPosition();
         CurrentState = CutState.Cutting;
-    }
-
-    private float TrackPushRate()
-    {
-        Vector3 currentPosition = manager.GetCurrentBoardPosition();
-        Vector3 deltaVector = currentPosition - previousBoardPosition;
-        previousBoardPosition = currentPosition;
-        return deltaVector.magnitude;
+        manager.SetUpBoardForCutting(true);
     }
 	
 	void Update () 
     {
         #region CuttingCode
-        if (manager.WoodToCut.Count > 0)
+        if (manager.StillCutting)
         {
+            totalTimePassed += Time.deltaTime;
             if (CurrentState == CutState.ReadyToCut)
             {
                 SwitchLine();
@@ -73,36 +65,53 @@ public class BandSawCutting : MonoBehaviour
                     RaycastHit hit;
                     if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Piece" || hit.collider.tag == "Leftover" || hit.collider.tag == "Dado"))
                     {
+                        hit.collider.gameObject.transform.parent.GetComponent<BandSawPieceController>().RotationPoint = hit.point;
                         StartWoodCutting();
                     }
                 }
             }
             else if (CurrentState == CutState.Cutting && Blade.SawActive)
             {
+                float distanceFromBlade = currentLine.CalculateDistance(Blade.transform.position);
+                bool cuttingAlongLine = (distanceFromBlade <= ValidCutOffset);
                 if (cuttingAlongLine)
                 {
-                    currentLine.UpdateLine(Blade.transform.position);
+                    currentLine.UpdateLine(Blade.transform.position, ValidCutOffset);
                     if (currentLine.LineIsCut())
                     {
                         CurrentState = CutState.EndOfCut;
                     }
-                    else
+                    if (totalTimePassed >= timeUpdateFrequency)
                     {
-                        float pushRate = TrackPushRate();
-                        //Debug.Log("Push Rate: " + (pushRate * 100));
-                        timeStalling = 0.0f;
-                        //Calculate push rate is within consistent rate
-                        //Lose points if too slow or too fast
+                        totalTimePassed = 0.0f;
+                        if (distanceFromBlade <= ValidCutOffset && distanceFromBlade >= 0.015f)
+                        {
+                            lineScore -= 0.2f;
+                        }
+                        else if (distanceFromBlade <= 0.015f && distanceFromBlade >= 0.01f)
+                        {
+                            lineScore -= 0.1f;
+                        }
                     }
                 }
                 else
                 {
-                    //Decrease value by certain amount until zero and need to start over
-                    if (Blade.NoInteractionWithBoard)
+                    if (totalTimePassed >= timeUpdateFrequency)
+                    {
+                        totalTimePassed = 0.0f;
+                        lineScore -= 0.5f;
+                    }
+                    totalTimeNotCuttingLine += Time.deltaTime;
+                    if (totalTimeNotCuttingLine >= MaxTimeAwayFromLine)
+                    {
+                        manager.StopGameDueToLowScore("You've messed up the wood too much.");
+                    }
+                    else if (Blade.NoInteractionWithBoard)
                     {
                         CurrentState = CutState.ReadyToCut;
                         Blade.ResetEdgePosition();
                         currentLine = null;
+                        manager.SetUpBoardForCutting(false);
                     }
                 }
             }
@@ -110,12 +119,25 @@ public class BandSawCutting : MonoBehaviour
             {
                 if (!Blade.CuttingWoodBoard && Blade.NoInteractionWithBoard)
                 {
+                    Debug.Log("lineScore: " + lineScore);
+                    manager.DisplayScore(lineScore);
+                    lineScore = 100.0f;
+                    manager.SetUpBoardForCutting(false);
                     manager.SplitMaterial(currentLine);
-                    cuttingAlongLine = false;
                     currentLine = null;
                     Blade.ResetEdgePosition();
                     CurrentState = CutState.ReadyToCut;
                 }
+            }
+
+            if (lineScore <= 0.0f)
+            {
+                manager.StopGameDueToLowScore("This cut is too messed up to keep going.");
+            }
+
+            if (totalTimePassed >= timeUpdateFrequency)
+            {
+                totalTimePassed = 0.0f;
             }
         }
         #endregion

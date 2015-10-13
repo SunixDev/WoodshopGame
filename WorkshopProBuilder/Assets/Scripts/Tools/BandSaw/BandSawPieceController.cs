@@ -6,6 +6,8 @@ public class BandSawPieceController : MonoBehaviour
     public bool Moveable = true;
     public Transform objTransform { get; set; }
     public WoodMaterialObject WoodObject { get; set; }
+    public bool BeingCut { get; set; }
+    public Vector3 RotationPoint { get; set; }
 
     private bool selected = false;
     private Vector3 previousPosition = Vector3.zero;
@@ -13,6 +15,7 @@ public class BandSawPieceController : MonoBehaviour
 
     void Start()
     {
+        BeingCut = false;
         objTransform = GetComponent<Transform>();
         WoodObject = GetComponent<WoodMaterialObject>();
     }
@@ -49,14 +52,16 @@ public class BandSawPieceController : MonoBehaviour
     {
         if (Moveable && selected && gesture.touchCount == 2)
         {
-            //if (rotationPoint == Vector3.zero)
-            //{
-            //    Vector3 position = gesture.GetTouchToWorldPoint(transform.position);
-            //    rotationPoint = position;
-            //}
-            Vector3 position = gesture.GetTouchToWorldPoint(transform.position);
             Vector3 axis = Vector3.up;
-            transform.RotateAround(position, axis, -gesture.twistAngle);
+            if (BeingCut)
+            {
+                transform.RotateAround(RotationPoint, axis, -gesture.twistAngle);
+            }
+            else
+            {
+                Vector3 position = gesture.GetTouchToWorldPoint(transform.position);
+                transform.RotateAround(position, axis, -gesture.twistAngle);
+            }
         }
     }
 
@@ -64,16 +69,31 @@ public class BandSawPieceController : MonoBehaviour
     {
         selected = false;
         previousPosition = Vector3.zero;
-        rotationPoint = Vector3.zero;
     }
 
     private void Move(Gesture gesture)
     {
         Vector3 position = gesture.GetTouchToWorldPoint(transform.position);
         Vector3 nextPosition = position - previousPosition;
-        previousPosition = position;
-        nextPosition = new Vector3(nextPosition.x, 0.0f, nextPosition.z);
+        if (BeingCut)
+        {
+            nextPosition = new Vector3(0.0f, 0.0f, nextPosition.z);
+        }
+        else
+        {
+            nextPosition = new Vector3(nextPosition.x, 0.0f, nextPosition.z);
+        }
         objTransform.position += nextPosition;
+        previousPosition = position;
+    }
+
+    private bool FingersAreNextToEachOther(Vector3 positionToCompare, Gesture gesture)
+    {
+        Vector3 fingetOnePosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
+        fingetOnePosition.z = positionToCompare.y;
+        Vector3 fingetTwoPosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(1).position);
+        fingetTwoPosition.z = positionToCompare.y;
+        return true;
     }
 
     void OnEnable()

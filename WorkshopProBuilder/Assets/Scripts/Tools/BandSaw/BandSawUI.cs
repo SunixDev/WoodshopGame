@@ -8,10 +8,16 @@ public class BandSawUI : MonoBehaviour
     public Button StartSawButton;
     public Button StopSawButton;
     public GameObject PlansPanel;
+    public GameObject InfoPanel;
+    public Text InfoText;
+    public Button HideButton;
+    public Button StartOverButton;
+    public Button NextSceneButton;
+
 
     private bool SawButtonsActive = true;
 
-    void Start()
+    void Awake()
     {
         PlansPanel.SetActive(false);
     }
@@ -19,6 +25,11 @@ public class BandSawUI : MonoBehaviour
     public void DisplayPlans(bool showPlans)
     {
         PlansPanel.SetActive(showPlans);
+    }
+
+    public void DisplayInfo(bool showPlans)
+    {
+        InfoPanel.SetActive(showPlans);
     }
 
     public void ChangeSawButtons(bool bladeIsActive)

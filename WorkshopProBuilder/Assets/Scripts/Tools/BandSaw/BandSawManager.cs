@@ -5,38 +5,77 @@ using System.Collections.Generic;
 public class BandSawManager : MonoBehaviour 
 {
     public List<GameObject> WoodToCut;
+    public List<CutLine> LinesToCut;
     public Transform PlacementFromBlade;
     public BandSawUI UI_Manager;
+    public bool StillCutting { get; set; }
 
     private int currentPieceIndex = 0;
+    private float cumulativeLineScore = 0.0f;
 
-	void Start () 
+    void Start()
     {
+        StillCutting = true;
+        UI_Manager.DisplayPlans(true);
         UI_Manager.ChangeSawButtons(false);
         foreach (GameObject woodMat in WoodToCut)
         {
-            WoodMaterialObject wood = woodMat.GetComponent<WoodMaterialObject>();
-            foreach (CutLine line in wood.LinesToCut)
-            {
-                if (line.CutType == CutLineType.CurvatureCut)
-                {
-                    line.lineRenderer.enabled = true;
-                }
-            }
             woodMat.SetActive(false);
+        }
+        foreach (CutLine line in LinesToCut)
+        {
+            if (line.CutType == CutLineType.CurvatureCut)
+            {
+                line.lineRenderer.enabled = true;
+            }
         }
         WoodToCut[currentPieceIndex].SetActive(true);
         PlacePiece();
     }
 
+    public void StopGameDueToLowScore(string message)
+    {
+        StillCutting = false;
+        UI_Manager.InfoPanel.SetActive(true);
+        UI_Manager.InfoText.text = message + "\nStart the project all over again with new materials.";
+        UI_Manager.HideButton.gameObject.SetActive(false);
+        UI_Manager.StartOverButton.gameObject.SetActive(true);
+        UI_Manager.NextSceneButton.gameObject.SetActive(false);
+    }
+
+    public void DisplayScore(float lineScore)
+    {
+        UI_Manager.InfoPanel.SetActive(true);
+        cumulativeLineScore += lineScore;
+        string result = "";
+        if (lineScore >= 90.0f)
+        {
+            result += "Excellent! That was a perfect cut.";
+        }
+        else if (lineScore < 90.0f && lineScore >= 75.0f)
+        {
+            result += "Well done! It's a bit rough, but a clean cut regardless.";
+        }
+        else
+        {
+            result += "Not bad, but you can do a much better job. Remember to cut at a consistent rate and near the line.";
+        }
+        UI_Manager.InfoText.text = result;
+        UI_Manager.HideButton.gameObject.SetActive(true);
+        UI_Manager.StartOverButton.gameObject.SetActive(false);
+        UI_Manager.NextSceneButton.gameObject.SetActive(false);
+    }
+
     public void SplitMaterial(CutLine lineToRemove)
     {
-        if (WoodToCut.Count > 0)
+        WoodToCut[currentPieceIndex].transform.rotation = Quaternion.identity;
+        WoodMaterialObject woodBoard = WoodToCut[currentPieceIndex].GetComponent<WoodMaterialObject>();
+        LinesToCut.Remove(lineToRemove);
+        List<GameObject> pieces = WoodManagerHelper.SplitBoard(lineToRemove.GetFirstBaseNode(),
+                                                    lineToRemove.GetSecondBaseNode(),
+                                                    woodBoard, lineToRemove);
+        if (LinesToCut.Count > 0)
         {
-            WoodMaterialObject woodBoard = WoodToCut[currentPieceIndex].GetComponent<WoodMaterialObject>();
-            List<GameObject> pieces = WoodManagerHelper.SplitBoard(lineToRemove.GetFirstBaseNode(),
-                                                        lineToRemove.GetSecondBaseNode(),
-                                                        woodBoard, lineToRemove);
             foreach (GameObject piece in pieces)
             {
                 if (piece.tag == "Piece")
@@ -58,7 +97,18 @@ public class BandSawManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("All lines cut");
+            UI_Manager.InfoPanel.SetActive(true);
+            UI_Manager.InfoText.text = "All of the lines are cut. \nOn to the next step.";
+            UI_Manager.HideButton.gameObject.SetActive(false);
+            UI_Manager.StartOverButton.gameObject.SetActive(false);
+            UI_Manager.NextSceneButton.gameObject.SetActive(true);
+            StillCutting = false;
+            float percentage = cumulativeLineScore / LinesToCut.Count;
+            Debug.Log(percentage);
+            if (GameManager.instance != null)
+            {
+                GameManager.instance.ApplyScore(percentage);
+            }
         }
     }
 
@@ -89,6 +139,11 @@ public class BandSawManager : MonoBehaviour
         return WoodToCut[currentPieceIndex].transform.position;
     }
 
+    public void SetUpBoardForCutting(bool beingCut)
+    {
+        WoodToCut[currentPieceIndex].GetComponent<BandSawPieceController>().BeingCut = beingCut;
+    }
+
     public bool AllLinesOnBoardAreCut()
     {
         WoodMaterialObject wood = WoodToCut[currentPieceIndex].GetComponent<WoodMaterialObject>();
@@ -108,6 +163,11 @@ public class BandSawManager : MonoBehaviour
         return currentPieceIndex == WoodToCut.Count;
     }
 
+    public void SwitchScene(string level)
+    {
+        Application.LoadLevel(level);
+    }
+
     public CutLine GetNearestLine(Vector3 fromPosition)
     {
         bool lineFound = false;
@@ -117,25 +177,28 @@ public class BandSawManager : MonoBehaviour
         for (int i = 0; i < lines.Count && !lineFound; i++)
         {
             CutLine currentLine = lines[i];
-            if (currentLine.CutType == CutLineType.CurvatureCut)
+            if (currentLine != null)
             {
-                float firstDistance = Vector3.Distance(fromPosition, currentLine.Checkpoints[0].GetPosition());
-                float lastDistance = Vector3.Distance(fromPosition, currentLine.Checkpoints[currentLine.Checkpoints.Count - 1].GetPosition());
-
-                
-
-                if (nearestLineIndex == -1 || firstDistance < smallestDistance || lastDistance < smallestDistance)
+                if (currentLine.CutType == CutLineType.CurvatureCut)
                 {
-                    if (nearestLineIndex == -1)
+                    float firstDistance = Vector3.Distance(fromPosition, currentLine.Checkpoints[0].GetPosition());
+                    float lastDistance = Vector3.Distance(fromPosition, currentLine.Checkpoints[currentLine.Checkpoints.Count - 1].GetPosition());
+
+
+
+                    if (nearestLineIndex == -1 || firstDistance < smallestDistance || lastDistance < smallestDistance)
                     {
-                        smallestDistance = (firstDistance < lastDistance) ? firstDistance : lastDistance;
+                        if (nearestLineIndex == -1)
+                        {
+                            smallestDistance = (firstDistance < lastDistance) ? firstDistance : lastDistance;
+                        }
+                        else
+                        {
+                            smallestDistance = (firstDistance < smallestDistance) ? firstDistance : smallestDistance;
+                            smallestDistance = (lastDistance < smallestDistance) ? lastDistance : smallestDistance;
+                        }
+                        nearestLineIndex = i;
                     }
-                    else
-                    {
-                        smallestDistance = (firstDistance < smallestDistance) ? firstDistance : smallestDistance;
-                        smallestDistance = (lastDistance < smallestDistance) ? lastDistance : smallestDistance;
-                    }
-                    nearestLineIndex = i;
                 }
             }
         }

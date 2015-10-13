@@ -186,6 +186,10 @@ public class TableSawCut : MonoBehaviour
         {
             manager.StopGameDueToLowScore("This cut is too messed up to keep going.");
         }
+        if (totalTimePassed >= timeUpdateFrequency)
+        {
+            totalTimePassed = 0.0f;
+        }
         #endregion
     }
 
