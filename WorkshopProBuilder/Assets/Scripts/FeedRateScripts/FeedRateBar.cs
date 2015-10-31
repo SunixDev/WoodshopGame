@@ -37,8 +37,8 @@ public class FeedRateBar : MonoBehaviour
 
     public void UpdateColor(float amount, float maxAmount, float minRate, float maxRate)
     {
-        float percentage = (amount * 100) / maxAmount;
-        float amountToApply = MaxWidth * (percentage / 100);
+        //float percentage = (amount * 100) / maxAmount;
+        //float amountToApply = MaxWidth * (percentage / 100);
 
         float minPercentage = (minRate * 100) / maxAmount;
         float min = MaxWidth * (minPercentage / 100);

@@ -31,9 +31,11 @@ public class TableSawManager : MonoBehaviour, IToolManager
     private ActionState previousAction = ActionState.None;
     private BoardController currentBoardController;
     private float cumulativeLineScore = 0.0f;
+    private float numberOfCuts;
 
 	void Start ()
     {
+        numberOfCuts = LinesToCut.Count;
         UI_Manager.DisplayPlans(true);
         StillCutting = true;
         GameRuler.AssignManager(this);
@@ -132,18 +134,18 @@ public class TableSawManager : MonoBehaviour, IToolManager
                     Destroy(piece);
                 }
             }
-
-            if (!pieceAdded && AvailableWoodMaterial.Count > 0)
-            {
-                currentPieceIndex = 0;
-                AvailableWoodMaterial[currentPieceIndex].SetActive(true);
-                currentBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();
-                SetupForCutting();
-                PlacePiece();
-            }
-            SawBlade.TurnOff();
-            UI_Manager.ChangeSawButtons(false);
         }
+
+        if (!pieceAdded && AvailableWoodMaterial.Count > 0)
+        {
+            currentPieceIndex = 0;
+            AvailableWoodMaterial[currentPieceIndex].SetActive(true);
+            currentBoardController = AvailableWoodMaterial[currentPieceIndex].GetComponent<BoardController>();
+            SetupForCutting();
+            PlacePiece();
+        }
+        SawBlade.TurnOff();
+        UI_Manager.ChangeSawButtons(false);
 
         if (LinesToCut.Count > 0)
         {
@@ -157,8 +159,15 @@ public class TableSawManager : MonoBehaviour, IToolManager
             UI_Manager.StartOverButton.gameObject.SetActive(false);
             UI_Manager.NextSceneButton.gameObject.SetActive(true);
             StillCutting = false;
-            float percentage = cumulativeLineScore / LinesToCut.Count;
-            GameManager.instance.ApplyScore(percentage);
+            float percentage = cumulativeLineScore / numberOfCuts;
+            if (GameManager.instance != null)
+            {
+                GameManager.instance.ApplyScore(percentage);
+            }
+            else
+            {
+                Debug.Log("Not game manager");
+            }
         }
     }
 
@@ -297,7 +306,7 @@ public class TableSawManager : MonoBehaviour, IToolManager
             GameCamera.ChangeDistanceVariables(1.0f, 0.1f, 2.0f);
             GameCamera.ChangeVerticalRotationLimit(0.0f, 180.0f);
             GameCamera.ChangeAngle(0.0f, 89.5f);
-            GameCamera.PanSensitivity = 0.5f;
+            GameCamera.PanSensitivity = 0.2f;
         }
         GameCamera.EnableRotation(false);
         GameCamera.EnableMovement(false);

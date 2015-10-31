@@ -11,7 +11,6 @@ public class BandSawPieceController : MonoBehaviour
 
     private bool selected = false;
     private Vector3 previousPosition = Vector3.zero;
-    private Vector3 rotationPoint = Vector3.zero;
 
     void Start()
     {

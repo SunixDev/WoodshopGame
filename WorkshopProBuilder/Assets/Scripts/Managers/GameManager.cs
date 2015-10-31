@@ -5,9 +5,13 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour
 {
     public float ProjectValue;
+    public string LevelKey;
+    public string DryTimeKey;
+    public string ScoreKey;
+    public string StepsKey;
 
-    private float totalScorePercentage;
-    private float numberOfSteps;
+    public float totalScorePercentage { get; set; }
+    public float numberOfSteps { get; set; }
 
     private static GameManager _instance;
     public static GameManager instance
@@ -34,6 +38,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        bool buttonPressed = Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Menu);
+        if (buttonPressed && Application.platform == RuntimePlatform.Android)
+        {
+            Application.Quit();
+        }
+    }
+
     public void ResetScore()
     {
         totalScorePercentage = 0;
@@ -57,6 +70,18 @@ public class GameManager : MonoBehaviour
             float percentage = totalScorePercentage / numberOfSteps;
             float valueFromPercentage = ProjectValue * (percentage / 100.0f);
             return valueFromPercentage;
+        }
+    }
+
+    public float CalculatePercentage()
+    {
+        if (numberOfSteps == 0)
+        {
+            return 100;
+        }
+        else
+        {
+            return totalScorePercentage / numberOfSteps;
         }
     }
 

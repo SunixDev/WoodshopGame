@@ -23,7 +23,7 @@ public class SnapPieceGameManager : MonoBehaviour
     private WoodPiece CurrentPiece;
     private int currentPieceIndex = 0;
     private List<SnapPiece> ConnectedPieces = new List<SnapPiece>();
-    private bool inProgress = true;
+    //private bool inProgress = true;
     private int Total_PerfectGlues = 0;
     private int Total_MinimumGlues = 0;
     private int Total_TooMuchGlues = 0;
@@ -150,7 +150,14 @@ public class SnapPieceGameManager : MonoBehaviour
             UI_Manager.InfoPanel.SetActive(true);
             UI_Manager.SceneButton.gameObject.SetActive(true);
             float overall = (TotalPercentage / Glues.Count);
-            GameManager.instance.ApplyScore(overall);
+            if (GameManager.instance != null)
+            {
+                GameManager.instance.ApplyScore(overall);
+            }
+            else
+            {
+                Debug.Log("No Game manager");
+            }
             if (Total_MinimumGlues == 0 && Total_TooMuchGlues == 0)
             {
                 UI_Manager.InfoText.text = "Results:\nExcellent gluing skills. Every piece was put together with the perfect amount of glue.\nOn to the next step.";

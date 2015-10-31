@@ -24,11 +24,11 @@ public class BandSawBlade : MonoBehaviour
     }
 
     private Vector3 originalBladePosition;
-    private List<GameObject> HitObjects;
+    //private List<GameObject> HitObjects;
 
     void Awake()
     {
-        HitObjects = new List<GameObject>();
+        //HitObjects = new List<GameObject>();
         originalBladePosition = transform.position;
         NoInteractionWithBoard = true;
         CuttingWoodBoard = false;

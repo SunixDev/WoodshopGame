@@ -58,7 +58,7 @@ public class TableSawCut : MonoBehaviour
         }
         else if (!cuttingAlongLine)
         {
-            FeedRateTracker.ReduceScoreDirectly(3.0f);
+            FeedRateTracker.ReduceScoreDirectly(1.0f);
         }
 
         manager.RestrictCurrentBoardMovement(false, true);
@@ -75,7 +75,7 @@ public class TableSawCut : MonoBehaviour
         return Mathf.SmoothDamp(playerFeedRate, unitsPerSecond, ref playerSmoothingVelocity, 0.3f);
     }
 
-    private void UpdateFeedRateDate()
+    private void UpdateFeedRateData()
     {
         if (SawBlade.SawBladeActive)
         {
@@ -95,7 +95,7 @@ public class TableSawCut : MonoBehaviour
         {
             currentPiecePosition = manager.GetCurrentBoardPosition();
             totalTimePassed += Time.deltaTime;
-            UpdateFeedRateDate();
+            UpdateFeedRateData();
             
             if (CurrentState == CutState.ReadyToCut)
             {
@@ -126,11 +126,13 @@ public class TableSawCut : MonoBehaviour
                         if (totalTimePassed >= timeUpdateFrequency)
                         {
                             totalTimePassed = 0.0f;
+                            totalTimeStalling = 0.0f;
                             FeedRateTracker.UpdateScoreWithRate(playerFeedRate);
                         }
                         if (FeedRateTracker.RateTooSlow || FeedRateTracker.RateTooFast)
                         {
                             totalTimeStalling += Time.deltaTime;
+                            FeedRateTracker.ReduceScoreDirectly(0.1f);
                             if (totalTimeStalling >= MaxStallTime && FeedRateTracker.RateTooSlow)
                             {
                                 manager.StopGameDueToLowScore("You were cutting too slow, now the wood is burnt.");

@@ -12,9 +12,11 @@ public class BandSawManager : MonoBehaviour
 
     private int currentPieceIndex = 0;
     private float cumulativeLineScore = 0.0f;
+    private float numberOfCuts;
 
     void Start()
     {
+        numberOfCuts = LinesToCut.Count;
         StillCutting = true;
         UI_Manager.DisplayPlans(true);
         UI_Manager.ChangeSawButtons(false);
@@ -84,6 +86,10 @@ public class BandSawManager : MonoBehaviour
                     Destroy(piece);
                     NextPiece();
                 }
+                else if (piece.tag == "Leftover")
+                {
+
+                }
                 else
                 {
                     Rigidbody physics = piece.AddComponent<Rigidbody>();
@@ -103,7 +109,7 @@ public class BandSawManager : MonoBehaviour
             UI_Manager.StartOverButton.gameObject.SetActive(false);
             UI_Manager.NextSceneButton.gameObject.SetActive(true);
             StillCutting = false;
-            float percentage = cumulativeLineScore / LinesToCut.Count;
+            float percentage = cumulativeLineScore / numberOfCuts;
             Debug.Log(percentage);
             if (GameManager.instance != null)
             {
@@ -173,6 +179,26 @@ public class BandSawManager : MonoBehaviour
         bool lineFound = false;
         int nearestLineIndex = -1;
         float smallestDistance = 0.0f;
+        if (WoodToCut == null)
+        {
+            Debug.Log(WoodToCut);
+        }
+        if (WoodToCut[currentPieceIndex] == null)
+        {
+            Debug.Log(WoodToCut[currentPieceIndex]);
+        }
+        if (WoodToCut[currentPieceIndex].GetComponent<WoodMaterialObject>() == null)
+        {
+            Debug.Log(WoodToCut[currentPieceIndex].GetComponent<WoodMaterialObject>());
+        }
+        if (WoodToCut[currentPieceIndex].GetComponent<WoodMaterialObject>() == null)
+        {
+            Debug.Log(WoodToCut[currentPieceIndex].GetComponent<WoodMaterialObject>().LinesToCut);
+        }
+        if (WoodToCut[currentPieceIndex].GetComponent<WoodMaterialObject>().LinesToCut == null)
+        {
+            Debug.Log(WoodToCut[currentPieceIndex].GetComponent<WoodMaterialObject>().LinesToCut);
+        }
         List<CutLine> lines = WoodToCut[currentPieceIndex].GetComponent<WoodMaterialObject>().LinesToCut;
         for (int i = 0; i < lines.Count && !lineFound; i++)
         {
@@ -202,6 +228,7 @@ public class BandSawManager : MonoBehaviour
                 }
             }
         }
+        
         return lines[nearestLineIndex];
     }
 }

@@ -10,39 +10,55 @@ public class ClampManager : MonoBehaviour
     public GameObject ClampObject;
     public Vector3 ClampSpawn;
     public float MinConnectDistance;
-    public double dryTimeInMinutes = 5.0;
+    public double dryTimeInSeconds = 15.0;
     public ClampUI UI_Manager;
+    public Transform WoodProject;
 
-    private ClampController currentClamp;
-    private ClampHeadPoint currentClampHead;
+    private ClampControl currentClampController;
+    private Clamp currentClamp;
+    private GluedPieceController piece;
     private int clampPointsRemaining;
     private bool inProgress = true;
     private DateTime dryingTimeEnd;
-    private string keyForDryingTime = "DryTime";
     private bool saveDryTime = false;
 
-	void Start () 
+	void Start ()
     {
         UI_Manager.DisplayPlans(true);
         GameCamera.MovementEnabled = false;
-        if (PlayerPrefs.HasKey(keyForDryingTime))
+        bool levelLoaded = LoadLevel();
+        
+        if (!levelLoaded)
         {
+            SetupGame();
+        }
+
+        if (WoodProject == null)
+        {
+            Debug.LogError("WoodProject variable not assigned");
             inProgress = false;
-            clampPointsRemaining = 0;
-            long binaryTime = Convert.ToInt64(PlayerPrefs.GetString(keyForDryingTime));
-            dryingTimeEnd = DateTime.FromBinary(binaryTime);
-            PlayerPrefs.DeleteKey(keyForDryingTime);
-            UI_Manager.InfoPanel.SetActive(true);
-            UI_Manager.InfoPanelText.text = "Your project will be dry in " + dryTimeInMinutes + " minutes.\nCome back then to continue the project";
-            UI_Manager.InfoPanelButton.gameObject.SetActive(false);
         }
         else
         {
-            clampPointsRemaining = ClampPoints.Count;
-            GameObject clamp = Instantiate(ClampObject, ClampSpawn, Quaternion.identity) as GameObject;
-            currentClamp = clamp.GetComponent<ClampController>();
-            currentClamp.Moveable = true;
-            currentClampHead = currentClamp.GetComponent<ClampHeadPoint>();
+            foreach (ClampPoint point in ClampPoints)
+            {
+                point.DisplayPoint();
+            }
+        }
+    }
+
+    private void SetupGame()
+    {
+        clampPointsRemaining = ClampPoints.Count;
+        GameObject clamp = Instantiate(ClampObject, ClampSpawn, Quaternion.identity) as GameObject;
+        currentClampController = clamp.GetComponent<ClampControl>();
+        currentClampController.Moveable = true;
+        currentClamp = currentClampController.GetComponent<Clamp>();
+        piece = WoodProject.gameObject.GetComponent<GluedPieceController>();
+        if (piece == null)
+        {
+            piece = WoodProject.gameObject.AddComponent<GluedPieceController>();
+            piece.Moveable = true;
         }
     }
 
@@ -63,62 +79,91 @@ public class ClampManager : MonoBehaviour
             }
             else
             {
-                for (int i = 0; i < ClampPoints.Count && clampPointsRemaining > 0; i++)
+                int nearestClampPointIndex = -1;
+                for (int i = 0; i < ClampPoints.Count && clampPointsRemaining > 0 && nearestClampPointIndex == -1; i++)
                 {
-                    if (!ClampPoints[0].Clamped)
+                    if (!ClampPoints[i].Clamped)
                     {
-                        float distance = Vector3.Distance(currentClampHead.Position, ClampPoints[i].Position);
+                        float distance = Vector3.Distance(currentClamp.ClampHead.position, ClampPoints[i].Position);
                         if (distance <= MinConnectDistance)
                         {
-                            currentClampHead.ClampAt(ClampPoints[i]);
-                            currentClamp.ResetSelection();
-                            clampPointsRemaining--;
-
-                            if (clampPointsRemaining > 0)
-                            {
-                                GameObject clamp = Instantiate(ClampObject, ClampSpawn, Quaternion.identity) as GameObject;
-                                currentClamp = clamp.GetComponent<ClampController>();
-                                currentClamp.Moveable = true;
-                                currentClampHead = currentClamp.GetComponent<ClampHeadPoint>();
-                            }
-                            else
-                            {
-                                currentClamp = null;
-                                currentClampHead = null;
-                                DateTime dryTimeStart = DateTime.Now;
-                                dryingTimeEnd = dryTimeStart.AddMinutes(dryTimeInMinutes);
-                                UI_Manager.InfoPanel.SetActive(true);
-                                UI_Manager.InfoPanelText.text = "Your project will be dry in " + dryTimeInMinutes + " minutes.\nCome back then to continue the project";
-                                UI_Manager.InfoPanelButton.gameObject.SetActive(false);
-                                saveDryTime = true;
-                            }
+                            nearestClampPointIndex = i;
+                            currentClamp.ClampAt(ClampPoints[i], WoodProject);
                         }
                     }
+                }
+                if (nearestClampPointIndex == -1)
+                {
+                    currentClamp.ReleaseClamp();
+                }
+                else if ((Input.touchCount == 0 && nearestClampPointIndex > -1) || (Input.GetTouch(0).phase == TouchPhase.Ended && nearestClampPointIndex > -1))
+                {
+                    ClampPoints[nearestClampPointIndex].Clamped = true;
+                    clampPointsRemaining--;
+                    currentClampController.ResetSelection();
+
+                    ClampControl previousController = currentClampController;
+                    if (clampPointsRemaining > 0)
+                    {
+                        GameObject clamp = Instantiate(ClampObject, ClampSpawn, Quaternion.identity) as GameObject;
+                        currentClampController = clamp.GetComponent<ClampControl>();
+                        currentClampController.Moveable = true;
+                        currentClamp = currentClamp.GetComponent<Clamp>();
+                    }
+                    else
+                    {
+                        currentClampController = null;
+                        currentClamp = null;
+                        DateTime dryTimeStart = DateTime.Now;
+                        dryingTimeEnd = dryTimeStart.AddSeconds(dryTimeInSeconds);
+                        UI_Manager.InfoPanel.SetActive(true);
+                        UI_Manager.InfoPanelText.text = "Your project will be dry in " + dryTimeInSeconds + " seconds.\nCome back then to continue the project";
+                        UI_Manager.InfoPanelButton.gameObject.SetActive(false);
+                        saveDryTime = true;
+                    }
+                    Destroy(previousController);
                 }
             }
         }
     }
 
-    //public void RotateClampOrientation()
-    //{
-    //    currentClamp.RotateAtPoint(90.0f);
-    //}
+    private bool LoadLevel()
+    {
+        bool loaded = false;
+        if (GameManager.instance != null)
+        {
+            if (PlayerPrefs.HasKey(GameManager.instance.DryTimeKey))
+            {
+                clampPointsRemaining = -1;
+                long binaryTime = Convert.ToInt64(PlayerPrefs.GetString(GameManager.instance.DryTimeKey));
+                dryingTimeEnd = DateTime.FromBinary(binaryTime);
+                PlayerPrefs.DeleteKey(GameManager.instance.DryTimeKey);
+                UI_Manager.InfoPanel.SetActive(true);
+                UI_Manager.InfoPanelText.text = "Your project will be dry in " + dryTimeInSeconds + " seconds.\nCome back then to continue the project";
+                UI_Manager.InfoPanelButton.gameObject.SetActive(false);
+                loaded = true;
+            }
+        }
+        return loaded;
+    }
 
     public void SetUpClampMovement()
     {
         GameCamera.MovementEnabled = false;
-        if (currentClamp != null)
+        piece.Moveable = true;
+        if (currentClampController != null)
         {
-            currentClamp.Moveable = true;
+            currentClampController.Moveable = true;
         }
     }
 
     public void SetUpCameraMovement()
     {
         GameCamera.MovementEnabled = true;
-        if (currentClamp != null)
+        piece.Moveable = false;
+        if (currentClampController != null)
         {
-            currentClamp.Moveable = false;
+            currentClampController.Moveable = false;
         }
     }
 
@@ -129,10 +174,43 @@ public class ClampManager : MonoBehaviour
 
     public void OnApplicationQuit()
     {
-        if (saveDryTime)
+        if (saveDryTime && GameManager.instance != null)
         {
-            PlayerPrefs.SetString(keyForDryingTime, System.DateTime.Now.ToBinary().ToString());
-            PlayerPrefs.SetInt("GlueLevel", Application.loadedLevel);
+            PlayerPrefs.SetString(GameManager.instance.DryTimeKey, System.DateTime.Now.ToBinary().ToString());
+            PlayerPrefs.SetInt(GameManager.instance.LevelKey, Application.loadedLevel);
+            PlayerPrefs.SetFloat(GameManager.instance.ScoreKey, GameManager.instance.totalScorePercentage);
+            PlayerPrefs.SetFloat(GameManager.instance.StepsKey, GameManager.instance.numberOfSteps);
+            PlayerPrefs.Save();
         }
     }
 }
+
+
+
+
+
+//if (clampConnected)
+//                        {
+//                            currentClampHead.ClampAt(ClampPoints[i], WoodProject);
+//                            currentClamp.ResetSelection();
+//                            clampPointsRemaining--;
+
+//                            if (clampPointsRemaining > 0)
+//                            {
+//                                GameObject clamp = Instantiate(ClampObject, ClampSpawn, Quaternion.identity) as GameObject;
+//                                currentClamp = clamp.GetComponent<ClampControl>();
+//                                currentClamp.Moveable = true;
+//                                currentClampHead = currentClamp.GetComponent<ClampHeadPoint>();
+//                            }
+//                            else
+//                            {
+//                                currentClamp = null;
+//                                currentClampHead = null;
+//                                DateTime dryTimeStart = DateTime.Now;
+//                                dryingTimeEnd = dryTimeStart.AddSeconds(dryTimeInSeconds);
+//                                UI_Manager.InfoPanel.SetActive(true);
+//                                UI_Manager.InfoPanelText.text = "Your project will be dry in " + dryTimeInSeconds + " seconds.\nCome back then to continue the project";
+//                                UI_Manager.InfoPanelButton.gameObject.SetActive(false);
+//                                saveDryTime = true;
+//                            }
+//                        }

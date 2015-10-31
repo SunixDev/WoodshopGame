@@ -24,9 +24,11 @@ public class ChopSawManager : MonoBehaviour, IToolManager
     private ActionState previousAction = ActionState.None;
     private BoardController currentBoardController;
     private float cumulativeLineScore = 0.0f;
+    private float numberOfCuts;
 
 	void Start () 
     {
+        numberOfCuts = LinesToCut.Count;
         UI_Manager.DisplayPlans(true);
         StillCutting = true;
         GameRuler.AssignManager(this);
@@ -165,8 +167,15 @@ public class ChopSawManager : MonoBehaviour, IToolManager
             UI_Manager.StartOverButton.gameObject.SetActive(false);
             UI_Manager.NextSceneButton.gameObject.SetActive(true);
             StillCutting = false;
-            float percentage = cumulativeLineScore / LinesToCut.Count;
-            GameManager.instance.ApplyScore(percentage);
+            float percentage = cumulativeLineScore / numberOfCuts;
+            if (GameManager.instance != null)
+            {
+                GameManager.instance.ApplyScore(percentage);
+            }
+            else
+            {
+                Debug.Log("No GameManager");
+            }
         }
     }
 

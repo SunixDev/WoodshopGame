@@ -198,8 +198,7 @@ public class CameraControl : MonoBehaviour
                 Vector2 currentPosition = gesture.position;
                 if (currentPosition != previousFingerPosition)
                 {
-                    Vector3 deltaPosition = currentPosition - previousFingerPosition;
-                    deltaPosition = deltaPosition.normalized * (PanSensitivity * Time.deltaTime);
+                    Vector3 deltaPosition = gesture.deltaPosition * (PanSensitivity * Time.deltaTime);
                     if (panningType == PanType.XZ_Plane)
                     {
                         lookAtPointOffset += (Quaternion.Euler(new Vector3(0.0f, xMovement, 0.0f)) * new Vector3(-deltaPosition.x, 0.0f, -deltaPosition.y));

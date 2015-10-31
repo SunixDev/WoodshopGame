@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(Rigidbody))]
 public class BoardController : MonoBehaviour
 {
     public bool Moveable;
@@ -15,6 +14,7 @@ public class BoardController : MonoBehaviour
     public float MinLimit_X;
     public float MaxLimit_Z;
     public float MinLimit_Z;
+    public bool UseRigidbody = true;
 
     private bool selected = false;
 
@@ -24,6 +24,11 @@ public class BoardController : MonoBehaviour
     void Start()
     {
         objRigidbody = GetComponent<Rigidbody>();
+        if (objRigidbody == null && UseRigidbody)
+        {
+            objRigidbody = gameObject.AddComponent<Rigidbody>();
+            objRigidbody.useGravity = true;
+        }
         objTransform = GetComponent<Transform>();
         WoodObject = GetComponent<WoodMaterialObject>();
     }
@@ -138,16 +143,33 @@ public class BoardController : MonoBehaviour
         Vector3 nextPosition = position - previousPosition;
         previousPosition = position;
         nextPosition = DetermineRestrictions(nextPosition);
-        objRigidbody.position += nextPosition;
-        if (objRigidbody.position.x > MaxLimit_X || objRigidbody.position.x < MinLimit_X)
+        if (UseRigidbody)
         {
-            float x = objRigidbody.position.x;
-            objRigidbody.position = new Vector3(Mathf.Clamp(x, MinLimit_X, MaxLimit_X), objRigidbody.position.y, objRigidbody.position.z);
+            objRigidbody.position += nextPosition;
+            if (objRigidbody.position.x > MaxLimit_X || objRigidbody.position.x < MinLimit_X)
+            {
+                float x = objRigidbody.position.x;
+                objRigidbody.position = new Vector3(Mathf.Clamp(x, MinLimit_X, MaxLimit_X), objRigidbody.position.y, objRigidbody.position.z);
+            }
+            if (objRigidbody.position.z > MaxLimit_Z || objRigidbody.position.z < MinLimit_Z)
+            {
+                float z = objRigidbody.position.z;
+                objRigidbody.position = new Vector3(objRigidbody.position.x, objRigidbody.position.y, Mathf.Clamp(z, MinLimit_Z, MaxLimit_Z));
+            }
         }
-        if (objRigidbody.position.z > MaxLimit_Z || objRigidbody.position.z < MinLimit_Z)
+        else
         {
-            float z = objRigidbody.position.z;
-            objRigidbody.position = new Vector3(objRigidbody.position.x, objRigidbody.position.y, Mathf.Clamp(z, MinLimit_Z, MaxLimit_Z));
+            objTransform.position += nextPosition;
+            if (objTransform.position.x > MaxLimit_X || objTransform.position.x < MinLimit_X)
+            {
+                float x = objTransform.position.x;
+                objTransform.position = new Vector3(Mathf.Clamp(x, MinLimit_X, MaxLimit_X), objTransform.position.y, objTransform.position.z);
+            }
+            if (objTransform.position.z > MaxLimit_Z || objTransform.position.z < MinLimit_Z)
+            {
+                float z = objTransform.position.z;
+                objTransform.position = new Vector3(objTransform.position.x, objTransform.position.y, Mathf.Clamp(z, MinLimit_Z, MaxLimit_Z));
+            }
         }
     }
 

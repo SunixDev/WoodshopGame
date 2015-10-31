@@ -101,7 +101,14 @@ public class SwipeManager : MonoBehaviour
                     totalScore += textureScans[i].GetPercentageCorrect();
                 }
                 float overallScore = totalScore / textureScans.Count;
-                GameManager.instance.ApplyScore(overallScore);
+                if (GameManager.instance != null)
+                {
+                    GameManager.instance.ApplyScore(overallScore);
+                }
+                else
+                {
+                    Debug.Log("Not game manager");
+                }
                 if (overallScore >= 90.0f)
                 {
                     UI_Manager.DisplayFullMessagePanel("Excellent!\nYou work was detailed and thorough. The end result is well done.");

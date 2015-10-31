@@ -12,8 +12,8 @@ public class BandSawCutting : MonoBehaviour
     public CutState CurrentState { get; set; }
 
     private CutLine currentLine;
-    private Vector3 previousBoardPosition;
-    private float timeStalling;
+    //private Vector3 previousBoardPosition;
+    //private float timeStalling;
     private float lineScore = 100.0f;
 
     private float totalTimeNotCuttingLine = 0.0f;
@@ -25,7 +25,7 @@ public class BandSawCutting : MonoBehaviour
 	void Start () 
     {
         currentLine = null;
-        timeStalling = 0.0f;
+        //timeStalling = 0.0f;
         CurrentState = CutState.ReadyToCut;
 	}
 
@@ -43,7 +43,7 @@ public class BandSawCutting : MonoBehaviour
     private void StartWoodCutting()
     {
         currentLine.DetermineCutDirection(Blade.transform.position);
-        previousBoardPosition = manager.GetCurrentBoardPosition();
+        //previousBoardPosition = manager.GetCurrentBoardPosition();
         CurrentState = CutState.Cutting;
         manager.SetUpBoardForCutting(true);
     }
@@ -110,6 +110,7 @@ public class BandSawCutting : MonoBehaviour
                     {
                         CurrentState = CutState.ReadyToCut;
                         Blade.ResetEdgePosition();
+                        currentLine.Reset();
                         currentLine = null;
                         manager.SetUpBoardForCutting(false);
                     }
@@ -119,7 +120,6 @@ public class BandSawCutting : MonoBehaviour
             {
                 if (!Blade.CuttingWoodBoard && Blade.NoInteractionWithBoard)
                 {
-                    Debug.Log("lineScore: " + lineScore);
                     manager.DisplayScore(lineScore);
                     lineScore = 100.0f;
                     manager.SetUpBoardForCutting(false);

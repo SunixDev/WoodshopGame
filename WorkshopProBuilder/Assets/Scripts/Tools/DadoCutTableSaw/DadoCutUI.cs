@@ -16,12 +16,31 @@ public class DadoCutUI : MonoBehaviour
     public Button RotateButton;
     public Button ResetRotationButton;
 
+    public GameObject PlansPanel;
+    public GameObject InfoPanel;
+    public Text InfoText;
+    public Button HideButton;
+    public Button StartOverButton;
+    public Button NextSceneButton;
+
     private bool SawButtonsActive = true;
 
     void Start()
     {
         SelectedButton.GetComponent<Image>().color = SelectedButtonColor;
         SelectedButton.GetComponent<Button>().enabled = false;
+        PlansPanel.SetActive(false);
+        InfoPanel.SetActive(false);
+    }
+
+    public void DisplayPlans(bool showPlans)
+    {
+        PlansPanel.SetActive(showPlans);
+    }
+
+    public void DisplayInfo(bool showPlans)
+    {
+        InfoPanel.SetActive(showPlans);
     }
 
     public void SwitchActiveButton(GameObject buttonToUse)

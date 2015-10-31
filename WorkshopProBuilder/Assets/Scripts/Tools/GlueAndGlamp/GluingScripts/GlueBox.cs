@@ -23,10 +23,6 @@ public class GlueBox : MonoBehaviour
 	void Start () 
     {
         objCollider = GetComponent<Collider>();
-        foreach (GluePlane p in GluingPlanes)
-        {
-            p.MaxGlueAmount = MaxGlueAmountBeforeTooMuch;
-        }
         previousHitPoint = Vector3.zero;
         currentGlueAmount = 0.0f;
         PointToActivate.CanConnect = false;
@@ -50,14 +46,15 @@ public class GlueBox : MonoBehaviour
                     ReadyToConnect = true;
                     minimumGlueAmountReached = true;
                     PointToActivate.CanConnect = true;
+                    PointToActivate.DisplayPoint();
                 }
-                if (currentGlueAmount >= MinValueForPerfectScore && currentGlueAmount < MaxGlueAmountBeforeTooMuch && !perfectGlueAmountReached)
+                if (currentGlueAmount >= MinValueForPerfectScore && !perfectGlueAmountReached)
                 {
                     perfectGlueAmountReached = true;
                 }
                 foreach (GluePlane p in GluingPlanes)
                 {
-                    p.UpdatePlane(currentGlueAmount);
+                    p.UpdatePlane(currentGlueAmount, MaxGlueAmountBeforeTooMuch);
                 }
                 previousHitPoint = hit.point;
             }

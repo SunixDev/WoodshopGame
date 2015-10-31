@@ -51,6 +51,7 @@
      <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Editor\EasyTouchTriggerInspector.cs" />
      <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Editor\EasytouchHierachyCallBack.cs" />
      <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Editor\HTGuiTools.cs" />
+     <Compile Include="Assets\HSVPicker\Editor\BoxSliderEditor.cs" />
      <None Include="Assets\Shaders\ShiningShader.shader" />
      <None Include="Assets\Shaders\SandingShader.shader" />
      <None Include="Assets\EasyTouchBundle\Readme.txt" />

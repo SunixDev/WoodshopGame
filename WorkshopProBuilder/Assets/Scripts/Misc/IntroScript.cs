@@ -1,22 +1,37 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class IntroScript : MonoBehaviour 
 {
-    public GameObject ProjectToInstantiate;
-    public List<GameObject> WoodPieces;
+    public string FirstScene;
+    public GameObject InstructionsPanel;
+
+    void Start()
+    {
+        if (PlayerPrefs.HasKey(GameManager.instance.LevelKey))
+        {
+            string level = PlayerPrefs.GetString(GameManager.instance.LevelKey);
+            PlayerPrefs.DeleteKey(GameManager.instance.LevelKey);
+
+            GameManager.instance.totalScorePercentage = PlayerPrefs.GetFloat(GameManager.instance.ScoreKey);
+            PlayerPrefs.DeleteKey(GameManager.instance.ScoreKey);
+
+            GameManager.instance.numberOfSteps = PlayerPrefs.GetFloat(GameManager.instance.StepsKey);
+            PlayerPrefs.DeleteKey(GameManager.instance.StepsKey);
+            Application.LoadLevel(level);
+        }
+    }
 
     public void StartProject()
     {
-        //GameObject project = Instantiate(ProjectToInstantiate);
-        //GameManager.instance.CurrentProject = project.GetComponent<Project>();
-        //foreach (GameObject wood in WoodPieces)
-        //{
-        //    GameObject woodPiece = Instantiate(wood);
-        //    GameManager.instance.WoodManager.WoodMaterials.Add(woodPiece);
-        //    woodPiece.SetActive(false);
-        //}
-        //Application.LoadLevel("None");
+        GameManager.instance.ResetScore();
+        Application.LoadLevel(FirstScene);
+    }
+
+    public void ShowInstructions(bool show)
+    {
+        InstructionsPanel.SetActive(show);
     }
 }

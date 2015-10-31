@@ -19,6 +19,7 @@ public class SwipeGameplay : MonoBehaviour
     public Material SwipeBackgroundMaterial;
     public Color BrushColor;
     public Texture2D WhiteBackground;
+    public HSVPicker colorPicker;
 
     [Range(100, 1000)]
     public int NumberOfBrushes = 500;
@@ -38,6 +39,14 @@ public class SwipeGameplay : MonoBehaviour
         if (type != SwipeGameType.Paint)
         {
             BrushColor = Color.black;
+        }
+        else
+        {
+            colorPicker.onValueChanged.AddListener(color =>
+            {
+                BrushColor = color;
+            });
+            BrushColor = colorPicker.currentColor;
         }
 
         for (int i = 0; i < NumberOfBrushes; i++)
@@ -70,7 +79,7 @@ public class SwipeGameplay : MonoBehaviour
                 Vector3 paintUVPosition = new Vector3(0.0f, uvs.y - RenderCamera.orthographicSize,
                                                             uvs.x - RenderCamera.orthographicSize - 0.05f);
 
-                BrushColor.a = 1.0f;  //BrushSize * 50.0f;
+                BrushColor.a = BrushSize * 10.0f; //1.0f;
                 SwipeBrushStrokes[BrushIndex].GetComponent<SpriteRenderer>().enabled = true;
                 SwipeBrushStrokes[BrushIndex].GetComponent<SpriteRenderer>().color = BrushColor;
                 SwipeBrushStrokes[BrushIndex].transform.localPosition = paintUVPosition;
