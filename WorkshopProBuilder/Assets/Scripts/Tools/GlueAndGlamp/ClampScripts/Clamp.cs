@@ -7,12 +7,15 @@ public class Clamp : MonoBehaviour
     public Transform ClampHandle;
     public Transform HandleContactPoint;
     public bool ClampedDown { get; private set; }
+    [HideInInspector]
+    public ClampControl controller;
 
     private Vector3 originalHandlePosition;
 
-	void Start () 
+	void Awake () 
     {
         originalHandlePosition = ClampHandle.localPosition;
+        controller = gameObject.GetComponent<ClampControl>();
 	}
 
     public void ClampAt(ClampPoint point, Transform parentPiece)
@@ -33,6 +36,7 @@ public class Clamp : MonoBehaviour
     {
         ClampedDown = false;
         transform.parent = null;
+        transform.rotation = Quaternion.identity;
         ClampHandle.localPosition = originalHandlePosition;
     }
 

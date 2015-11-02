@@ -6,11 +6,11 @@ public class ClampControl : MonoBehaviour
 {
     public bool Moveable = true;
     public List<Collider> Colliders;
-    public float RotationSpeed = 2.0f;
-    public Quaternion CurrentRotation { get; private set; }
-    public Transform objTransform { get; private set; }
+    public bool Dragging { get; private set; }
 
-    private bool selected = false;
+    private Transform objTransform;
+    private Vector3 offset;
+    private Clamp clamp;
 
     void Start()
     {
@@ -19,13 +19,15 @@ public class ClampControl : MonoBehaviour
 
     public void Initialize()
     {
+        Dragging = false;
         objTransform = transform;
+        clamp = gameObject.GetComponent<Clamp>();
     }
 
     public void ResetSelection()
     {
         Moveable = false;
-        selected = false;
+        Dragging = false;
     }
 
     public void OnTouch(Gesture gesture)
@@ -34,7 +36,8 @@ public class ClampControl : MonoBehaviour
         {
             if (Moveable && ContainsCollider(gesture.pickedObject.GetComponent<Collider>()))
             {
-                selected = true;
+                offset = objTransform.position - gesture.GetTouchToWorldPoint(objTransform.position);
+                Dragging = true;
             }
         }
     }
@@ -49,17 +52,17 @@ public class ClampControl : MonoBehaviour
         return containsCollider;
     }
 
-    public void MovePiece(Gesture gesture)
+    public void DragClamp(Gesture gesture)
     {
-        if (Moveable && selected && gesture.touchCount == 1)
+        if (Moveable && Dragging && gesture.touchCount == 1)
         {
-            objTransform.position = gesture.GetTouchToWorldPoint(objTransform.position);
+            objTransform.position = gesture.GetTouchToWorldPoint(objTransform.position) + offset;
         }
     }
 
     public void Deselect(Gesture gesture)
     {
-        selected = false;
+        Dragging = false;
     }
 
 
@@ -68,14 +71,14 @@ public class ClampControl : MonoBehaviour
 
     private void EnableTouchEvents()
     {
-        EasyTouch.On_Drag += MovePiece;
+        EasyTouch.On_Drag += DragClamp;
         EasyTouch.On_TouchStart += OnTouch;
         EasyTouch.On_TouchUp += Deselect;
     }
 
     private void DisableTouchEvents()
     {
-        EasyTouch.On_Drag -= MovePiece;
+        EasyTouch.On_Drag -= DragClamp;
         EasyTouch.On_TouchStart -= OnTouch;
         EasyTouch.On_TouchUp -= Deselect;
     }
