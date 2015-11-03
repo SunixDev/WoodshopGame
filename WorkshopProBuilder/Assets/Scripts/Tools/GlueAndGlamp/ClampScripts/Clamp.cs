@@ -32,14 +32,6 @@ public class Clamp : MonoBehaviour
         ClampedDown = true;
     }
 
-    public void ReleaseClamp()
-    {
-        ClampedDown = false;
-        transform.parent = null;
-        transform.rotation = Quaternion.identity;
-        ClampHandle.localPosition = originalHandlePosition;
-    }
-
     public void ConnectHandle()
     {
         Ray ray = new Ray(HandleContactPoint.position, HandleContactPoint.right);

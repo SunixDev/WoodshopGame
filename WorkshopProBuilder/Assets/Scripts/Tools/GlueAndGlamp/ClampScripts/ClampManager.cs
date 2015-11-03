@@ -77,27 +77,17 @@ public class ClampManager : MonoBehaviour
             }
             else
             {
-                if (currentClamp.controller.Dragging && ClampPoints[0].transform.forward == -Vector3.forward && WithinMinimumDistance(currentClamp, ClampPoints[0]))
+                if (Input.touchCount > 0 || Input.GetMouseButton(0))
                 {
-                    //nearestClampPointIndex = i;
-                    currentClamp.ClampAt(ClampPoints[0], WoodProject);
+                    if (Input.GetTouch(0).phase != TouchPhase.Ended || Input.GetMouseButton(0))
+                    {
+                        
+                    }
+                    if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetMouseButtonUp(0))
+                    {
+
+                    }
                 }
-                else
-                {
-                    currentClamp.ReleaseClamp();
-                }
-                //int nearestClampPointIndex = -1;
-                //for (int i = 0; i < ClampPoints.Count && clampPointsRemaining > 0 && nearestClampPointIndex == -1; i++)
-                //{
-                //    if (!ClampPoints[i].Clamped)
-                //    {
-                //        if (currentClamp.controller.Dragging && ClampPoints[i].transform.forward == -Vector3.forward && WithinMinimumDistance(currentClamp, ClampPoints[i]))
-                //        {
-                //            nearestClampPointIndex = i;
-                //            currentClamp.ClampAt(ClampPoints[i], WoodProject);
-                //        }
-                //    }
-                //}
                 //if (nearestClampPointIndex == -1)
                 //{
                 //    currentClamp.ReleaseClamp();
@@ -132,13 +122,17 @@ public class ClampManager : MonoBehaviour
         }
     }
 
-    private bool WithinMinimumDistance(Clamp clamp, ClampPoint point)
+    private float DistanceFromDistance(ClampPoint point)
     {
-        Vector3 clampHeadPosition = new Vector3(clamp.ClampHead.position.x, clamp.ClampHead.position.y, 0.0f);
-        Vector3 pointPosition = new Vector3(point.transform.position.x, point.transform.position.y, 0.0f);
-        float distance = Vector3.Distance(clampHeadPosition, pointPosition);
-        Debug.Log("Distance: " + distance);
-        return (distance <= MinConnectDistance);
+        float distance = -1.0f;
+        if (Input.touchCount > 0 || Input.GetMouseButton(0))
+        {
+            Vector2 touchPoint = (Input.touchCount > 0) ? Input.GetTouch(0).position : new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+            Vector3 touchPosition = Camera.main.ScreenToWorldPoint(new Vector3(touchPoint.x, touchPoint.y, 10.0f));
+            touchPosition.z = point.transform.position.z;
+            distance = Vector3.Distance(touchPosition, point.transform.position);
+        }
+        return distance;
     }
 
     private bool LoadLevel()
