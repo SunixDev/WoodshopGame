@@ -60,9 +60,6 @@ public class SnapPieceGameManager : MonoBehaviour
 
     void Update()
     {
-        //Debug.Log("TotalPiecesConnected: " + TotalPiecesConnected);
-        //Debug.Log("PiecesToConnect: " + PiecesToConnect.Count);
-        //Debug.Log("TotalPiecesConnected < PiecesToConnect.Count: " + (TotalPiecesConnected < PiecesToConnect.Count));
         if (TotalPiecesConnected < PiecesToConnect.Count)
         {
             bool pieceConnected = false;
@@ -113,7 +110,7 @@ public class SnapPieceGameManager : MonoBehaviour
                 }
                 else
                 {
-                    DisplayResults();
+                    //DisplayResults();
                 }
             }
         }
@@ -139,69 +136,69 @@ public class SnapPieceGameManager : MonoBehaviour
         }
     }
 
-    public void DisplayResults()
-    {
-        if (TotalPiecesConnected >= PiecesToConnect.Count)
-        {
-            foreach (GlueBox glue in Glues)
-            {
-                EvaluateGluing(glue);
-            }
-            UI_Manager.InfoPanel.SetActive(true);
-            UI_Manager.SceneButton.gameObject.SetActive(true);
-            float overall = (TotalPercentage / Glues.Count);
-            if (GameManager.instance != null)
-            {
-                GameManager.instance.ApplyScore(overall);
-            }
-            else
-            {
-                Debug.Log("No Game manager");
-            }
-            if (Total_MinimumGlues == 0 && Total_TooMuchGlues == 0)
-            {
-                UI_Manager.InfoText.text = "Results:\nExcellent gluing skills. Every piece was put together with the perfect amount of glue.\nOn to the next step.";
-            }
-            else
-            {
-                string praiseText = "";
-                if(Total_PerfectGlues > (Total_MinimumGlues + Total_TooMuchGlues))
-                {
-                    praiseText = "Nice job putting the pieces together. A little bit of clean up and this will look nice.";
-                }
-                else if (Total_PerfectGlues <= (Total_MinimumGlues + Total_TooMuchGlues))
-                {
-                    praiseText = "Not bad, but you need more practice in how much glue you add.";
-                }
-                UI_Manager.InfoText.text = praiseText + "Here are the results:\n" + 
-                                           "Areas with the perfect amount of glue: " + Total_PerfectGlues +
-                                           "\nAreas that needed a bit more glue: " + Total_MinimumGlues +
-                                           "\nAreas with too much glue that bubbled out the edges: " + Total_TooMuchGlues +
-                                           "\nOn to the next step";
-            }
-        }
-    }
+    //public void DisplayResults()
+    //{
+    //    if (TotalPiecesConnected >= PiecesToConnect.Count)
+    //    {
+    //        foreach (GlueBox glue in Glues)
+    //        {
+    //            EvaluateGluing(glue);
+    //        }
+    //        UI_Manager.InfoPanel.SetActive(true);
+    //        UI_Manager.SceneButton.gameObject.SetActive(true);
+    //        float overall = (TotalPercentage / Glues.Count);
+    //        if (GameManager.instance != null)
+    //        {
+    //            GameManager.instance.ApplyScore(overall);
+    //        }
+    //        else
+    //        {
+    //            Debug.Log("No Game manager");
+    //        }
+    //        if (Total_MinimumGlues == 0 && Total_TooMuchGlues == 0)
+    //        {
+    //            UI_Manager.InfoText.text = "Results:\nExcellent gluing skills. Every piece was put together with the perfect amount of glue.\nOn to the next step.";
+    //        }
+    //        else
+    //        {
+    //            string praiseText = "";
+    //            if(Total_PerfectGlues > (Total_MinimumGlues + Total_TooMuchGlues))
+    //            {
+    //                praiseText = "Nice job putting the pieces together. A little bit of clean up and this will look nice.";
+    //            }
+    //            else if (Total_PerfectGlues <= (Total_MinimumGlues + Total_TooMuchGlues))
+    //            {
+    //                praiseText = "Not bad, but you need more practice in how much glue you add.";
+    //            }
+    //            UI_Manager.InfoText.text = praiseText + "Here are the results:\n" + 
+    //                                       "Areas with the perfect amount of glue: " + Total_PerfectGlues +
+    //                                       "\nAreas that needed a bit more glue: " + Total_MinimumGlues +
+    //                                       "\nAreas with too much glue that bubbled out the edges: " + Total_TooMuchGlues +
+    //                                       "\nOn to the next step";
+    //        }
+    //    }
+    //}
 
-    private void EvaluateGluing(GlueBox glue)
-    {
-        if (glue != null)
-        {
-            float glueApplied = glue.GetTotalGlueApplied();
-            TotalPercentage += glueApplied;
-            if (glueApplied >= glue.MinValueToActivatePointAndLowScore && glueApplied < glue.MinValueForPerfectScore)
-            {
-                Total_MinimumGlues++;
-            }
-            else if (glueApplied >= glue.MinValueForPerfectScore && glueApplied < glue.MaxGlueAmountBeforeTooMuch)
-            {
-                Total_PerfectGlues++;
-            }
-            else if (glueApplied >= glue.MaxGlueAmountBeforeTooMuch)
-            {
-                Total_TooMuchGlues++;
-            }
-        }
-    }
+    //private void EvaluateGluing(GlueBox glue)
+    //{
+    //    if (glue != null)
+    //    {
+    //        float glueApplied = glue.GetTotalGlueApplied();
+    //        TotalPercentage += glueApplied;
+    //        if (glueApplied >= glue.MinValueToActivatePointAndLowScore && glueApplied < glue.MinValueForPerfectScore)
+    //        {
+    //            Total_MinimumGlues++;
+    //        }
+    //        else if (glueApplied >= glue.MinValueForPerfectScore && glueApplied < glue.MaxGlueAmountBeforeTooMuch)
+    //        {
+    //            Total_PerfectGlues++;
+    //        }
+    //        else if (glueApplied >= glue.MaxGlueAmountBeforeTooMuch)
+    //        {
+    //            Total_TooMuchGlues++;
+    //        }
+    //    }
+    //}
 
     public void SwitchPiece(int index)
     {
@@ -225,7 +222,7 @@ public class SnapPieceGameManager : MonoBehaviour
     {
         if (CurrentPiece != null)
         {
-            CurrentPiece.GetComponent<PieceController>().Moveable = true;
+            //CurrentPiece.GetComponent<PieceController>().Moveable = true;
         }
         GameCamera.EnableMovement(false);
         foreach (GlueBox glue in Glues)
@@ -238,7 +235,7 @@ public class SnapPieceGameManager : MonoBehaviour
     {
         if (CurrentPiece != null)
         {
-            CurrentPiece.GetComponent<PieceController>().Moveable = false;
+            //CurrentPiece.GetComponent<PieceController>().Moveable = false;
         }
         GameCamera.EnableMovement(false);
         foreach (GlueBox glue in Glues)
@@ -251,7 +248,7 @@ public class SnapPieceGameManager : MonoBehaviour
     {
         if (CurrentPiece != null)
         {
-            CurrentPiece.GetComponent<PieceController>().Moveable = false;
+            //CurrentPiece.GetComponent<PieceController>().Moveable = false;
         }
         GameCamera.EnableMovement(true);
         foreach (GlueBox glue in Glues)

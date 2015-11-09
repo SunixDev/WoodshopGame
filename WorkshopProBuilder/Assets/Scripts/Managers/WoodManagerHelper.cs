@@ -25,7 +25,6 @@ public class WoodManagerHelper : MonoBehaviour
                 {
                     controller = obj.AddComponent<PieceController>();
                 }
-                controller.Initialize();
             }
             else if (obj.tag == "Leftover")
             {

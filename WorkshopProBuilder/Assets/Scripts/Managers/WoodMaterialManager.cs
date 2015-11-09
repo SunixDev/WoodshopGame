@@ -70,7 +70,7 @@ public class WoodMaterialManager : MonoBehaviour
             if (obj.tag == "Piece")
             {
                 PieceController controller = obj.GetComponent<PieceController>();
-                controller.Initialize();
+                //controller.Initialize();
                 WoodMaterials.Add(obj);
             }
             else if (obj.tag == "Leftover")

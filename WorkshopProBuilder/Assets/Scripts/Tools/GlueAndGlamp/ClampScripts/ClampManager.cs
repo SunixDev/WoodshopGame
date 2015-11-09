@@ -79,14 +79,14 @@ public class ClampManager : MonoBehaviour
             {
                 if (Input.touchCount > 0 || Input.GetMouseButton(0))
                 {
-                    if (Input.GetTouch(0).phase != TouchPhase.Ended || Input.GetMouseButton(0))
-                    {
+                    //if (Input.GetTouch(0).phase != TouchPhase.Ended || Input.GetMouseButton(0))
+                    //{
                         
-                    }
-                    if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetMouseButtonUp(0))
-                    {
+                    //}
+                    //if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetMouseButtonUp(0))
+                    //{
 
-                    }
+                    //}
                 }
                 //if (nearestClampPointIndex == -1)
                 //{
