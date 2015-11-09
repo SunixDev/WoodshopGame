@@ -87,6 +87,7 @@
     <Compile Include="Assets\HSVPicker\UtilityScripts\ColorScrollRect.cs" />
     <Compile Include="Assets\HSVPicker\UtilityScripts\HSVUtil.cs" />
     <Compile Include="Assets\HSVPicker\UtilityScripts\TiltWindow.cs" />
+    <Compile Include="Assets\Scripts\BoundsRenderer.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraControl.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraPositioning.cs" />
     <Compile Include="Assets\Scripts\Enums\CutLineType.cs" />
@@ -142,6 +143,8 @@
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\ClampScripts\GluedPieceController.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\GlueBox.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\GluePlane.cs" />
+    <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\GlueArea.cs" />
+    <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\MoveToCamera.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\PieceController.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\PlayerGlue.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPiece.cs" />

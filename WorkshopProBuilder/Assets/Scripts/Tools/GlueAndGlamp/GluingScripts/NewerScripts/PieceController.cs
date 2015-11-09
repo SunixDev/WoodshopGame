@@ -24,6 +24,7 @@ public class PieceController : MonoBehaviour
 
     public void OnPieceTouched(Gesture gesture)
     {
+        Debug.Log("gesture.pickedObject: " + gesture.pickedObject);
         if (gesture.pickedObject == gameObject && gesture.touchCount == 1)
         {
             if (state == PieceControlState.Drag)

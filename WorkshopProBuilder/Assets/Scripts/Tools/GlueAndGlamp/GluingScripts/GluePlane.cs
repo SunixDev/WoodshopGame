@@ -10,7 +10,7 @@ public enum IndicationType
 public class GluePlane : MonoBehaviour 
 {
     private Color glueColor = Color.white;
-    private Color highlightColor = new Color(0.0f, 1.0f, 0.07f, 1.0f);
+    private Color highlightColor = new Color(0.98f, 1f, 0f, 1f);
     private Renderer objRenderer;
     private Vector3 fullScale;
     private IndicationType type = IndicationType.Highlight;
@@ -20,7 +20,7 @@ public class GluePlane : MonoBehaviour
         glueColor.a = 0.0f;
         objRenderer = GetComponent<Renderer>();
         fullScale = transform.localScale;
-        objRenderer.material.color = highlightColor;
+        objRenderer.sharedMaterial.color = highlightColor;
     }
 
     public void UpdatePlane(float currentGlueAmount, float maxGlueAmount)

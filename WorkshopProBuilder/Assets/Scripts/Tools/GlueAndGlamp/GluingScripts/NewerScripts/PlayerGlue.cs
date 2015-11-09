@@ -10,7 +10,7 @@ public class PlayerGlue : MonoBehaviour
     private Vector2 currentTouchPosition;
     private Vector2 previousTouchPosition;
 
-    void Start()
+    void Awake()
     {
         glueLayerMask = LayerMask.GetMask("Glue");
         currentTouchPosition = new Vector2(-1f, -1f);
@@ -38,7 +38,13 @@ public class PlayerGlue : MonoBehaviour
 
     public void GetTouchPosition(Gesture gesture)
     {
-        currentTouchPosition = gesture.position;
+        if (gesture.pickedObject != null)
+        {
+            if (gesture.pickedObject.tag == "GlueHitBox")
+            {
+                currentTouchPosition = gesture.position;
+            }
+        }
     }
 
     private void EnableTouchEvents()
