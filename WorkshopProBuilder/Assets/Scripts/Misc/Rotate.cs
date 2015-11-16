@@ -9,13 +9,11 @@ public class Rotate : MonoBehaviour
     public bool RotationX = true;
     public bool RotationY = false;
     public bool RotationZ = false;
-
-    private bool rotateEnabled;
+    public bool rotateEnabled = false;
 
 	void Start () 
     {
         StartCoroutine(RotationCoroutine());
-        rotateEnabled = false;
 	}
 
     IEnumerator RotationCoroutine()

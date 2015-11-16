@@ -26,7 +26,7 @@ public class WoodListPanel : MonoBehaviour
 
         int index = AvailableButtonsList.Count;
         newButton.onClick.AddListener(() => SwitchSelectedButton(index));
-        newButton.onClick.AddListener(() => manager.SwitchPiece(index));
+        //newButton.onClick.AddListener(() => manager.SwitchPiece(index));
         if (AvailableButtonsList.Count == 0)
         {
             newButton.GetComponent<Image>().color = SelectedButtonColor;

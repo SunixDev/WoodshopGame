@@ -66,6 +66,7 @@
      <Compile Include="Assets\HSVPicker\UtilityScripts\HSVUtil.cs" />
      <Compile Include="Assets\HSVPicker\UtilityScripts\TiltWindow.cs" />
      <Compile Include="Assets\Scripts\BoundsRenderer.cs" />
+     <Compile Include="Assets\Scripts\BoundsWithChildren.cs" />
      <Compile Include="Assets\Scripts\Camera\CameraControl.cs" />
      <Compile Include="Assets\Scripts\Camera\CameraPositioning.cs" />
      <Compile Include="Assets\Scripts\Enums\CutLineType.cs" />
@@ -91,6 +92,7 @@
      <Compile Include="Assets\Scripts\Misc\Persistance.cs" />
      <Compile Include="Assets\Scripts\Misc\Rotate.cs" />
      <Compile Include="Assets\Scripts\Misc\StepID.cs" />
+     <Compile Include="Assets\Scripts\MoveToTest.cs" />
      <Compile Include="Assets\Scripts\ObjectBorder.cs" />
      <Compile Include="Assets\Scripts\ObjectController.cs" />
      <Compile Include="Assets\Scripts\Tools\BandSaw\BandSawBlade.cs" />
@@ -132,6 +134,7 @@
      <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPoint.cs" />
      <Compile Include="Assets\Scripts\Tools\IToolManager.cs" />
      <Compile Include="Assets\Scripts\Tools\Node.cs" />
+     <Compile Include="Assets\Scripts\Tools\RotateTowardsTest.cs" />
      <Compile Include="Assets\Scripts\Tools\Ruler\Ruler.cs" />
      <Compile Include="Assets\Scripts\Tools\Ruler\RulerMovement.cs" />
      <Compile Include="Assets\Scripts\Tools\SwipingGameplay\SwipeGameplay.cs" />

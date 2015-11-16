@@ -76,7 +76,7 @@ public class WoodPiece : MonoBehaviour
             StepID id = snapPoint.GetComponent<StepID>();
             if (id.UsedInStep(stepNumber))
             {
-                snapPoint.isActive = true;
+                //snapPoint.isActive = true;
                 activatedSnapPoints.Add(snapPoint);
             }
         }

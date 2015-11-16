@@ -39,6 +39,7 @@ public class PieceController : MonoBehaviour
     {
         if (gesture.pickedObject == gameObject && gesture.touchCount == 1 && isMoving && state == PieceControlState.Drag)
         {
+            Debug.Log(pieceTransform.position);
             pieceTransform.position = gesture.GetTouchToWorldPoint(pieceTransform.position) + offset;
         }
     }

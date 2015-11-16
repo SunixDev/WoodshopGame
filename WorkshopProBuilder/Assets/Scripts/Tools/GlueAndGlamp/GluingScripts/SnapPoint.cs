@@ -4,12 +4,10 @@ using System.Collections;
 public class SnapPoint : MonoBehaviour 
 {
     public SnapPiece ParentSnapPiece;
-    public GlueBox RelatedGlueBox;
     public string ConnectionID = "Default";
-    public bool CanConnect = true;
-    public bool isActive { get; set; }
+    public bool ReadyToConnect { get; set; }
     public bool IsConnected { get; private set; }
-    public Vector3 CurrentPosition
+    public Vector3 Position
     {
         get
         {
@@ -17,28 +15,21 @@ public class SnapPoint : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        isActive = false;
-    }
-
     public bool CanConnectTo(SnapPoint otherPoint)
     {
-        return (otherPoint.ConnectionID == ConnectionID) && CanConnect && otherPoint.CanConnect && !otherPoint.IsConnected && !IsConnected;
+        return (otherPoint.ConnectionID == ConnectionID) && ReadyToConnect && otherPoint.ReadyToConnect && !otherPoint.IsConnected && !IsConnected;
     }
 
-    public float DistanceFromPoint(SnapPoint otherPoint)
-    {
-        return Vector3.Distance(CurrentPosition, otherPoint.CurrentPosition);
-    }
+    //public float DistanceFromPoint(SnapPoint otherPoint)
+    //{
+    //    return Vector3.Distance(Position, otherPoint.Position);
+    //}
 
-    public void ConnectToPoint(SnapPoint otherPoint, Transform center)
+    public void ConnectPieceToPoint(SnapPoint otherPoint, Transform center)
     {
         IsConnected = true;
         otherPoint.IsConnected = true;
-        ParentSnapPiece.gameObject.transform.parent = center;
-        ParentSnapPiece.RotateToLocalRotation();
-        ParentSnapPiece.MoveToLocalLocation();
+        ParentSnapPiece.SnapTo(center.position);
     }
 
     public void DisplayPoint()
