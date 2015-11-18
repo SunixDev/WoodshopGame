@@ -28,8 +28,10 @@ public class BoundsWithChildren : MonoBehaviour
             float radius = objBounds.extents.magnitude;
             Gizmos.color = Color.white;
             Gizmos.DrawWireSphere(center, radius);
-            Gizmos.DrawWireCube(center, new Vector3(objBounds.center.x + objBounds.size.x, objBounds.center.y + objBounds.size.y, objBounds.center.z + objBounds.size.z));
-            Debug.DrawRay(objBounds.center, Vector3.down, Color.blue);
+            float x = objBounds.center.x + objBounds.size.x;
+            float y = objBounds.center.y + objBounds.size.y;
+            float z = objBounds.center.z + objBounds.size.z;
+            Gizmos.DrawWireCube(center, new Vector3(x, y, z));
         }
     }
 }

@@ -46,14 +46,6 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\BaseFinger.cs" />
-     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Component\EasyTouchTrigger.cs" />
-     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\ECamera.cs" />
-     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\EasyTouch.cs" />
-     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\EasyTouchInput.cs" />
-     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Finger.cs" />
-     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Gesture.cs" />
-     <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\TwoFingerGesture.cs" />
      <Compile Include="Assets\HSVPicker\BoxSlider.cs" />
      <Compile Include="Assets\HSVPicker\ColorPickerTester.cs" />
      <Compile Include="Assets\HSVPicker\HSVDragger.cs" />
@@ -68,7 +60,8 @@
      <Compile Include="Assets\Scripts\BoundsRenderer.cs" />
      <Compile Include="Assets\Scripts\BoundsWithChildren.cs" />
      <Compile Include="Assets\Scripts\Camera\CameraControl.cs" />
-     <Compile Include="Assets\Scripts\Camera\CameraPositioning.cs" />
+     <Compile Include="Assets\Scripts\Camera\GameCameraControl.cs" />
+     <Compile Include="Assets\Scripts\CubeBoundary.cs" />
      <Compile Include="Assets\Scripts\Enums\CutLineType.cs" />
      <Compile Include="Assets\Scripts\Enums\CutState.cs" />
      <Compile Include="Assets\Scripts\Enums\GameState.cs" />
@@ -124,9 +117,10 @@
      <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\GlueBox.cs" />
      <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\GluePlane.cs" />
      <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\GlueArea.cs" />
-     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\MoveToCamera.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\GlueManager.cs" />
      <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\PieceController.cs" />
      <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\PlayerGlue.cs" />
+     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\SnapTest.cs" />
      <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPiece.cs" />
      <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPieceGameManager.cs" />
      <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPieceGameplay.cs" />
@@ -134,7 +128,6 @@
      <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPoint.cs" />
      <Compile Include="Assets\Scripts\Tools\IToolManager.cs" />
      <Compile Include="Assets\Scripts\Tools\Node.cs" />
-     <Compile Include="Assets\Scripts\Tools\RotateTowardsTest.cs" />
      <Compile Include="Assets\Scripts\Tools\Ruler\Ruler.cs" />
      <Compile Include="Assets\Scripts\Tools\Ruler\RulerMovement.cs" />
      <Compile Include="Assets\Scripts\Tools\SwipingGameplay\SwipeGameplay.cs" />
@@ -144,9 +137,8 @@
      <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawCut.cs" />
      <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawManager.cs" />
      <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawUI.cs" />
-     <Compile Include="Assets\Scripts\UI\BringToFront.cs" />
      <Compile Include="Assets\Scripts\UI\DrawerSlide.cs" />
-     <Compile Include="Assets\Scripts\UI\ModelWindowManager.cs" />
+     <Compile Include="Assets\Scripts\UI\MainUI.cs" />
      <Compile Include="Assets\Scripts\UI\WoodListPanel.cs" />
      <Compile Include="Assets\Scripts\WoodMaterials\BoardController.cs" />
      <Compile Include="Assets\Scripts\WoodMaterials\WoodLeftover.cs" />
@@ -154,9 +146,9 @@
      <Compile Include="Assets\Scripts\WoodMaterials\WoodPiece.cs" />
      <None Include="Assets\Shaders\ShiningShader.shader" />
      <None Include="Assets\Shaders\SandingShader.shader" />
-     <None Include="Assets\EasyTouchBundle\Readme.txt" />
+     <None Include="Assets\Plugins\EasyTouchBundle\Readme.txt" />
      <None Include="Assets\Shaders\PaintingShader.shader" />
-     <None Include="Assets\EasyTouchBundle\EasyTouch\RealseNotes.txt" />
+     <None Include="Assets\Plugins\EasyTouchBundle\EasyTouch\RealseNotes.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>F:/Unity/Unity5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
@@ -169,6 +161,10 @@
  <Reference Include="UnityEditor.iOS.Extensions.Xcode">
  <HintPath>F:/Unity/Unity5/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
  </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{0F1C7E4B-C8AD-3799-2411-EF5580F85F55}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

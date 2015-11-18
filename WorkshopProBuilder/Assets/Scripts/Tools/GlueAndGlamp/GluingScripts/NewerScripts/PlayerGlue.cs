@@ -3,23 +3,27 @@ using System.Collections;
 
 public class PlayerGlue : MonoBehaviour 
 {
-    public float applicationRate = 20f;
-    public float maxAmount = 100f;
-
-    private int glueLayerMask;
+    public float ApplicationRate = 20f;
+    public float AmountToActivateSnapPoints = 75f;
+    public float MinAmountForPerfectScore = 95f;
+    public float MaxAmount = 100f;
+    
+    private LayerMask glueLayerMask;
     private Vector2 currentTouchPosition;
     private Vector2 previousTouchPosition;
+    private bool applyingGlue;
 
     void Awake()
     {
         glueLayerMask = LayerMask.GetMask("Glue");
         currentTouchPosition = new Vector2(-1f, -1f);
         previousTouchPosition = currentTouchPosition;
+        applyingGlue = false;
     }
 
     void Update()
     {
-        if (previousTouchPosition != currentTouchPosition)
+        if (previousTouchPosition != currentTouchPosition && applyingGlue)
         {
             Ray ray = Camera.main.ScreenPointToRay(currentTouchPosition);
             RaycastHit hit;
@@ -28,7 +32,7 @@ public class PlayerGlue : MonoBehaviour
                 GlueBox glueBox = hit.collider.gameObject.GetComponent<GlueBox>();
                 if (glueBox != null)
                 {
-                    glueBox.ApplyGlue(applicationRate, maxAmount);
+                    glueBox.ApplyGlue(this);
                 }
             }
             previousTouchPosition = currentTouchPosition;
@@ -43,18 +47,26 @@ public class PlayerGlue : MonoBehaviour
             if (gesture.pickedObject.tag == "GlueHitBox")
             {
                 currentTouchPosition = gesture.position;
+                applyingGlue = true;
             }
         }
+    }
+
+    public void OnTouchRelease(Gesture gesture)
+    {
+        applyingGlue = false;
     }
 
     private void EnableTouchEvents()
     {
         EasyTouch.On_TouchDown += GetTouchPosition;
+        EasyTouch.On_TouchUp += OnTouchRelease;
     }
 
     private void DisableTouchEvents()
     {
-        EasyTouch.On_TouchDown -= GetTouchPosition;        
+        EasyTouch.On_TouchDown -= GetTouchPosition;
+        EasyTouch.On_TouchUp -= OnTouchRelease;       
     }
 
     void OnEnable()
@@ -72,18 +84,3 @@ public class PlayerGlue : MonoBehaviour
         DisableTouchEvents();
     }
 }
-
-
-
-
-
-//private Vector3 origin;
-//private Transform piece;
-//private bool playerPickedPiece;
-
-//void Start()
-//{
-//    origin = Vector3.zero;
-//    piece = null;
-//    playerPickedPiece = false;
-//}

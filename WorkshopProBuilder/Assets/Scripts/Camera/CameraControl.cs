@@ -9,9 +9,10 @@ public enum ZoomType
 
 public enum PanType
 {
-    XZ_Plane,
-    XY_Plane
+    XY_Plane,
+    XZ_Plane
 }
+
 
 public enum CameraType
 {

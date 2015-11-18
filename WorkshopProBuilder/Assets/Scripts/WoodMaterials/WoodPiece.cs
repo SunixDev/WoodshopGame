@@ -24,7 +24,7 @@ public class WoodPiece : MonoBehaviour
                 bool canConnect = true;
                 for (int i = 0; i < GlueBoxes.Count && canConnect; i++)
                 {
-                    canConnect = GlueBoxes[i].ReadyToConnect;
+                    canConnect = GlueBoxes[i].MinimumReached;
                 }
                 return canConnect;
             }
@@ -53,33 +53,33 @@ public class WoodPiece : MonoBehaviour
         }
     }
 
-    public List<GlueBox> ActivateGlueBoxes(int stepNumber)
-    {
-        List<GlueBox> activatedGlueBoxes = new List<GlueBox>();
-        foreach (GlueBox glue in GlueBoxes)
-        {
-            StepID id = glue.GetComponent<StepID>();
-            if (id.UsedInStep(stepNumber))
-            {
-                glue.gameObject.GetComponent<BoxCollider>().enabled = true;
-                activatedGlueBoxes.Add(glue);
-            }
-        }
-        return activatedGlueBoxes;
-    }
+    //public List<GlueBox> ActivateGlueBoxes(int stepNumber)
+    //{
+    //    List<GlueBox> activatedGlueBoxes = new List<GlueBox>();
+    //    foreach (GlueBox glue in GlueBoxes)
+    //    {
+    //        StepID id = glue.GetComponent<StepID>();
+    //        if (id.UsedInStep(stepNumber))
+    //        {
+    //            glue.gameObject.GetComponent<BoxCollider>().enabled = true;
+    //            activatedGlueBoxes.Add(glue);
+    //        }
+    //    }
+    //    return activatedGlueBoxes;
+    //}
 
-    public List<SnapPoint> ActivateSnapPoints(int stepNumber)
-    {
-        List<SnapPoint> activatedSnapPoints = new List<SnapPoint>();
-        foreach (SnapPoint snapPoint in SnapPoints)
-        {
-            StepID id = snapPoint.GetComponent<StepID>();
-            if (id.UsedInStep(stepNumber))
-            {
-                //snapPoint.isActive = true;
-                activatedSnapPoints.Add(snapPoint);
-            }
-        }
-        return activatedSnapPoints;
-    }
+    //public List<SnapPoint> ActivateSnapPoints(int stepNumber)
+    //{
+    //    List<SnapPoint> activatedSnapPoints = new List<SnapPoint>();
+    //    foreach (SnapPoint snapPoint in SnapPoints)
+    //    {
+    //        StepID id = snapPoint.GetComponent<StepID>();
+    //        if (id.UsedInStep(stepNumber))
+    //        {
+    //            //snapPoint.isActive = true;
+    //            activatedSnapPoints.Add(snapPoint);
+    //        }
+    //    }
+    //    return activatedSnapPoints;
+    //}
 }

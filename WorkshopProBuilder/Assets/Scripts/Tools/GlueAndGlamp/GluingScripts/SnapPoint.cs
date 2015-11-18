@@ -5,7 +5,7 @@ public class SnapPoint : MonoBehaviour
 {
     public SnapPiece ParentSnapPiece;
     public string ConnectionID = "Default";
-    public bool ReadyToConnect { get; set; }
+    public bool ReadyToConnect { get; private set; }
     public bool IsConnected { get; private set; }
     public Vector3 Position
     {
@@ -15,36 +15,33 @@ public class SnapPoint : MonoBehaviour
         }
     }
 
-    public bool CanConnectTo(SnapPoint otherPoint)
+    void Awake()
     {
-        return (otherPoint.ConnectionID == ConnectionID) && ReadyToConnect && otherPoint.ReadyToConnect && !otherPoint.IsConnected && !IsConnected;
+        ActivatePoint();
+        IsConnected = false;
     }
 
-    //public float DistanceFromPoint(SnapPoint otherPoint)
-    //{
-    //    return Vector3.Distance(Position, otherPoint.Position);
-    //}
+    public bool CanConnectTo(SnapPoint otherPoint)
+    {
+        return (otherPoint.ConnectionID == ConnectionID) && ReadyToConnect && otherPoint.ReadyToConnect && !otherPoint.IsConnected && !IsConnected && otherPoint != this;
+    }
 
     public void ConnectPieceToPoint(SnapPoint otherPoint, Transform center)
     {
         IsConnected = true;
         otherPoint.IsConnected = true;
-        ParentSnapPiece.SnapTo(center.position);
+        ParentSnapPiece.SnapToProject(center.position);
     }
 
-    public void DisplayPoint()
+    public void ActivatePoint()
     {
+        ReadyToConnect = true;
         GetComponent<MeshRenderer>().enabled = true;
     }
 
-    public void HidePoint()
+    public void DeactivatePoint()
     {
+        ReadyToConnect = false;
         GetComponent<MeshRenderer>().enabled = false;
     }
 }
-
-//Vector3 nextPosition = Vector3.MoveTowards(CurrentPosition, otherPoint.CurrentPosition, 1.0f);
-//float magnitude = Vector3.Magnitude(nextPosition - CurrentPosition);
-//Vector3 direction = Vector3.Normalize(nextPosition - CurrentPosition);
-//Vector3 totalMovement = (direction * magnitude);
-//ParentSnapPiece.SnapTo(totalMovement);

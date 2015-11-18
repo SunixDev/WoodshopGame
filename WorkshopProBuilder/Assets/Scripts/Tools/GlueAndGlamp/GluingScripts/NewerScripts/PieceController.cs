@@ -24,7 +24,6 @@ public class PieceController : MonoBehaviour
 
     public void OnPieceTouched(Gesture gesture)
     {
-        Debug.Log("gesture.pickedObject: " + gesture.pickedObject);
         if (gesture.pickedObject == gameObject && gesture.touchCount == 1)
         {
             if (state == PieceControlState.Drag)
@@ -35,16 +34,15 @@ public class PieceController : MonoBehaviour
         }
     }
 
-    public void Move(Gesture gesture)
+    public void MovePiece(Gesture gesture)
     {
         if (gesture.pickedObject == gameObject && gesture.touchCount == 1 && isMoving && state == PieceControlState.Drag)
         {
-            Debug.Log(pieceTransform.position);
             pieceTransform.position = gesture.GetTouchToWorldPoint(pieceTransform.position) + offset;
         }
     }
 
-    public void Rotate(Gesture gesture)
+    public void RotatePiece(Gesture gesture)
     {
         if (gesture.pickedObject == gameObject && gesture.touchCount == 1 && isMoving && state == PieceControlState.Rotate)
         {
@@ -70,16 +68,16 @@ public class PieceController : MonoBehaviour
     {
         EasyTouch.On_TouchStart += OnPieceTouched;
         EasyTouch.On_TouchUp += OnPieceReleased;
-        EasyTouch.On_Drag += Move;
-        EasyTouch.On_Drag += Rotate;
+        EasyTouch.On_Drag += MovePiece;
+        EasyTouch.On_Drag += RotatePiece;
     }
 
     private void DisableTouchEvents()
     {
         EasyTouch.On_TouchStart -= OnPieceTouched;
         EasyTouch.On_TouchUp -= OnPieceReleased;
-        EasyTouch.On_Drag -= Move;
-        EasyTouch.On_Drag -= Rotate;
+        EasyTouch.On_Drag -= MovePiece;
+        EasyTouch.On_Drag -= RotatePiece;
     }
 
     void OnEnable()

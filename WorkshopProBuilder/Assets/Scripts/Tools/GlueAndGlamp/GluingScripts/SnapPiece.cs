@@ -18,17 +18,24 @@ public class SnapPiece : MonoBehaviour
             return valid;
         }
     }
+    public bool AllPointsReadyToConnect
+    {
+        get
+        {
+            bool valid = true;
+            for (int i = 0; i < SnapPoints.Count && valid; i++)
+            {
+                valid = SnapPoints[i].ReadyToConnect;
+            }
+            return valid;
+        }
+    }
 
-    public void SnapTo(Vector3 centerPoint)
+    public void SnapToProject(Vector3 centerPoint)
     {
         transform.rotation = Quaternion.identity;
         transform.position = centerPoint += ConnectedLocalPosition;
     }
-
-    //public void RotateToLocalRotation()
-    //{
-    //    transform.localRotation = Quaternion.Euler(ConnectedLocalRotation);
-    //}
 
     public List<SnapPoint> GetAvailableSnapPoints()
     {

@@ -14,6 +14,7 @@ public class GluePlane : MonoBehaviour
     private Renderer objRenderer;
     private Vector3 fullScale;
     private IndicationType type = IndicationType.Highlight;
+    private float excessiveGluePercentage = 1.1f;
 
     void OnEnable()
     {
@@ -30,9 +31,9 @@ public class GluePlane : MonoBehaviour
             type = IndicationType.Application;
             objRenderer.material.color = glueColor;
         }
-        float percentageFilled = currentGlueAmount / maxGlueAmount;
-        if (percentageFilled > 1.2f)
-            percentageFilled = 1.2f;
+        float percentageFilled = currentGlueAmount / maxGlueAmount; //Percentage between 1.0 and 0.0
+        if (percentageFilled > excessiveGluePercentage)
+            percentageFilled = excessiveGluePercentage;
         glueColor.a = percentageFilled;
         objRenderer.material.color = glueColor;
         transform.localScale = fullScale * percentageFilled;

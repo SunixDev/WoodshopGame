@@ -5,16 +5,16 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DA736681-B3B8-D498-5C50-0DFB06FD60B7}</ProjectGuid>
+    <ProjectGuid>{15709EF1-4F8C-408A-BDC8-BC7E1661EEFB}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AssemblyName>Assembly-CSharp-Editor</AssemblyName>
+    <AssemblyName>Assembly-CSharp-firstpass</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
     <CompilerResponseFile></CompilerResponseFile>
-    <UnityProjectType>Editor:5</UnityProjectType>
+    <UnityProjectType>GamePlugins:3</UnityProjectType>
     <UnityBuildTarget>Android:13</UnityBuildTarget>
     <UnityVersion>5.1.1f1</UnityVersion>
     <RootNamespace></RootNamespace>
@@ -51,82 +51,36 @@
     <Reference Include="UnityEngine">
       <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor">
-      <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.UI">
-      <HintPath>Library\UnityAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Networking">
       <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor.Networking">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Networking.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.Analytics">
       <HintPath>Library\UnityAssemblies\UnityEngine.Analytics.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor.Graphs">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Graphs.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.Android.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Android.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.iOS.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.WP8.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.WP8.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.Metro.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Metro.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.BB10.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.BB10.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.SamsungTV.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.SamsungTV.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.WebGL.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.WebGL.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.LinuxStandalone.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.LinuxStandalone.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.WindowsStandalone.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.OSXStandalone.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.OSXStandalone.Extensions.dll</HintPath>
+    <Reference Include="UnityEditor">
+      <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
     </Reference>
-    <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
-      <HintPath>Assets\UnityVS\Editor\SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
-    </Reference>
-    <Reference Include="SyntaxTree.VisualStudio.Unity.Messaging">
-      <HintPath>Assets\UnityVS\Editor\SyntaxTree.VisualStudio.Unity.Messaging.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityVS.VersionSpecific">
-      <HintPath>Assets\UnityVS\Editor\UnityVS.VersionSpecific.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="UnityVS.WorkshopProBuilder.CSharp.Plugins.csproj">
-      <Project>{15709EF1-4F8C-408A-BDC8-BC7E1661EEFB}</Project>
-      <Name>UnityVS.WorkshopProBuilder.CSharp.Plugins</Name>
-    </ProjectReference>
-    <ProjectReference Include="UnityVS.WorkshopProBuilder.CSharp.csproj">
-      <Project>{FEB10B72-EA16-6FC7-5790-377E1EBA9F22}</Project>
-      <Name>UnityVS.WorkshopProBuilder.CSharp</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Assets\HSVPicker\Editor\BoxSliderEditor.cs" />
+    <Compile Include="Assets\Plugins\EasyTouchBundle\EasyTouch\Plugins\BaseFinger.cs" />
+    <Compile Include="Assets\Plugins\EasyTouchBundle\EasyTouch\Plugins\Component\EasyTouchTrigger.cs" />
+    <Compile Include="Assets\Plugins\EasyTouchBundle\EasyTouch\Plugins\ECamera.cs" />
+    <Compile Include="Assets\Plugins\EasyTouchBundle\EasyTouch\Plugins\EasyTouch.cs" />
+    <Compile Include="Assets\Plugins\EasyTouchBundle\EasyTouch\Plugins\EasyTouchInput.cs" />
+    <Compile Include="Assets\Plugins\EasyTouchBundle\EasyTouch\Plugins\Editor\EasyTouchInspector.cs" />
+    <Compile Include="Assets\Plugins\EasyTouchBundle\EasyTouch\Plugins\Editor\EasyTouchMenu.cs" />
+    <Compile Include="Assets\Plugins\EasyTouchBundle\EasyTouch\Plugins\Editor\EasyTouchTriggerInspector.cs" />
+    <Compile Include="Assets\Plugins\EasyTouchBundle\EasyTouch\Plugins\Editor\EasytouchHierachyCallBack.cs" />
+    <Compile Include="Assets\Plugins\EasyTouchBundle\EasyTouch\Plugins\Editor\HTGuiTools.cs" />
+    <Compile Include="Assets\Plugins\EasyTouchBundle\EasyTouch\Plugins\Finger.cs" />
+    <Compile Include="Assets\Plugins\EasyTouchBundle\EasyTouch\Plugins\Gesture.cs" />
+    <Compile Include="Assets\Plugins\EasyTouchBundle\EasyTouch\Plugins\TwoFingerGesture.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Plugins\EasyTouchBundle\EasyTouch\RealseNotes.txt" />
