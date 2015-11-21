@@ -3,7 +3,6 @@ using System.Collections;
 
 public class ClampPoint : MonoBehaviour 
 {
-    //public GameObject ParentPiece;
     public Vector3 LocalConnectionRotation;
     public bool Clamped { get; set; }
     public Vector3 Position

@@ -126,6 +126,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Editor\ClampEditor.cs" />
+    <Compile Include="Assets\Editor\SnapPieceEditor.cs" />
     <Compile Include="Assets\HSVPicker\Editor\BoxSliderEditor.cs" />
   </ItemGroup>
   <ItemGroup>

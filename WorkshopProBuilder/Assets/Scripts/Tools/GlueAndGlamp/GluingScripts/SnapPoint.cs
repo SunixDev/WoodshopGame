@@ -30,7 +30,7 @@ public class SnapPoint : MonoBehaviour
     {
         IsConnected = true;
         otherPoint.IsConnected = true;
-        ParentSnapPiece.SnapToProject(center.position);
+        ParentSnapPiece.SnapToProject(center);
     }
 
     public void ActivatePoint()

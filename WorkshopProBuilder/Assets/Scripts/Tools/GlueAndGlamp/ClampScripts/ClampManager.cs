@@ -6,25 +6,23 @@ using System;
 public class ClampManager : MonoBehaviour 
 {
     public List<ClampPoint> ClampPoints;
-    public CameraControl GameCamera;
-    public GameObject ClampObject;
-    public Vector3 ClampSpawn;
-    public float MinConnectDistance;
+    public GameObject Clamp;
+    public Transform ClampSpawnPoint;
     public double dryTimeInSeconds = 15.0;
     public ClampUI UI_Manager;
     public Transform WoodProject;
+    public LayerMask clampingLayerMask;
 
-    private Clamp currentClamp;
-    private GluedPieceController piece;
-    private int clampPointsRemaining;
-    private bool inProgress = true;
+    private ClampControl currentClamp;
+    private bool clampPlacementInProgress = true;
     private DateTime dryingTimeEnd;
     private bool saveDryTime = false;
+    private bool updatingTouchPosition;
+    private Vector2 currentFingerPosition;
 
 	void Start ()
     {
-        UI_Manager.DisplayPlans(true);
-        GameCamera.MovementEnabled = false;
+        updatingTouchPosition = true;
         bool levelLoaded = LoadLevel();
         
         if (!levelLoaded)
@@ -35,7 +33,7 @@ public class ClampManager : MonoBehaviour
         if (WoodProject == null)
         {
             Debug.LogError("WoodProject variable not assigned");
-            inProgress = false;
+            clampPlacementInProgress = false;
         }
         else
         {
@@ -48,91 +46,46 @@ public class ClampManager : MonoBehaviour
 
     private void SetupGame()
     {
-        clampPointsRemaining = ClampPoints.Count;
-        GameObject clamp = Instantiate(ClampObject, ClampSpawn, Quaternion.identity) as GameObject;
-        currentClamp = clamp.GetComponent<Clamp>();
-        currentClamp.controller.Moveable = true;
-        piece = WoodProject.gameObject.GetComponent<GluedPieceController>();
-        if (piece == null)
-        {
-            piece = WoodProject.gameObject.AddComponent<GluedPieceController>();
-            piece.Moveable = true;
-        }
+        GameObject clamp = Instantiate(Clamp, ClampSpawnPoint.position, Quaternion.identity) as GameObject;
+        currentClamp = clamp.GetComponent<ClampControl>();
     }
 
     void Update()
     {
-        if (inProgress)
+        if (clampPlacementInProgress)
         {
-            if (clampPointsRemaining <= 0)
+            if (ClampPoints.Count <= 0 || ClampPoints == null)
             {
                 System.DateTime currentTime = System.DateTime.Now;
                 if (currentTime.CompareTo(dryingTimeEnd) >= 0)
                 {
-                    UI_Manager.InfoPanelText.text = "Your project is completely dry now. On to the next step.";
-                    UI_Manager.InfoPanelButton.gameObject.SetActive(true);
-                    inProgress = false;
+                    UI_Manager.DisplayResultsPanel("Your project is completely dry now. On to the next step.", displayNextSceneButton: true);
+                    clampPlacementInProgress = false;
                     saveDryTime = false;
                 }
             }
             else
             {
-                if (Input.touchCount > 0 || Input.GetMouseButton(0))
-                {
-                    //if (Input.GetTouch(0).phase != TouchPhase.Ended || Input.GetMouseButton(0))
-                    //{
-                        
-                    //}
-                    //if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetMouseButtonUp(0))
-                    //{
-
-                    //}
-                }
-                //if (nearestClampPointIndex == -1)
-                //{
-                //    currentClamp.ReleaseClamp();
-                //}
-                //else if (Input.touchCount > 0 )
-                //{
-                //    if (nearestClampPointIndex >= 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
-                //    {
-                //        ClampPoints[nearestClampPointIndex].Clamped = true;
-                //        clampPointsRemaining--;
-                //        currentClamp.controller.ResetSelection();
-
-                //        if (clampPointsRemaining > 0)
-                //        {
-                //            GameObject clamp = Instantiate(ClampObject, ClampSpawn, Quaternion.identity) as GameObject;
-                //            currentClamp = clamp.GetComponent<Clamp>();
-                //            currentClamp.controller.Moveable = true;
-                //        }
-                //        else
-                //        {
-                //            currentClamp = null;
-                //            DateTime dryTimeStart = DateTime.Now;
-                //            dryingTimeEnd = dryTimeStart.AddSeconds(dryTimeInSeconds);
-                //            UI_Manager.InfoPanel.SetActive(true);
-                //            UI_Manager.InfoPanelText.text = "Your project will be dry in " + dryTimeInSeconds + " seconds.\nCome back then to continue the project";
-                //            UI_Manager.InfoPanelButton.gameObject.SetActive(false);
-                //            saveDryTime = true;
-                //        }
-                //    }
-                //}
+                
             }
         }
     }
 
-    private float DistanceFromDistance(ClampPoint point)
+    public void UpdateTouchPosition(Gesture gesture)
     {
-        float distance = -1.0f;
-        if (Input.touchCount > 0 || Input.GetMouseButton(0))
+        if (gesture.touchCount == 1)
         {
-            Vector2 touchPoint = (Input.touchCount > 0) ? Input.GetTouch(0).position : new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-            Vector3 touchPosition = Camera.main.ScreenToWorldPoint(new Vector3(touchPoint.x, touchPoint.y, 10.0f));
-            touchPosition.z = point.transform.position.z;
-            distance = Vector3.Distance(touchPosition, point.transform.position);
+            currentFingerPosition = gesture.position;
+            updatingTouchPosition = true;
         }
-        return distance;
+    }
+
+    public void StopUpdatingTouchPosition(Gesture gesture)
+    {
+        if (gesture.touchCount == 1)
+        {
+            updatingTouchPosition = false;
+        }
     }
 
     private bool LoadLevel()
@@ -142,32 +95,14 @@ public class ClampManager : MonoBehaviour
         {
             if (PlayerPrefs.HasKey(GameManager.instance.DryTimeKey))
             {
-                clampPointsRemaining = -1;
                 long binaryTime = Convert.ToInt64(PlayerPrefs.GetString(GameManager.instance.DryTimeKey));
                 dryingTimeEnd = DateTime.FromBinary(binaryTime);
                 PlayerPrefs.DeleteKey(GameManager.instance.DryTimeKey);
-                UI_Manager.InfoPanel.SetActive(true);
-                UI_Manager.InfoPanelText.text = "Your project will be dry in " + dryTimeInSeconds + " seconds.\nCome back then to continue the project";
-                UI_Manager.InfoPanelButton.gameObject.SetActive(false);
+                UI_Manager.DisplayResultsPanel("Your project will be dry in " + dryTimeInSeconds + " seconds.\nCome back then to continue the project");
                 loaded = true;
             }
         }
         return loaded;
-    }
-
-    public void SetUpClampMovement()
-    {
-        GameCamera.MovementEnabled = false;
-        piece.Moveable = true;
-        currentClamp.controller.Moveable = true;
-        
-    }
-
-    public void SetUpCameraMovement()
-    {
-        GameCamera.MovementEnabled = true;
-        piece.Moveable = false;
-        currentClamp.controller.Moveable = false;
     }
 
     public void GoToScene(string sceneName)
@@ -192,5 +127,32 @@ public class ClampManager : MonoBehaviour
             PlayerPrefs.SetFloat(GameManager.instance.StepsKey, GameManager.instance.numberOfSteps);
             PlayerPrefs.Save();
         }
+    }
+
+
+
+    private void EnableTouchEvents()
+    {
+        EasyTouch.On_TouchDown += UpdateTouchPosition;
+        EasyTouch.On_TouchUp += StopUpdatingTouchPosition;
+    }
+
+    private void DisableTouchEvents()
+    {
+        EasyTouch.On_TouchDown -= UpdateTouchPosition;
+        EasyTouch.On_TouchUp -= StopUpdatingTouchPosition;
+    }
+
+    void OnEnable()
+    {
+        EnableTouchEvents();
+    }
+    void OnDisable()
+    {
+        DisableTouchEvents();
+    }
+    void OnDestory()
+    {
+        DisableTouchEvents();
     }
 }

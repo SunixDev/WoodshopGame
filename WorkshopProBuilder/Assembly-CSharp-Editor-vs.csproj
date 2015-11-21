@@ -46,6 +46,8 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Editor\ClampEditor.cs" />
+     <Compile Include="Assets\Editor\SnapPieceEditor.cs" />
      <Compile Include="Assets\HSVPicker\Editor\BoxSliderEditor.cs" />
      <None Include="Assets\Shaders\ShiningShader.shader" />
      <None Include="Assets\Shaders\SandingShader.shader" />

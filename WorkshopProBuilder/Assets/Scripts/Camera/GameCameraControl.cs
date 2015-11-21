@@ -5,29 +5,33 @@ public class GameCameraControl : MonoBehaviour
 {
     [Header("Distance Variables")]
     public Transform LookAtPoint;
-    public float Distance = 2.0f;
+    public float Distance = 2f;
     public float MinDistance = 0.5f;
-    public float MaxDistance = 5.0f;
+    public float MaxDistance = 5f;
 
     [Header("Initial Rotation")]
-    public float Vertical = 90;
-    public float Horizontal = 90;
+    public float Vertical = 0f;
+    public float Horizontal = 0f;
 
     [Header("Speed Input")]
-    [Range(1.0f, 5.0f)]
-    public float SensitivityX = 2.0f;
-    [Range(1.0f, 5.0f)]
-    public float SensitivityY = 2.0f;
-    [Range(0.1f, 5.0f)]
-    public float ZoomSensitivity = 1.0f;
+    [Range(1f, 5f)]
+    public float SensitivityX = 2f;
+    [Range(1f, 5f)]
+    public float SensitivityY = 2f;
+    [Range(0.1f, 5f)]
+    public float ZoomSensitivity = 1f;
 
     [Header("Vertical Rotation Clamp")]
-    public float MinRotationY = 1.0f;
-    public float MaxRotationY = 179.0f;
+    public float MinRotationY = 1f;
+    public float MaxRotationY = 179f;
 
     [Header("Horizontal Rotation Clamp")]
-    public float MinRotationX = 0.0f;
-    public float MaxRotationX = 180.0f;
+    public float MinRotationX = -180f;
+    public float MaxRotationX = 180f;
+
+    [Header("Movement Toggle")]
+    public bool EnableZoom = true;
+    public bool EnableOrbit = true;
 
     private float xMovement;
     private float yMovement;
@@ -51,7 +55,7 @@ public class GameCameraControl : MonoBehaviour
 
     public void OrbitCamera(Gesture gesture)
     {
-        if (gesture.touchCount == 1 && gesture.pickedObject == null)
+        if (gesture.touchCount == 1 && EnableOrbit && gesture.pickedObject == null)
         {
             xMovement += gesture.deltaPosition.x * SensitivityX * 0.1f;
             xMovement = ClampAngle(xMovement, MinRotationX, MaxRotationX);
@@ -63,9 +67,9 @@ public class GameCameraControl : MonoBehaviour
 
     public void ZoomOut(Gesture gesture)
     {
-        if (gesture.touchCount == 2)
+        if (gesture.touchCount == 2 && EnableZoom && gesture.pickedObject == null)
         {
-            float zoomAmount = gesture.deltaPinch * ZoomSensitivity * 0.1f;
+            float zoomAmount = gesture.deltaPinch * ZoomSensitivity * 0.01f;
             Distance += zoomAmount;
             Distance = Mathf.Clamp(Distance, MinDistance, MaxDistance);
         }
@@ -73,9 +77,9 @@ public class GameCameraControl : MonoBehaviour
 
     public void ZoomIn(Gesture gesture)
     {
-        if (gesture.touchCount == 2)
+        if (gesture.touchCount == 2 && EnableZoom && gesture.pickedObject == null)
         {
-            float zoomAmount = gesture.deltaPinch * ZoomSensitivity * 0.1f;
+            float zoomAmount = gesture.deltaPinch * ZoomSensitivity * 0.01f;
             Distance -= zoomAmount;
             Distance = Mathf.Clamp(Distance, MinDistance, MaxDistance);
         }

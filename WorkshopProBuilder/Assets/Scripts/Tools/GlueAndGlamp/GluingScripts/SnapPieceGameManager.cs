@@ -11,35 +11,37 @@ public enum GlueResult
 
 public class SnapPieceGameManager : MonoBehaviour
 {
-    //public List<SnapPiece> PiecesToConnect;
-    //public Transform Center;
-    //public List<GlueBox> Glues;
-    //public List<SnapPoint> SnapPoints;
-    //public SnapPieceUI UI_Manager;
-    //public CameraControl GameCamera;
-    //public Transform SpawnPoint;
-    //public float ValidConnectionDistance = 0.05f;
+    public List<GameObject> PartsToConnect;
+    public List<GlueBox> GlueAreas;
+    public List<SnapPoint> SnapPoints;
+    public Transform ProjectCenter;
+    public SnapPieceUI UI_Manager;
+    public GlueManager GlueManager;
+    public SnapTest SnapManager;
+    public Transform SpawnPoint;
 
-    //private WoodPiece CurrentPiece;
-    //private int currentPieceIndex = 0;
-    //private List<SnapPiece> ConnectedPieces = new List<SnapPiece>();
-    ////private bool inProgress = true;
-    //private int Total_PerfectGlues = 0;
-    //private int Total_MinimumGlues = 0;
-    //private int Total_TooMuchGlues = 0;
-    //private float TotalPercentage = 0.0f;
-    //private int TotalPiecesConnected = 0;
+    private int currentPieceIndex = 0;
 
     void Start()
     {
-        //UI_Manager.DisplayPlans(true);
-        //SnapPiece initialPiece = PiecesToConnect[0];
-        //initialPiece.gameObject.SetActive(true);
-        //Destroy(initialPiece.gameObject.GetComponent<PieceController>());
-        //PiecesToConnect.RemoveAt(0);
-        //initialPiece.gameObject.transform.parent = Center;
-        //initialPiece.RotateToLocalRotation();
-        //initialPiece.MoveToLocalLocation();
+        UI_Manager.DisplayPlans(true);
+        bool projectFound = false;
+        for (int i = 0; i < PartsToConnect.Count && !projectFound; i++)
+        {
+            if (PartsToConnect[i].tag == "WoodProject")
+            {
+                projectFound = true;
+            }
+        }
+        if (!projectFound)
+        {
+            SnapManager.projectCenter = ProjectCenter;
+            SnapPiece initialPiece = PartsToConnect[0].GetComponent<SnapPiece>();
+            initialPiece.gameObject.SetActive(true);
+            initialPiece.gameObject.GetComponent<PieceController>().enabled = false;
+            PartsToConnect.RemoveAt(0);
+            initialPiece.SnapToProject(ProjectCenter);
+        }
 
         //foreach (SnapPiece piece in PiecesToConnect)
         //{
@@ -60,60 +62,7 @@ public class SnapPieceGameManager : MonoBehaviour
 
     void Update()
     {
-        //if (TotalPiecesConnected < PiecesToConnect.Count)
-        //{
-        //    bool pieceConnected = false;
-        //    foreach (SnapPoint otherPoint in SnapPoints)
-        //    {
-        //        foreach (SnapPoint currentPoint in CurrentPiece.SnapPoints)
-        //        {
-        //            if (currentPoint != otherPoint && currentPoint.CanConnectTo(otherPoint) && 
-        //                currentPoint.DistanceFromPoint(otherPoint) <= ValidConnectionDistance && CurrentPiece.CanConnect &&
-        //                otherPoint.ParentSnapPiece.GetComponent<WoodPiece>().CanConnect)
-        //            {
-        //                TotalPiecesConnected++;
-        //                CurrentPiece.gameObject.transform.parent = Center;
-        //                EvaluateAllConnectionsInPiece();
-        //                pieceConnected = true;
-        //                break;
-        //            }
-        //        }
-        //        if (pieceConnected) { break; }
-        //    }
-
-
-        //    if (pieceConnected)
-        //    {
-        //        CurrentPiece = null;
-        //        ConnectedPieces.Add(PiecesToConnect[currentPieceIndex]);
-        //        Destroy(PiecesToConnect[currentPieceIndex].gameObject.GetComponent<PieceController>());
-        //        currentPieceIndex++;
-        //        if (TotalPiecesConnected < PiecesToConnect.Count)
-        //        {
-        //            UI_Manager.ListPanel.RemoveButton(currentPieceIndex - 1);
-        //            if (currentPieceIndex == PiecesToConnect.Count || PiecesToConnect[currentPieceIndex].IsAttached)
-        //            {
-        //                bool found = false;
-        //                for (int i = 0; i < PiecesToConnect.Count && !found; i++)
-        //                {
-        //                    if (!PiecesToConnect[i].IsAttached)
-        //                    {
-        //                        found = true;
-        //                        currentPieceIndex = i;
-        //                    }
-        //                }
-        //            }
-        //            CurrentPiece = PiecesToConnect[currentPieceIndex].GetComponent<WoodPiece>();
-        //            PiecesToConnect[currentPieceIndex].gameObject.SetActive(true);
-        //            PiecesToConnect[currentPieceIndex].transform.position = SpawnPoint.position;
-        //            PiecesToConnect[currentPieceIndex].transform.rotation = Quaternion.identity;
-        //        }
-        //        else
-        //        {
-        //            //DisplayResults();
-        //        }
-        //    }
-        //}
+        
     }
 
     private void EvaluateAllConnectionsInPiece()
@@ -216,52 +165,6 @@ public class SnapPieceGameManager : MonoBehaviour
     //    {
     //        Debug.Log("Index #" + index + " is invalid.");
     //    }
-    //}
-
-    //public void SetupForMovingPieces()
-    //{
-    //    if (CurrentPiece != null)
-    //    {
-    //        //CurrentPiece.GetComponent<PieceController>().Moveable = true;
-    //    }
-    //    GameCamera.EnableMovement(false);
-    //    foreach (GlueBox glue in Glues)
-    //    {
-    //        glue.gameObject.GetComponent<BoxCollider>().enabled = false;
-    //    }
-    //}
-
-    //public void SetupForGluing()
-    //{
-    //    if (CurrentPiece != null)
-    //    {
-    //        //CurrentPiece.GetComponent<PieceController>().Moveable = false;
-    //    }
-    //    GameCamera.EnableMovement(false);
-    //    foreach (GlueBox glue in Glues)
-    //    {
-    //        glue.gameObject.GetComponent<BoxCollider>().enabled = true;
-    //    }
-    //}
-
-    //public void SetupForCameraMovement()
-    //{
-    //    if (CurrentPiece != null)
-    //    {
-    //        //CurrentPiece.GetComponent<PieceController>().Moveable = false;
-    //    }
-    //    GameCamera.EnableMovement(true);
-    //    foreach (GlueBox glue in Glues)
-    //    {
-    //        glue.gameObject.GetComponent<BoxCollider>().enabled = false;
-    //    }
-    //}
-
-    //public void ResetCameraPosition()
-    //{
-    //    GameCamera.SnapToRotation(0.0f, 30.0f);
-    //    GameCamera.ResetLookAtOffset();
-    //    GameCamera.DistanceFromPoint = 1.2f;
     //}
 
     //public void GoToNextScene(string scene)

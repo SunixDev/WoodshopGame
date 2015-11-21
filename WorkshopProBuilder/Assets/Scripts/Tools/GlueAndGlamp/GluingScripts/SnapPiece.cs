@@ -31,10 +31,23 @@ public class SnapPiece : MonoBehaviour
         }
     }
 
-    public void SnapToProject(Vector3 centerPoint)
+    public void UpdateConnectedLocalPosition()
+    {
+        if (transform.parent != null)
+        {
+            ConnectedLocalPosition = transform.localPosition;
+        }
+        else
+        {
+            Debug.LogError(gameObject + ": The object is not a child of another object in order to get an accurate local position");
+        }
+    }
+
+    public void SnapToProject(Transform connectedProject)
     {
         transform.rotation = Quaternion.identity;
-        transform.position = centerPoint += ConnectedLocalPosition;
+        transform.parent = connectedProject;
+        transform.localPosition = ConnectedLocalPosition;
     }
 
     public List<SnapPoint> GetAvailableSnapPoints()

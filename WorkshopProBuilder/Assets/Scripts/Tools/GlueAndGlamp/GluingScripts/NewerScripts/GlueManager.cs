@@ -6,6 +6,7 @@ public class GlueManager : MonoBehaviour
     public Transform PiecePosition;
     public GameObject GameCamera;
     public PlayerGlue PlayerGlue;
+    public SnapPieceGameManager gameManager;
 
     private Transform pieceTransform;
     private Vector3 pieceOrigin = Vector3.zero;

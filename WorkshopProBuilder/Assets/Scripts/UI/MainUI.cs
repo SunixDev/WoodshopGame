@@ -10,7 +10,7 @@ public class MainUI : MonoBehaviour
     public List<Button> OptionButtons;
 
     public GameObject PlansPanel;
-    public Button HideButton;
+    public Button HidePlansButton;
 
     public GameObject ResultsPanel;
     public Text ResultsText;
@@ -19,22 +19,33 @@ public class MainUI : MonoBehaviour
 
     protected void Initialize()
     {
-        SelectedButton.GetComponent<Image>().color = SelectedButtonColor;
-        SelectedButton.GetComponent<Button>().enabled = false;
-        PlansPanel.SetActive(false);
+        if (OptionButtons.Count > 0)
+        {
+            SelectedButton.GetComponent<Image>().color = SelectedButtonColor;
+            SelectedButton.GetComponent<Button>().enabled = false;
+        }
+        DisplayPlans(true);
         ResultsPanel.SetActive(false);
     }
 
     public void DisplayPlans(bool showPlans)
     {
         PlansPanel.SetActive(showPlans);
+        ResultsPanel.SetActive(false);
     }
 
     public void DisplayResultsPanel(string textToDisplay, bool displayStartOverButton = false, bool displayNextSceneButton = false)
     {
+        PlansPanel.SetActive(false);
         ResultsPanel.SetActive(true);
-        StartOverButton.gameObject.SetActive(displayStartOverButton);
-        NextSceneButton.gameObject.SetActive(displayNextSceneButton);
+        if (StartOverButton != null)
+        {
+            StartOverButton.gameObject.SetActive(displayStartOverButton);
+        }
+        if (NextSceneButton != null)
+        {
+            NextSceneButton.gameObject.SetActive(displayNextSceneButton);
+        }
     }
 
     public void HideResultsPanel()
@@ -44,7 +55,7 @@ public class MainUI : MonoBehaviour
 
     public void SwitchActiveButton(GameObject buttonToUse)
     {
-        if (buttonToUse != SelectedButton)
+        if (buttonToUse != SelectedButton && OptionButtons.Count > 0)
         {
             SelectedButton.GetComponent<Image>().color = Color.white;
             SelectedButton.GetComponent<Button>().enabled = true;
@@ -62,7 +73,10 @@ public class MainUI : MonoBehaviour
             button.interactable = true;
             button.GetComponent<Image>().color = Color.white;
         }
-        SelectedButton.GetComponent<Button>().interactable = false;
+        if (SelectedButton != null)
+        {
+            SelectedButton.GetComponent<Button>().interactable = false;
+        }
     }
 
     protected void DisableOptions()

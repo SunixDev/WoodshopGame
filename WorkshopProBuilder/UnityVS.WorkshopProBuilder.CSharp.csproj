@@ -89,6 +89,7 @@
     <Compile Include="Assets\Scripts\BoundsWithChildren.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraControl.cs" />
     <Compile Include="Assets\Scripts\Camera\GameCameraControl.cs" />
+    <Compile Include="Assets\Scripts\Camera\OrbitCamera.cs" />
     <Compile Include="Assets\Scripts\CubeBoundary.cs" />
     <Compile Include="Assets\Scripts\Enums\CutLineType.cs" />
     <Compile Include="Assets\Scripts\Enums\CutState.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="Assets\Scripts\Managers\Project.cs" />
     <Compile Include="Assets\Scripts\Managers\Requirements.cs" />
     <Compile Include="Assets\Scripts\Managers\Step.cs" />
+    <Compile Include="Assets\Scripts\Managers\WoodContainer.cs" />
     <Compile Include="Assets\Scripts\Managers\WoodManagerHelper.cs" />
     <Compile Include="Assets\Scripts\Managers\WoodMaterialManager.cs" />
     <Compile Include="Assets\Scripts\Misc\DebugLogScript.cs" />
@@ -113,7 +115,6 @@
     <Compile Include="Assets\Scripts\Misc\Persistance.cs" />
     <Compile Include="Assets\Scripts\Misc\Rotate.cs" />
     <Compile Include="Assets\Scripts\Misc\StepID.cs" />
-    <Compile Include="Assets\Scripts\MoveToTest.cs" />
     <Compile Include="Assets\Scripts\ObjectBorder.cs" />
     <Compile Include="Assets\Scripts\ObjectController.cs" />
     <Compile Include="Assets\Scripts\Tools\BandSaw\BandSawBlade.cs" />
@@ -142,9 +143,9 @@
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\ClampScripts\ClampPoint.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\ClampScripts\ClampUI.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\ClampScripts\GluedPieceController.cs" />
+    <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\ClampScripts\PlayerClamping.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\GlueBox.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\GluePlane.cs" />
-    <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\GlueArea.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\GlueManager.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\PieceController.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\PlayerGlue.cs" />

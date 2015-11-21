@@ -6,7 +6,6 @@ public class Clamp : MonoBehaviour
     public Transform ClampHead;
     public Transform ClampHandle;
     public Transform HandleContactPoint;
-    public bool ClampedDown { get; private set; }
     [HideInInspector]
     public ClampControl controller;
 
@@ -29,7 +28,6 @@ public class Clamp : MonoBehaviour
         transform.position += totalMovement;
 
         ConnectHandle();
-        ClampedDown = true;
     }
 
     public void ConnectHandle()
@@ -51,5 +49,23 @@ public class Clamp : MonoBehaviour
         Vector3 direction = Vector3.Normalize(nextPosition - currentPosition);
         Vector3 totalMovement = (direction * magnitude);
         return totalMovement;
+    }
+
+    public void AddClampPoint(GameObject clampPoint)
+    {
+        if (transform.parent != null)
+        {
+            clampPoint.transform.position = ClampHead.position;
+            clampPoint.transform.parent = transform.parent;
+            ClampPoint point = clampPoint.GetComponent<ClampPoint>();
+            float x = Mathf.Round(transform.rotation.eulerAngles.x);
+            float y = Mathf.Round(transform.rotation.eulerAngles.y);
+            float z = Mathf.Round(transform.rotation.eulerAngles.z);
+            point.LocalConnectionRotation = new Vector3(x, y, z);
+        }
+        else
+        {
+            Debug.LogError("Make sure clamp is parented to the object it will be clamping to.");
+        }
     }
 }

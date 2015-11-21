@@ -3,6 +3,8 @@ using System.Collections;
 
 public class SnapTest : MonoBehaviour 
 {
+    public SnapPieceGameManager gameManager;
+    [HideInInspector]
     public Transform projectCenter;
 
     private SnapPiece selectedPiece;
