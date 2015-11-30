@@ -17,12 +17,9 @@ public class ClampManager : MonoBehaviour
     private bool clampPlacementInProgress = true;
     private DateTime dryingTimeEnd;
     private bool saveDryTime = false;
-    private bool updatingTouchPosition;
-    private Vector2 currentFingerPosition;
 
 	void Start ()
     {
-        updatingTouchPosition = true;
         bool levelLoaded = LoadLevel();
         
         if (!levelLoaded)
@@ -71,23 +68,6 @@ public class ClampManager : MonoBehaviour
         }
     }
 
-    public void UpdateTouchPosition(Gesture gesture)
-    {
-        if (gesture.touchCount == 1)
-        {
-            currentFingerPosition = gesture.position;
-            updatingTouchPosition = true;
-        }
-    }
-
-    public void StopUpdatingTouchPosition(Gesture gesture)
-    {
-        if (gesture.touchCount == 1)
-        {
-            updatingTouchPosition = false;
-        }
-    }
-
     private bool LoadLevel()
     {
         bool loaded = false;
@@ -127,32 +107,5 @@ public class ClampManager : MonoBehaviour
             PlayerPrefs.SetFloat(GameManager.instance.StepsKey, GameManager.instance.numberOfSteps);
             PlayerPrefs.Save();
         }
-    }
-
-
-
-    private void EnableTouchEvents()
-    {
-        EasyTouch.On_TouchDown += UpdateTouchPosition;
-        EasyTouch.On_TouchUp += StopUpdatingTouchPosition;
-    }
-
-    private void DisableTouchEvents()
-    {
-        EasyTouch.On_TouchDown -= UpdateTouchPosition;
-        EasyTouch.On_TouchUp -= StopUpdatingTouchPosition;
-    }
-
-    void OnEnable()
-    {
-        EnableTouchEvents();
-    }
-    void OnDisable()
-    {
-        DisableTouchEvents();
-    }
-    void OnDestory()
-    {
-        DisableTouchEvents();
     }
 }

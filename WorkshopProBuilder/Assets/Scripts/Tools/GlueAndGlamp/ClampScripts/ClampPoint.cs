@@ -3,6 +3,7 @@ using System.Collections;
 
 public class ClampPoint : MonoBehaviour 
 {
+    public Transform parentPiece;
     public Vector3 LocalConnectionRotation;
     public bool Clamped { get; set; }
     public Vector3 Position
@@ -13,16 +14,21 @@ public class ClampPoint : MonoBehaviour
         }
     }
 
-    private Color NeutralColor = Color.yellow;
-    private Color ActiveColor = Color.green;
+    //private Color neutralColor = Color.yellow;
+    //private Color activeColor = Color.green;
     private Renderer objRenderer;
 
     void Awake()
     {
         Clamped = false;
-        HidePoint();
+        parentPiece = transform.parent;
+        if (parentPiece == null)
+        {
+            Debug.LogError(gameObject + " needs to be the child of a Piece object");
+        }
+        //HidePoint();
         objRenderer = GetComponent<Renderer>();
-        ChangeToNeutralColor();
+        //ChangeToNeutralColor();
     }
 
     public void DisplayPoint()
@@ -35,13 +41,18 @@ public class ClampPoint : MonoBehaviour
         GetComponent<MeshRenderer>().enabled = false;
     }
 
-    public void ChangeToNeutralColor()
+    public Transform GetParentTransform()
     {
-        objRenderer.material.color = NeutralColor;
+        return parentPiece;
     }
 
-    public void ChangeToActiveColor()
-    {
-        objRenderer.material.color = ActiveColor;
-    }
+    //public void ChangeToNeutralColor()
+    //{
+    //    objRenderer.material.color = neutralColor;
+    //}
+
+    //public void ChangeToActiveColor()
+    //{
+    //    objRenderer.material.color = activeColor;
+    //}
 }

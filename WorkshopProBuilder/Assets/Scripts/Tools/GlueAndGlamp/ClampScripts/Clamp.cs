@@ -17,27 +17,27 @@ public class Clamp : MonoBehaviour
         controller = gameObject.GetComponent<ClampControl>();
 	}
 
-    public void ClampAt(ClampPoint point, Transform parentPiece)
+    public void ClampAt(ClampPoint point)
     {
-        transform.parent = parentPiece;
+        transform.parent = point.GetParentTransform();
         transform.localRotation = Quaternion.Euler(point.LocalConnectionRotation);
 
         Vector3 position = ClampHead.position;
-        Vector3 nextPosition = Vector3.MoveTowards(position, point.Position, 1.0f);
+        Vector3 nextPosition = Vector3.Lerp(position, point.Position, 1.0f);
         Vector3 totalMovement = CalculateMovementVector(position, nextPosition);
         transform.position += totalMovement;
 
         ConnectHandle();
     }
 
-    public void ConnectHandle()
+    private void ConnectHandle()
     {
         Ray ray = new Ray(HandleContactPoint.position, HandleContactPoint.right);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
             Vector3 position = HandleContactPoint.position;
-            Vector3 nextPosition = Vector3.MoveTowards(position, hit.point, 1.0f);
+            Vector3 nextPosition = Vector3.Lerp(position, hit.point, 1.0f);
             Vector3 totalMovement = CalculateMovementVector(position, nextPosition);
             ClampHandle.position += totalMovement;
         }
