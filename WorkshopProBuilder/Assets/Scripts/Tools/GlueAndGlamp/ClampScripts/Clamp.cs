@@ -28,6 +28,7 @@ public class Clamp : MonoBehaviour
         transform.position += totalMovement;
 
         ConnectHandle();
+        point.Clamped = true;
     }
 
     private void ConnectHandle()

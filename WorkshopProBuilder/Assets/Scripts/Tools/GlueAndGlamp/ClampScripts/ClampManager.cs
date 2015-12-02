@@ -6,14 +6,9 @@ using System;
 public class ClampManager : MonoBehaviour 
 {
     public List<ClampPoint> ClampPoints;
-    public GameObject Clamp;
-    public Transform ClampSpawnPoint;
     public double dryTimeInSeconds = 15.0;
-    public ClampUI UI_Manager;
-    public Transform WoodProject;
-    public LayerMask clampingLayerMask;
+    public MainUI UI_Manager;
 
-    private ClampControl currentClamp;
     private bool clampPlacementInProgress = true;
     private DateTime dryingTimeEnd;
     private bool saveDryTime = false;
@@ -24,27 +19,20 @@ public class ClampManager : MonoBehaviour
         
         if (!levelLoaded)
         {
-            SetupGame();
-        }
-
-        if (WoodProject == null)
-        {
-            Debug.LogError("WoodProject variable not assigned");
-            clampPlacementInProgress = false;
-        }
-        else
-        {
-            foreach (ClampPoint point in ClampPoints)
+            if (ClampPoints.Count <= 0)
             {
-                point.DisplayPoint();
+                clampPlacementInProgress = false;
+                Debug.Log("No clamp points were found or assigned");
+            }
+            else
+            {
+                UI_Manager.Initialize();
+                foreach (ClampPoint point in ClampPoints)
+                {
+                    point.DisplayPoint();
+                }
             }
         }
-    }
-
-    private void SetupGame()
-    {
-        GameObject clamp = Instantiate(Clamp, ClampSpawnPoint.position, Quaternion.identity) as GameObject;
-        currentClamp = clamp.GetComponent<ClampControl>();
     }
 
     void Update()
@@ -61,10 +49,16 @@ public class ClampManager : MonoBehaviour
                     saveDryTime = false;
                 }
             }
-            else
-            {
-                
-            }
+        }
+    }
+
+    public void UpdateClampedPoints(ClampPoint point)
+    {
+        ClampPoints.Remove(point);
+        if (ClampPoints.Count <= 0 || ClampPoints == null)
+        {
+            dryingTimeEnd = System.DateTime.Now.AddSeconds(dryTimeInSeconds);
+            UI_Manager.DisplayResultsPanel("Your project will be dry in " + dryTimeInSeconds + " seconds.\nCome back then to continue the project");
         }
     }
 

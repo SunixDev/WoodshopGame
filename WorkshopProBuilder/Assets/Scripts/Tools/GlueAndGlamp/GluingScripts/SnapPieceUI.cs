@@ -10,12 +10,12 @@ public class SnapPieceUI : MainUI
     public void EnableAllButtons()
     {
         base.EnableOptions();
-        ListPanel.EnableButtons();
+        //ListPanel.EnableButtons();
     }
 
     public void DisableAllButtons()
     {
         base.DisableOptions();
-        ListPanel.DisableButtons();
+        //ListPanel.DisableButtons();
     }
 }

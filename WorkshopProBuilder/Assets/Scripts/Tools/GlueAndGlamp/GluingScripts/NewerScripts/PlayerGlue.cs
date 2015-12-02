@@ -7,15 +7,14 @@ public class PlayerGlue : MonoBehaviour
     public float AmountToActivateSnapPoints = 75f;
     public float MinAmountForPerfectScore = 95f;
     public float MaxAmount = 100f;
-    
-    private LayerMask glueLayerMask;
+    public LayerMask pickableLayers;
+
     private Vector2 currentTouchPosition;
     private Vector2 previousTouchPosition;
     private bool applyingGlue;
 
     void Awake()
     {
-        glueLayerMask = LayerMask.GetMask("Glue");
         currentTouchPosition = new Vector2(-1f, -1f);
         previousTouchPosition = currentTouchPosition;
         applyingGlue = false;
@@ -25,20 +24,26 @@ public class PlayerGlue : MonoBehaviour
     {
         if (previousTouchPosition != currentTouchPosition && applyingGlue)
         {
-            Ray ray = Camera.main.ScreenPointToRay(currentTouchPosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 100f, glueLayerMask))
-            {
-                GlueBox glueBox = hit.collider.gameObject.GetComponent<GlueBox>();
-                if (glueBox != null)
-                {
-                    glueBox.ApplyGlue(this);
-                }
-            }
-            previousTouchPosition = currentTouchPosition;
+            DetectGluingAreas();
         }
-
     }
+
+    private void DetectGluingAreas()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(currentTouchPosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 100f, pickableLayers))
+        {
+            GlueBox glueBox = hit.collider.gameObject.GetComponent<GlueBox>();
+            if (glueBox != null)
+            {
+                glueBox.ApplyGlue(this);
+            }
+        }
+        previousTouchPosition = currentTouchPosition;
+    }
+
+
 
     public void GetTouchPosition(Gesture gesture)
     {
@@ -57,6 +62,8 @@ public class PlayerGlue : MonoBehaviour
         applyingGlue = false;
     }
 
+
+
     private void EnableTouchEvents()
     {
         EasyTouch.On_TouchDown += GetTouchPosition;
@@ -73,12 +80,10 @@ public class PlayerGlue : MonoBehaviour
     {
         EnableTouchEvents();
     }
-
     void OnDisable()
     {
         DisableTouchEvents();
     }
-
     void OnDestroy()
     {
         DisableTouchEvents();

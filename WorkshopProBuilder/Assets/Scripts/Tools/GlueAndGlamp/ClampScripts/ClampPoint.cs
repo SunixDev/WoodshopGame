@@ -3,7 +3,6 @@ using System.Collections;
 
 public class ClampPoint : MonoBehaviour 
 {
-    public Transform parentPiece;
     public Vector3 LocalConnectionRotation;
     public bool Clamped { get; set; }
     public Vector3 Position
@@ -14,8 +13,7 @@ public class ClampPoint : MonoBehaviour
         }
     }
 
-    //private Color neutralColor = Color.yellow;
-    //private Color activeColor = Color.green;
+    private Transform parentPiece;
     private Renderer objRenderer;
 
     void Awake()
@@ -26,9 +24,8 @@ public class ClampPoint : MonoBehaviour
         {
             Debug.LogError(gameObject + " needs to be the child of a Piece object");
         }
-        //HidePoint();
+        HidePoint();
         objRenderer = GetComponent<Renderer>();
-        //ChangeToNeutralColor();
     }
 
     public void DisplayPoint()
@@ -45,14 +42,4 @@ public class ClampPoint : MonoBehaviour
     {
         return parentPiece;
     }
-
-    //public void ChangeToNeutralColor()
-    //{
-    //    objRenderer.material.color = neutralColor;
-    //}
-
-    //public void ChangeToActiveColor()
-    //{
-    //    objRenderer.material.color = activeColor;
-    //}
 }

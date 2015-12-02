@@ -149,7 +149,9 @@
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\GlueManager.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\PieceController.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\PlayerGlue.cs" />
+    <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\PlayerPieceSnap.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\SnapTest.cs" />
+    <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\WoodPieceCustomButton.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPiece.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPieceGameManager.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPieceGameplay.cs" />
@@ -168,6 +170,9 @@
     <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawUI.cs" />
     <Compile Include="Assets\Scripts\UI\DrawerSlide.cs" />
     <Compile Include="Assets\Scripts\UI\MainUI.cs" />
+    <Compile Include="Assets\Scripts\UI\UICustomPanelButton.cs" />
+    <Compile Include="Assets\Scripts\UI\UIDrag.cs" />
+    <Compile Include="Assets\Scripts\UI\UIDragFromButton.cs" />
     <Compile Include="Assets\Scripts\UI\WoodListPanel.cs" />
     <Compile Include="Assets\Scripts\WoodMaterials\BoardController.cs" />
     <Compile Include="Assets\Scripts\WoodMaterials\WoodLeftover.cs" />

@@ -5,19 +5,22 @@ using System.Collections.Generic;
 
 public class MainUI : MonoBehaviour 
 {
+    [Header("Main UI In Every Tool")]
     public Color SelectedButtonColor;
     public GameObject SelectedButton;
     public List<Button> OptionButtons;
 
+    [Header("Plans to Display For Step")]
     public GameObject PlansPanel;
     public Button HidePlansButton;
 
+    [Header("Display Results of Tool")]
     public GameObject ResultsPanel;
     public Text ResultsText;
     public Button StartOverButton;
     public Button NextSceneButton;
 
-    protected void Initialize()
+    public void Initialize()
     {
         if (OptionButtons.Count > 0)
         {
@@ -38,6 +41,7 @@ public class MainUI : MonoBehaviour
     {
         PlansPanel.SetActive(false);
         ResultsPanel.SetActive(true);
+        ResultsText.text = textToDisplay;
         if (StartOverButton != null)
         {
             StartOverButton.gameObject.SetActive(displayStartOverButton);

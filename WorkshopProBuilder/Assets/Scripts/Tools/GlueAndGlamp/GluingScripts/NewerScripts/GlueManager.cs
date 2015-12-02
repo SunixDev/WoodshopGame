@@ -9,9 +9,6 @@ public class GlueManager : MonoBehaviour
     public SnapPieceGameManager gameManager;
 
     private Transform pieceTransform;
-    private Vector3 pieceOrigin = Vector3.zero;
-    private Quaternion pieceOriginRotation = Quaternion.identity;
-    private PieceController pieceController;
 
     private Vector3 cameraOrigin = Vector3.zero;
     private Transform cameraTransform;
@@ -33,93 +30,84 @@ public class GlueManager : MonoBehaviour
         }
     }
 
-    //Replace with method that starts up gluing
-    //Called by minigame game manager, which is called by a UI button
-    public void OnDoubleTap(Gesture gesture) 
+    //Called by main game manager, which is called by the "Apply Glue" button
+    //Setups the passed in piece
+    public void ActivateGluing(GameObject pieceToGlue)
     {
-        if (gesture.pickedObject != null)
-        {
-            if (!PlayerGlue.enabled)
-            {
-                if (gesture.pickedObject.tag == "Piece")
-                {
-                    pieceTransform = gesture.pickedObject.transform;
-                    pieceController = gesture.pickedObject.GetComponent<PieceController>();
-                    ActivateGluing();
-                }
-            }
-            else
-            {
-                if (gesture.pickedObject.tag == "GlueHitBox")
-                {
-                    
-                }
-            }
-        }
-    }
-
-    public void OnPinchIn(Gesture gesture)
-    {
-        if (PlayerGlue.enabled)
-        {
-            DeactivateGluing();
-        }
-    }
-
-    private void ActivateGluing()
-    {
+        pieceToGlue.SetActive(true);
+        pieceTransform = pieceToGlue.transform;
         PlayerGlue.enabled = true;
-        pieceOrigin = pieceTransform.position;
-        pieceOriginRotation = pieceTransform.rotation;
-        pieceController.state = PieceControlState.Rotate;
+        SetupScene();
+    }
 
-        cameraControl.enabled = false;
-        cameraOrigin = cameraTransform.position;
-        cameraLookAt = PiecePosition;
+    public void SwitchPiece(GameObject newPieceToGlue)
+    {
+        pieceTransform = newPieceToGlue.transform;
 
+        SetupScene();
+    }
+
+    //Called by main game manager, which is called by the "Connect Pieces" button
+    public void DeactivateGluing()
+    {
+        PlayerGlue.enabled = false;
+        cameraTransform.position = cameraOrigin;
+        cameraControl.enabled = true;
+        pieceTransform = null;
+    }
+
+    private void SetupScene()
+    {
+        pieceTransform.gameObject.GetComponent<PieceController>().state = PieceControlState.Rotate;
         pieceTransform.position = PiecePosition.position;
         Renderer pieceRenderer = pieceTransform.gameObject.GetComponent<Renderer>();
         float zDistance = pieceRenderer.bounds.extents.magnitude * 2f;
         cameraTransform.position = new Vector3(PiecePosition.position.x, PiecePosition.position.y, PiecePosition.position.z - zDistance);
     }
 
-    private void DeactivateGluing()
-    {
-        PlayerGlue.enabled = false;
-        pieceTransform.position = pieceOrigin;
-        pieceTransform.rotation = pieceOriginRotation;
-
-        cameraTransform.position = cameraOrigin;
-        cameraControl.enabled = true;
-
-        pieceTransform = null;
-    }
 
 
-    private void EnableTouchEvents()
-    {
-        EasyTouch.On_DoubleTap += OnDoubleTap;
-        EasyTouch.On_PinchIn += OnPinchIn;
-    }
+    //public void OnDoubleTap(Gesture gesture) 
+    //{
+    //    if (gesture.pickedObject != null)
+    //    {
+    //        if (!PlayerGlue.enabled)
+    //        {
+    //            if (gesture.pickedObject.tag == "Piece")
+    //            {
+    //                SetupGluing(gesture.pickedObject);
+    //            }
+    //        }
+    //        else
+    //        {
+    //            if (gesture.pickedObject.tag == "GlueHitBox")
+    //            {
 
-    private void DisableTouchEvents()
-    {
-        EasyTouch.On_DoubleTap -= OnDoubleTap;
-        EasyTouch.On_PinchIn -= OnPinchIn;
-    }
+    //            }
+    //        }
+    //    }
+    //}
 
-    void OnEnable()
-    {
-        EnableTouchEvents();
-    }
+    //private void EnableTouchEvents()
+    //{
+    //    EasyTouch.On_DoubleTap += OnDoubleTap;
+    //}
 
-    void OnDisable()
-    {
-        DisableTouchEvents();
-    }
+    //private void DisableTouchEvents()
+    //{
+    //    EasyTouch.On_DoubleTap -= OnDoubleTap;
+    //}
 
-    void OnDestroy()
-    {
-        DisableTouchEvents();
-    }
+    //void OnEnable()
+    //{
+    //    EnableTouchEvents();
+    //}
+    //void OnDisable()
+    //{
+    //    DisableTouchEvents();
+    //}
+    //void OnDestroy()
+    //{
+    //    DisableTouchEvents();
+    //}
 }

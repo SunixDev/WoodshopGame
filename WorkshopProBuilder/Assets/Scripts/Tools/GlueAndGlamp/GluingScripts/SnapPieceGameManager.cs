@@ -15,12 +15,8 @@ public class SnapPieceGameManager : MonoBehaviour
     public List<GlueBox> GlueAreas;
     public List<SnapPoint> SnapPoints;
     public Transform ProjectCenter;
-    public SnapPieceUI UI_Manager;
-    public GlueManager GlueManager;
-    public SnapTest SnapManager;
-    public Transform SpawnPoint;
-
-    private int currentPieceIndex = 0;
+    public MainUI UI_Manager;
+    public WoodListPanel woodListPanel;
 
     void Start()
     {
@@ -31,15 +27,15 @@ public class SnapPieceGameManager : MonoBehaviour
             if (PartsToConnect[i].tag == "WoodProject")
             {
                 projectFound = true;
+                PartsToConnect[i].transform.position = ProjectCenter.position;
+                PartsToConnect[i].GetComponent<PieceController>().enabled = false;
             }
         }
         if (!projectFound)
         {
-            SnapManager.projectCenter = ProjectCenter;
             SnapPiece initialPiece = PartsToConnect[0].GetComponent<SnapPiece>();
             initialPiece.gameObject.SetActive(true);
             initialPiece.gameObject.GetComponent<PieceController>().enabled = false;
-            PartsToConnect.RemoveAt(0);
             initialPiece.SnapToProject(ProjectCenter);
         }
 
@@ -53,11 +49,6 @@ public class SnapPieceGameManager : MonoBehaviour
         //{
         //    glue.gameObject.GetComponent<BoxCollider>().enabled = false;
         //}
-
-        //CurrentPiece = PiecesToConnect[currentPieceIndex].GetComponent<WoodPiece>();
-        //PiecesToConnect[currentPieceIndex].gameObject.SetActive(true);
-        //PiecesToConnect[currentPieceIndex].transform.position = SpawnPoint.position;
-        //PiecesToConnect[currentPieceIndex].transform.rotation = Quaternion.identity;
     }
 
     void Update()
@@ -167,10 +158,10 @@ public class SnapPieceGameManager : MonoBehaviour
     //    }
     //}
 
-    //public void GoToNextScene(string scene)
-    //{
-    //    Application.LoadLevel(scene);
-    //}
+    public void GoToNextScene(string scene)
+    {
+        Application.LoadLevel(scene);
+    }
 }
 
 //PiecesToConnect = GameManager.instance.GetNecessaryPieces();
