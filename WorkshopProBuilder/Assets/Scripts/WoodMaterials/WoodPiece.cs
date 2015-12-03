@@ -5,12 +5,12 @@ using System.Collections.Generic;
 [RequireComponent(typeof(MeshCollider))]
 public class WoodPiece : MonoBehaviour
 {
-    public string Name;
     public Texture WoodTexture;
     public List<SnapPoint> SnapPoints;
     public List<ClampPoint> ClampPoints;
     public List<GlueBox> GlueBoxes;
     public MeshCollider objMeshCollider;
+    public Sprite ButtonIcon;
     public bool CanConnect
     {
         get

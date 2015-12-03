@@ -166,11 +166,13 @@
     <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawCut.cs" />
     <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawManager.cs" />
     <Compile Include="Assets\Scripts\Tools\TableSaw\TableSawUI.cs" />
+    <Compile Include="Assets\Scripts\UI\CustomButtonDisplay.cs" />
+    <Compile Include="Assets\Scripts\UI\DragButtonContainer.cs" />
     <Compile Include="Assets\Scripts\UI\DrawerSlide.cs" />
+    <Compile Include="Assets\Scripts\UI\GlueButtonContainer.cs" />
     <Compile Include="Assets\Scripts\UI\MainUI.cs" />
-    <Compile Include="Assets\Scripts\UI\UIDrag.cs" />
+    <Compile Include="Assets\Scripts\UI\ScrollingButtonContainer.cs" />
     <Compile Include="Assets\Scripts\UI\UIDragButton.cs" />
-    <Compile Include="Assets\Scripts\UI\WoodListPanel.cs" />
     <Compile Include="Assets\Scripts\WoodMaterials\BoardController.cs" />
     <Compile Include="Assets\Scripts\WoodMaterials\WoodLeftover.cs" />
     <Compile Include="Assets\Scripts\WoodMaterials\WoodMaterialObject.cs" />

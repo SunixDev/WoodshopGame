@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public enum GlueResult
 {
@@ -16,13 +17,29 @@ public class SnapPieceGameManager : MonoBehaviour
     public List<SnapPoint> SnapPoints;
     public Transform ProjectCenter;
     public MainUI UI_Manager;
-    public WoodListPanel WoodListPanel;
+    public DragButtonContainer snapPieceListPanel;
+    public GlueButtonContainer gluePieceListPanel;
 
     void Start()
     {
         foreach (GameObject piece in PiecesToConnect)
         {
             piece.transform.position = new Vector3(0f, -20f, 20f);
+            Sprite icon = piece.GetComponent<WoodPiece>().ButtonIcon;
+            snapPieceListPanel.CreateButton(icon, piece.name);
+            gluePieceListPanel.CreateButton(icon, piece.name, this);
+        }
+
+        foreach (SnapPoint snapPoint in SnapPoints)
+        {
+            snapPoint.gameObject.SetActive(true);
+            snapPoint.ActiveInStep = true;
+        }
+
+        foreach (GlueBox glueArea in GlueAreas)
+        {
+            glueArea.gameObject.SetActive(true);
+            glueArea.ActiveInStep = true;
         }
 
         UI_Manager.Initialize();
@@ -45,9 +62,9 @@ public class SnapPieceGameManager : MonoBehaviour
         }
     }
 
-    void Update()
+    public void TestingGlueButton(Button buttonPressed)
     {
-        
+        Debug.Log(buttonPressed + " was pressed");
     }
 
     private void EvaluateAllConnectionsInPiece()
@@ -156,6 +173,36 @@ public class SnapPieceGameManager : MonoBehaviour
     {
         Application.LoadLevel(scene);
     }
+
+    #region UI Event Test
+    public void TestUI(Gesture gesture)
+    {
+        Debug.Log("UI Picked: " + gesture.pickedUIElement);
+    }
+
+    private void EnableTouchEvents()
+    {
+        EasyTouch.On_TouchStart += TestUI;
+    }
+
+    private void DisableTouchEvents()
+    {
+        EasyTouch.On_TouchStart -= TestUI;
+    }
+
+    //void OnEnable()
+    //{
+    //    EnableTouchEvents();
+    //}
+    //void OnDisable()
+    //{
+    //    DisableTouchEvents();
+    //}
+    //void OnDestroy()
+    //{
+    //    DisableTouchEvents();
+    //}
+    #endregion
 }
 
 //PiecesToConnect = GameManager.instance.GetNecessaryPieces();

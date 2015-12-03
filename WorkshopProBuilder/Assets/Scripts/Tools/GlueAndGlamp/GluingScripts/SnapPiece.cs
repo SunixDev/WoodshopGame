@@ -40,18 +40,6 @@ public class SnapPiece : MonoBehaviour
         }
     }
 
-    public void UpdateConnectedLocalPosition()
-    {
-        if (transform.parent != null)
-        {
-            ConnectedLocalPosition = transform.localPosition;
-        }
-        else
-        {
-            Debug.LogError(gameObject + ": The object is not a child of another object in order to get an accurate local position");
-        }
-    }
-
     public void SnapToProject(Transform connectedProject)
     {
         transform.rotation = Quaternion.identity;
@@ -70,5 +58,18 @@ public class SnapPiece : MonoBehaviour
             }
         }
         return points;
+    }
+
+    //Editor Script Function
+    public void UpdateConnectedLocalPosition()
+    {
+        if (transform.parent != null)
+        {
+            ConnectedLocalPosition = transform.localPosition;
+        }
+        else
+        {
+            Debug.LogError(gameObject + ": The object is not a child of another object in order to get an accurate local position");
+        }
     }
 }

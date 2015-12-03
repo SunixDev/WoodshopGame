@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Image))]
-public class UIDragButton : MonoBehaviour, IDragHandler, IEndDragHandler, IPointerDownHandler
+public class UIDragButton : MonoBehaviour, IDragHandler, IEndDragHandler, IPointerDownHandler, IPointerUpHandler
 {
     public GameObject ElementToDrag;
     public bool MoveToFront = false;
@@ -12,7 +12,7 @@ public class UIDragButton : MonoBehaviour, IDragHandler, IEndDragHandler, IPoint
     public Color ActiveColor = new Color(0.5f, 0.5f, 0.5f, 0.8f);
 
     private RectTransform objRectTransform;
-    private Image objImage;
+    private Image buttonImage;
     private Color imageColor;
     private bool selected;
 
@@ -22,18 +22,19 @@ public class UIDragButton : MonoBehaviour, IDragHandler, IEndDragHandler, IPoint
         {
             SetElementToDrag(ElementToDrag);
         }
-        objImage = GetComponent<Image>();
-        imageColor = objImage.color;
-        objImage.color = imageColor * NeutralColor;
+        buttonImage = GetComponent<Image>();
+        imageColor = buttonImage.color;
+        buttonImage.color = imageColor * NeutralColor;
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public void BeginDraggingIcon(Vector2 pointerPosition)
     {
-        objImage.color = imageColor * ActiveColor;
+        buttonImage.color = imageColor * ActiveColor;
         selected = true;
+        ElementToDrag.SetActive(true);
         if (ElementToDrag != null)
         {
-            objRectTransform.position = eventData.position;
+            objRectTransform.position = pointerPosition;
             if (MoveToFront)
             {
                 Transform canvas = objRectTransform;
@@ -47,20 +48,21 @@ public class UIDragButton : MonoBehaviour, IDragHandler, IEndDragHandler, IPoint
         }
     }
 
-    public void OnDrag(PointerEventData eventData)
+    public void DragIcon(Vector2 pointerPosition)
     {
         if (ElementToDrag != null)
         {
-            objRectTransform.position = eventData.position;
+            objRectTransform.position = pointerPosition;
         }
     }
 
-    public void OnEndDrag(PointerEventData eventData)
+    public void StopDraggingIcon()
     {
         if (selected)
         {
-            objImage.color = imageColor * NeutralColor;
+            buttonImage.color = imageColor * NeutralColor;
             selected = false;
+            ElementToDrag.SetActive(false);
         }
     }
 
@@ -68,6 +70,28 @@ public class UIDragButton : MonoBehaviour, IDragHandler, IEndDragHandler, IPoint
     {
         ElementToDrag = element;
         objRectTransform = ElementToDrag.GetComponent<RectTransform>();
-        objImage = ElementToDrag.GetComponent<Image>();
+        ElementToDrag.SetActive(false);
+    }
+
+
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        BeginDraggingIcon(eventData.position);
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        DragIcon(eventData.position);
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        StopDraggingIcon();
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        StopDraggingIcon();
     }
 }

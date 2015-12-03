@@ -6,6 +6,7 @@ public class GlueBox : MonoBehaviour
 {
     public List<GluePlane> GluingPlanes;
     public SnapPoint PointToActivate;
+    public bool ActiveInStep = false;
     public bool MinimumReached { get; set; }
 
     private float currentGlueAmount;
