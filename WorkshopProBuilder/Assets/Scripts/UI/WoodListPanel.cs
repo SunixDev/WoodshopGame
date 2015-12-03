@@ -18,7 +18,7 @@ public class WoodListPanel : MonoBehaviour
 
     }
 
-    public void AddWoodMaterialButton(string woodName)
+    public Button AddWoodMaterialButton(string woodName)
     {
         GameObject button = Instantiate(WoodPieceButton) as GameObject;
         button.transform.SetParent(ButtonContainer.transform);
@@ -30,6 +30,8 @@ public class WoodListPanel : MonoBehaviour
 
         int index = AvailableButtonsList.Count;
         AvailableButtonsList.Add(button);
+
+        return newButton;
     }
 
     //public void DisableButton(int index)

@@ -5,6 +5,7 @@ public class SnapPoint : MonoBehaviour
 {
     public SnapPiece ParentSnapPiece;
     public string ConnectionID = "Default";
+    public bool ActiveInStep { get; set; }
     public bool ReadyToConnect { get; private set; }
     public bool IsConnected { get; private set; }
     public Vector3 Position
@@ -17,7 +18,8 @@ public class SnapPoint : MonoBehaviour
 
     void Awake()
     {
-        ActivatePoint();
+        ActiveInStep = false;
+        DeactivatePoint();
         IsConnected = false;
     }
 

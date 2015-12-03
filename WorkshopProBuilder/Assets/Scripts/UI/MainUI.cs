@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class MainUI : MonoBehaviour 
 {
     [Header("Main UI In Every Tool")]
-    public Color SelectedButtonColor;
+    public Color SelectedButtonColor = new Color(0.35f, 0.55f, 0.24f, 1f);
     public GameObject SelectedButton;
     public List<Button> OptionButtons;
 

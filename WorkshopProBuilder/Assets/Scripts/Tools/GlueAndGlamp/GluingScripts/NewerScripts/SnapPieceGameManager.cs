@@ -11,44 +11,38 @@ public enum GlueResult
 
 public class SnapPieceGameManager : MonoBehaviour
 {
-    public List<GameObject> PartsToConnect;
+    public List<GameObject> PiecesToConnect;
     public List<GlueBox> GlueAreas;
     public List<SnapPoint> SnapPoints;
     public Transform ProjectCenter;
     public MainUI UI_Manager;
-    public WoodListPanel woodListPanel;
+    public WoodListPanel WoodListPanel;
 
     void Start()
     {
-        UI_Manager.DisplayPlans(true);
-        bool projectFound = false;
-        for (int i = 0; i < PartsToConnect.Count && !projectFound; i++)
+        foreach (GameObject piece in PiecesToConnect)
         {
-            if (PartsToConnect[i].tag == "WoodProject")
+            piece.transform.position = new Vector3(0f, -20f, 20f);
+        }
+
+        UI_Manager.Initialize();
+        bool projectFound = false;
+        for (int i = 0; i < PiecesToConnect.Count && !projectFound; i++)
+        {
+            if (PiecesToConnect[i].tag == "WoodProject")
             {
                 projectFound = true;
-                PartsToConnect[i].transform.position = ProjectCenter.position;
-                PartsToConnect[i].GetComponent<PieceController>().enabled = false;
+                PiecesToConnect[i].transform.position = ProjectCenter.position;
+                PiecesToConnect[i].GetComponent<PieceController>().enabled = false;
             }
         }
         if (!projectFound)
         {
-            SnapPiece initialPiece = PartsToConnect[0].GetComponent<SnapPiece>();
+            SnapPiece initialPiece = PiecesToConnect[0].GetComponent<SnapPiece>();
             initialPiece.gameObject.SetActive(true);
             initialPiece.gameObject.GetComponent<PieceController>().enabled = false;
             initialPiece.SnapToProject(ProjectCenter);
         }
-
-        //foreach (SnapPiece piece in PiecesToConnect)
-        //{
-        //    UI_Manager.ListPanel.AddWoodMaterialButton(piece.gameObject.GetComponent<WoodPiece>().Name, this);
-        //    piece.gameObject.SetActive(false);
-        //}
-
-        //foreach (GlueBox glue in Glues)
-        //{
-        //    glue.gameObject.GetComponent<BoxCollider>().enabled = false;
-        //}
     }
 
     void Update()

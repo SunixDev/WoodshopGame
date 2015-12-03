@@ -13,7 +13,10 @@ public class SnapPiece : MonoBehaviour
             bool valid = true;
             for (int i = 0; i < SnapPoints.Count && valid; i++)
             {
-                valid = SnapPoints[i].IsConnected;
+                if (SnapPoints[i].ActiveInStep)
+                {
+                    valid = SnapPoints[i].IsConnected;
+                }
             }
             return valid;
         }
@@ -25,7 +28,13 @@ public class SnapPiece : MonoBehaviour
             bool valid = true;
             for (int i = 0; i < SnapPoints.Count && valid; i++)
             {
-                valid = SnapPoints[i].ReadyToConnect;
+                if(SnapPoints[i].gameObject.activeInHierarchy)
+                {
+                    if (SnapPoints[i].ActiveInStep)
+                    {
+                        valid = SnapPoints[i].ReadyToConnect;
+                    }
+                }
             }
             return valid;
         }
