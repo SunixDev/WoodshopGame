@@ -11,7 +11,7 @@ public class ScrollingButtonContainer : MonoBehaviour
     protected int SelectedButtonIndex = -1;
     protected List<GameObject> AvailableButtonsList = new List<GameObject>();
 
-    public GameObject CreateButton(Sprite iconSprite, string pieceName)
+    protected GameObject CreateButton(Sprite iconSprite, string pieceName)
     {
         GameObject button = Instantiate(WoodPieceButton) as GameObject;
         button.transform.SetParent(ButtonContainer.transform);
@@ -27,6 +27,4 @@ public class ScrollingButtonContainer : MonoBehaviour
         AvailableButtonsList.Add(button);
         return button;
     }
-
-    
 }

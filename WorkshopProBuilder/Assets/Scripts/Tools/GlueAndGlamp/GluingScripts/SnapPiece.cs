@@ -6,6 +6,8 @@ public class SnapPiece : MonoBehaviour
 {
     public List<SnapPoint> SnapPoints;
     public Vector3 ConnectedLocalPosition;
+    private bool addedToProject = false;
+
     public bool AllPointsConnected
     {
         get
@@ -21,6 +23,7 @@ public class SnapPiece : MonoBehaviour
             return valid;
         }
     }
+
     public bool AllPointsReadyToConnect
     {
         get
@@ -45,6 +48,7 @@ public class SnapPiece : MonoBehaviour
         transform.rotation = Quaternion.identity;
         transform.parent = connectedProject;
         transform.localPosition = ConnectedLocalPosition;
+        addedToProject = true;
     }
 
     public List<SnapPoint> GetAvailableSnapPoints()
@@ -58,6 +62,11 @@ public class SnapPiece : MonoBehaviour
             }
         }
         return points;
+    }
+
+    public bool PieceIsConnectedToProject()
+    {
+        return addedToProject;
     }
 
     //Editor Script Function

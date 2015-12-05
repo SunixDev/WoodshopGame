@@ -10,26 +10,38 @@ public enum GlueResult
     Perfect
 }
 
+public enum PlayerAction
+{
+    Gluing,
+    PieceSnapping
+}
+
 public class SnapPieceGameManager : MonoBehaviour
 {
     public List<GameObject> PiecesToConnect;
     public List<GlueBox> GlueAreas;
     public List<SnapPoint> SnapPoints;
     public Transform ProjectCenter;
-    public MainUI UI_Manager;
-    public DragButtonContainer snapPieceListPanel;
-    public GlueButtonContainer gluePieceListPanel;
+    public SnapPieceUI UI_Manager;
+    public GlueManager glueManager;
+    public SnapManager snapManager;
+
+    private int selectedGluePiece = 0;
+    private int selectedSnapPiece = -1;
+    private Vector3 PieceLocation = new Vector3(0f, -20f, 20f);
+    private PlayerAction action = PlayerAction.PieceSnapping;
 
     void Start()
     {
-        foreach (GameObject piece in PiecesToConnect)
-        {
-            piece.transform.position = new Vector3(0f, -20f, 20f);
-            Sprite icon = piece.GetComponent<WoodPiece>().ButtonIcon;
-            snapPieceListPanel.CreateButton(icon, piece.name);
-            gluePieceListPanel.CreateButton(icon, piece.name, this);
-        }
+        UI_Manager.Initialize();
+        SetUpGameplayObjects();
+        bool projectFound = SetUpPieces();
+        GenerateButtons(projectFound);
+    }
 
+    #region Set Up Scene Code
+    private void SetUpGameplayObjects()
+    {
         foreach (SnapPoint snapPoint in SnapPoints)
         {
             snapPoint.gameObject.SetActive(true);
@@ -41,31 +53,89 @@ public class SnapPieceGameManager : MonoBehaviour
             glueArea.gameObject.SetActive(true);
             glueArea.ActiveInStep = true;
         }
+    }
 
-        UI_Manager.Initialize();
+    private GameObject CreateWoodProject(GameObject initialPiece)
+    {
+        GameObject woodProject = new GameObject("Wood Project");
+        woodProject.tag = "WoodProject";
+        woodProject.transform.position = ProjectCenter.position;
+        ProjectCenter = woodProject.transform;
+
+        initialPiece.GetComponent<PieceController>().enabled = false;
+        initialPiece.GetComponent<SnapPiece>().SnapToProject(ProjectCenter);
+
+        WoodProject woodProjectComp = woodProject.AddComponent<WoodProject>();
+        woodProjectComp.AddPieceToConnect(initialPiece);
+
+        return woodProject;
+    }
+
+    private bool SetUpPieces()
+    {
         bool projectFound = false;
-        for (int i = 0; i < PiecesToConnect.Count && !projectFound; i++)
+        for (int i = 0; i < PiecesToConnect.Count; i++)
         {
             if (PiecesToConnect[i].tag == "WoodProject")
             {
                 projectFound = true;
+                PiecesToConnect[i].SetActive(true);
                 PiecesToConnect[i].transform.position = ProjectCenter.position;
-                PiecesToConnect[i].GetComponent<PieceController>().enabled = false;
+                ProjectCenter = PiecesToConnect[i].transform;
+                //Check if project needs glue first
+                    //Add to list in Glue Manager
+                UI_Manager.CreateGluingButton(PiecesToConnect[i].GetComponent<WoodProject>(), this);
+            }
+            else
+            {
+                PiecesToConnect[i].transform.position = PieceLocation;
+                PiecesToConnect[i].SetActive(false);
             }
         }
         if (!projectFound)
         {
-            SnapPiece initialPiece = PiecesToConnect[0].GetComponent<SnapPiece>();
-            initialPiece.gameObject.SetActive(true);
-            initialPiece.gameObject.GetComponent<PieceController>().enabled = false;
-            initialPiece.SnapToProject(ProjectCenter);
+            PiecesToConnect[0].SetActive(true);
+            GameObject project = CreateWoodProject(PiecesToConnect[0]);
+            PiecesToConnect[0] = project;
+            UI_Manager.CreateGluingButton(project.GetComponent<WoodProject>(), this);
         }
+        return projectFound;
     }
 
-    public void TestingGlueButton(Button buttonPressed)
+    public void GenerateButtons(bool projectFound)
     {
-        Debug.Log(buttonPressed + " was pressed");
+        for (int i = 0; i < PiecesToConnect.Count; i++)
+        {
+            if (PiecesToConnect[i].tag == "Piece")
+            {
+                if (i > 0 || (i == 0 && projectFound))
+                {
+                    UI_Manager.CreateDragButton(PiecesToConnect[i]);
+                }
+                if (PiecesToConnect[i].GetComponent<WoodPiece>().RequiresGlue)
+                {
+                    //Add to list in Glue Manager
+                    UI_Manager.CreateGluingButton(PiecesToConnect[i], this);
+                }
+            }
+        }
     }
+    #endregion
+
+    public void SetUpForGluingPieces()
+    {
+
+    }
+
+    //public void SwitchPieceToGlue(int index)
+    //{
+    //    GameObject previousPiece = GluingPieces[selectedGluePiece];
+    //    previousPiece.transform.position = PieceLocation;
+    //    selectedGluePiece = index;
+    //    glueManager.SwitchPiece(nextPiece);
+    //}
+
+
 
     private void EvaluateAllConnectionsInPiece()
     {
@@ -87,8 +157,8 @@ public class SnapPieceGameManager : MonoBehaviour
         //}
     }
 
-    //public void DisplayResults()
-    //{
+    public void DisplayResults()
+    {
     //    if (TotalPiecesConnected >= PiecesToConnect.Count)
     //    {
     //        foreach (GlueBox glue in Glues)
@@ -128,10 +198,10 @@ public class SnapPieceGameManager : MonoBehaviour
     //                                       "\nOn to the next step";
     //        }
     //    }
-    //}
+    }
 
-    //private void EvaluateGluing(GlueBox glue)
-    //{
+    private void EvaluateGluing(GlueBox glue)
+    {
     //    if (glue != null)
     //    {
     //        float glueApplied = glue.GetTotalGlueApplied();
@@ -149,10 +219,10 @@ public class SnapPieceGameManager : MonoBehaviour
     //            Total_TooMuchGlues++;
     //        }
     //    }
-    //}
+    }
 
-    //public void SwitchPiece(int index)
-    //{
+    public void SwitchPiece(int index)
+    {
     //    if (index >= 0 && index < PiecesToConnect.Count && index != currentPieceIndex)
     //    {
     //        PiecesToConnect[currentPieceIndex].gameObject.transform.position = Vector3.zero;
@@ -167,7 +237,7 @@ public class SnapPieceGameManager : MonoBehaviour
     //    {
     //        Debug.Log("Index #" + index + " is invalid.");
     //    }
-    //}
+    }
 
     public void GoToNextScene(string scene)
     {

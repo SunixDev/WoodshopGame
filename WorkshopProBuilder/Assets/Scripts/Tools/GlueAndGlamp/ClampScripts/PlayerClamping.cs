@@ -16,7 +16,7 @@ public class PlayerClamping : MonoBehaviour
     public LayerMask pickableLayers;
 
     private ClampPoint selectedPoint;
-    private Image clampIconImage;
+    //private Image clampIconImage;
     private Image clampMovingIconImage;
     private bool positioningClamp;
     private Vector2 currentFingerPosition;
@@ -25,7 +25,7 @@ public class PlayerClamping : MonoBehaviour
     void Start()
     {
         selectedPoint = null;
-        clampIconImage = ClampIcon.GetComponent<Image>();
+        //clampIconImage = ClampIcon.GetComponent<Image>();
         clampMovingIconImage = MovingClampIcon.GetComponent<Image>();
         MovingClampIcon.SetActive(false);
         positioningClamp = false;

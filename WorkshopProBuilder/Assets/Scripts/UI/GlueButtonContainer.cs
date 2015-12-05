@@ -15,7 +15,8 @@ public class GlueButtonContainer : ScrollingButtonContainer
         Button buttonComponent = button.GetComponent<Button>();
         if (buttonComponent != null)
         {
-            buttonComponent.onClick.AddListener(() => manager.TestingGlueButton(buttonComponent));
+            int i = AvailableButtonsList.Count - 1;
+            //buttonComponent.onClick.AddListener(() => manager.SwitchPieceToGlue(i));
             buttonComponent.onClick.AddListener(() => SwitchSelectedButton(button));
         }
 

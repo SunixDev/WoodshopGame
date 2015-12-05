@@ -15,7 +15,7 @@ public class WoodPiece : MonoBehaviour
     {
         get
         {
-            if (GlueBoxes.Count <= 0)
+            if (GlueBoxes.Count <= 0 || !RequiresGlue)
             {
                 return true;
             }
@@ -24,9 +24,32 @@ public class WoodPiece : MonoBehaviour
                 bool canConnect = true;
                 for (int i = 0; i < GlueBoxes.Count && canConnect; i++)
                 {
-                    canConnect = GlueBoxes[i].MinimumReached;
+                    if (GlueBoxes[i].ActiveInStep)
+                    {
+                        canConnect = GlueBoxes[i].MinimumReached;
+                    }
                 }
                 return canConnect;
+            }
+        }
+    }
+
+    public bool RequiresGlue
+    {
+        get
+        {
+            if (GlueBoxes.Count <= 0)
+            {
+                return false;
+            }
+            else
+            {
+                bool glueRequired = false;
+                for (int i = 0; i < GlueBoxes.Count && !glueRequired; i++)
+                {
+                    glueRequired = GlueBoxes[i].ActiveInStep;
+                }
+                return glueRequired;
             }
         }
     }

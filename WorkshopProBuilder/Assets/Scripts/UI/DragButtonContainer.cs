@@ -6,6 +6,7 @@ public class DragButtonContainer : ScrollingButtonContainer
 {
     public Transform canvas;
     public GameObject dragIconObject;
+    //public Color DisabledColor;
 
     public void CreateButton(Sprite iconSprite, string pieceName)
     {
@@ -27,5 +28,20 @@ public class DragButtonContainer : ScrollingButtonContainer
         UIDragButton dragButton = button.GetComponent<UIDragButton>();
         dragButton.SetElementToDrag(dragIcon);
         dragIcon.SetActive(false);
+    }
+
+    public bool ContainsSelectedButton(GameObject selectedButton)
+    {
+        return AvailableButtonsList.Contains(selectedButton);
+    }
+
+    public int IndexOfSelectedButton(GameObject selectedButton)
+    {
+        return AvailableButtonsList.IndexOf(selectedButton);
+    }
+
+    public void DisableButton(GameObject buttonToDisable)
+    {
+
     }
 }
