@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 public class WoodProject : MonoBehaviour 
 {
-    public List<WoodPiece> ConnectecPieces;
+    public List<WoodPiece> ConnectedPieces;
+    public bool displayBounds;
 
     private Bounds projectBounds;
 
@@ -13,9 +14,9 @@ public class WoodProject : MonoBehaviour
         get
         {
             bool glueRequired = false;
-            for (int i = 0; i < ConnectecPieces.Count && !glueRequired; i++)
+            for (int i = 0; i < ConnectedPieces.Count && !glueRequired; i++)
             {
-                glueRequired = ConnectecPieces[i].RequiresGlue;
+                glueRequired = ConnectedPieces[i].RequiresGlue;
             }
             return glueRequired;
         }
@@ -24,17 +25,20 @@ public class WoodProject : MonoBehaviour
     void Awake()
     {
         projectBounds = new Bounds();
-        if (ConnectecPieces == null)
+        if (ConnectedPieces == null)
         {
-            ConnectecPieces = new List<WoodPiece>();
+            ConnectedPieces = new List<WoodPiece>();
         }
         else
         {
-            for (int i = 0; i < ConnectecPieces.Count && ConnectecPieces.Count > 0; i++)
+            Vector3 previousPosition = transform.position;
+            transform.position = Vector3.zero;
+            for (int i = 0; i < ConnectedPieces.Count && ConnectedPieces.Count > 0; i++)
             {
-                ConnectecPieces[i].gameObject.transform.SetParent(transform);
-                projectBounds.Encapsulate(ConnectecPieces[i].gameObject.GetComponent<Renderer>().bounds);
+                ConnectedPieces[i].gameObject.transform.SetParent(transform);
+                projectBounds.Encapsulate(ConnectedPieces[i].gameObject.GetComponent<Renderer>().bounds);
             }
+            transform.position = previousPosition;
         }
     }
 
@@ -43,14 +47,39 @@ public class WoodProject : MonoBehaviour
         WoodPiece woodPiece = woodPieceObject.GetComponent<WoodPiece>();
         if(woodPiece != null)
         {
-            ConnectecPieces.Add(woodPiece);
+            ConnectedPieces.Add(woodPiece);
             woodPiece.transform.SetParent(transform);
-            projectBounds.Encapsulate(woodPieceObject.GetComponent<Renderer>().bounds);
+            EncapsulateBounds(woodPieceObject.GetComponent<Renderer>());
         }
     }
 
     public Bounds GetBounds()
     {
         return projectBounds;
+    }
+
+    private void EncapsulateBounds(Renderer pieceRenderer)
+    {
+        Vector3 previousPosition = transform.position;
+        transform.position = Vector3.zero;
+        projectBounds.Encapsulate(pieceRenderer.bounds);
+        transform.position = previousPosition;
+    }
+
+
+
+    void OnDrawGizmos()
+    {
+        if (displayBounds)
+        {
+            Vector3 center = projectBounds.center;
+            float radius = projectBounds.extents.magnitude;
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireSphere(center, radius);
+            float x = projectBounds.center.x + projectBounds.size.x;
+            float y = projectBounds.center.y + projectBounds.size.y;
+            float z = projectBounds.center.z + projectBounds.size.z;
+            Gizmos.DrawWireCube(center, new Vector3(x, y, z));
+        }
     }
 }
