@@ -5,8 +5,8 @@ public class TextureScanner : MonoBehaviour {
 
     public Texture2D texture { get; set; }
     public MeshFilter objMeshFilter { get; set; }
-    public Color ColorToCompare { get; set; }
 
+    private Color ColorToCompare = new Color(1f, 1f, 1f);
     private bool scanningComplete = false;
     private float TotalCorrectUVColors;
 
@@ -37,7 +37,7 @@ public class TextureScanner : MonoBehaviour {
             int texelX = Mathf.FloorToInt(objUVs[i].x * texture.width);
             int texelY = Mathf.FloorToInt(objUVs[i].y * texture.height);
             Color color = texture.GetPixel(texelX, texelY);
-            if (SameColor(color))
+            if (DifferentFromWhite(color))
             {
                 TotalCorrectUVColors++;
             }
@@ -46,10 +46,10 @@ public class TextureScanner : MonoBehaviour {
         scanningComplete = true;
     }
 
-    private bool SameColor(Color pixelColor)
+    private bool DifferentFromWhite(Color pixelColor)
     {
-        return (ColorToCompare.r == pixelColor.r && 
-                ColorToCompare.g == pixelColor.g && 
-                ColorToCompare.b == pixelColor.b);
+        return (ColorToCompare.r != pixelColor.r &&
+                ColorToCompare.g != pixelColor.g &&
+                ColorToCompare.b != pixelColor.b);
     }
 }

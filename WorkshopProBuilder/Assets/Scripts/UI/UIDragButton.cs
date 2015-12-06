@@ -42,7 +42,7 @@ public class UIDragButton : MonoBehaviour, IDragHandler, IEndDragHandler, IPoint
                 {
                     canvas = canvas.parent;
                 }
-                objRectTransform.parent = canvas;
+                objRectTransform.SetParent(canvas);
                 objRectTransform.SetAsLastSibling();
             }
         }

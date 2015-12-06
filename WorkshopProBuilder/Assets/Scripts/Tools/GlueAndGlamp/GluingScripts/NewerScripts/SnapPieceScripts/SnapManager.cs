@@ -39,4 +39,9 @@ public class SnapManager : MonoBehaviour
     {
         return DraggablePieces[index].GetComponent<SnapPiece>();
     }
+
+    internal void AddDragPiece(GameObject gameObject)
+    {
+        DraggablePieces.Add(gameObject);
+    }
 }

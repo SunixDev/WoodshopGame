@@ -20,7 +20,7 @@ public class MainUI : MonoBehaviour
     public Button StartOverButton;
     public Button NextSceneButton;
 
-    public void Initialize()
+    virtual public void Initialize()
     {
         if (OptionButtons.Count > 0)
         {

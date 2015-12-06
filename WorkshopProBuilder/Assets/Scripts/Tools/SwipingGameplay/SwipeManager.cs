@@ -12,6 +12,8 @@ public class SwipeManager : MonoBehaviour
     public Material SandingMaterial;
     public Material LaqcuerMaterial;
     public SwipeUI UI_Manager;
+    public GameObject ColorPickerContainer;
+    public DrawerSlide DrawerSlider;
     public bool PieceRotationEnabled { get; set; }
 
     private int currentPieceIndex = 0;
@@ -86,6 +88,18 @@ public class SwipeManager : MonoBehaviour
 
     void Update()
     {
+        if (DrawerSlider != null && ColorPickerContainer != null)
+        {
+            if (DrawerSlider.Hiding && ColorPickerContainer.activeInHierarchy)
+            {
+                ColorPickerContainer.SetActive(false);
+            }
+            else if (!DrawerSlider.Hiding && !ColorPickerContainer.activeInHierarchy)
+            {
+                ColorPickerContainer.SetActive(true);
+            }
+        }
+
         if (!swiping && scanning)
         {
             bool scansComplete = true;
@@ -133,7 +147,7 @@ public class SwipeManager : MonoBehaviour
 
     public void RotateObject(Gesture gesture)
     {
-        if (PieceRotationEnabled && gesture.touchCount == 1)
+        if (PieceRotationEnabled && gesture.touchCount == 1 && !gesture.IsOverUIElement())
         {
             AvailablePieces[currentPieceIndex].transform.Rotate(gesture.deltaPosition.y, -gesture.deltaPosition.x, 0.0f, Space.World);
         }

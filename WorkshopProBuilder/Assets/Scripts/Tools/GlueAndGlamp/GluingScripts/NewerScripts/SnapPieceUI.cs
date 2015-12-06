@@ -11,7 +11,7 @@ public class SnapPieceUI : MainUI
     private GameObject GluingButtonsPanel;
 
 
-    public void Initialize()
+    override public void Initialize()
     {
         base.Initialize();
         SnapPieceButtonsPanel = SnapPieceButtonList.gameObject;

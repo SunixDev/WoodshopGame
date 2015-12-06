@@ -4,6 +4,8 @@ using System.Collections;
 public class GluedPieceController : MonoBehaviour 
 {
     public float RotationSpeed = 5.0f;
+    public bool RotateX_Axis = false;
+    public bool RotateY_Axis = true;
 
     private Transform objTransform;
     private bool selected;
@@ -20,8 +22,16 @@ public class GluedPieceController : MonoBehaviour
         {
             if (selected)
             {
-                float yRotation = gesture.deltaPosition.x * RotationSpeed * 0.1f;
-                objTransform.Rotate(0f, -yRotation, 0.0f, Space.World);
+                if (RotateY_Axis)
+                {
+                    float yRotation = gesture.deltaPosition.x * RotationSpeed * 0.1f;
+                    objTransform.Rotate(0f, -yRotation, 0f, Space.World);
+                }
+                if (RotateX_Axis)
+                {
+                    float xRotation = gesture.deltaPosition.x * RotationSpeed * 0.1f;
+                    objTransform.Rotate(xRotation, 0, 0f, Space.World);
+                }
             }
             else
             {

@@ -93,6 +93,21 @@ public class OrbitCamera : MonoBehaviour
         return Mathf.Clamp(amount, min, max);
     }
 
+    public void ChangeAngle(float v, float h)
+    {
+        xMovement = v;
+        yMovement = h;
+    }
+
+    public float GetVerticalAngle()
+    {
+        return xMovement;
+    }
+
+    public float GetHorizontalAngle()
+    {
+        return yMovement;
+    }
 
 
     private void SubscribeEvents()

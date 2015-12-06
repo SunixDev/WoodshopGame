@@ -8,66 +8,68 @@ public class GlueManager : MonoBehaviour
     public Transform CameraPosition;
     public PlayerGlue glue;
 
-    private List<GameObject> GluingPieces = new List<GameObject>();
-    private Transform selectedPieceTransform;
-    private Vector3 previousPositionOfSelectedPiece;
+    private List<GameObject> GluingPieces;
+    private int selectedPieceIndex;
+    private Vector3 previousSelectedPiecePosition;
     private Vector3 cameraOrigin;
     private Transform cameraTransform;
     private OrbitCamera cameraControl;
 
-    void Start()
+    void Awake()
     {
+        GluingPieces = new List<GameObject>();
         glue.enabled = false;
-        selectedPieceTransform = null;
-        previousPositionOfSelectedPiece = Vector3.zero;
+        selectedPieceIndex = 0;
+        previousSelectedPiecePosition = Vector3.zero;
         cameraOrigin = Vector3.zero;
         cameraTransform = GameCamera.transform;
         cameraControl = GameCamera.GetComponent<OrbitCamera>();
     }
 
-    void LateUpdate()
-    {
-        if (glue.enabled)
-        {
-            cameraTransform.LookAt(selectedPieceTransform);
-        }
-    }
+    //void LateUpdate()
+    //{
+    //    if (glue.enabled)
+    //    {
+            
+    //    }
+    //}
 
     private void SetupScene()
     {
         cameraTransform.position = CameraPosition.position;
         float zDistance = 5f;
-        if (selectedPieceTransform.gameObject.tag == "Piece")
+        if (GluingPieces[selectedPieceIndex].tag == "Piece")
         {
-            selectedPieceTransform.gameObject.GetComponent<PieceController>().state = PieceControlState.Rotate;
-            Renderer pieceRenderer = selectedPieceTransform.gameObject.GetComponent<Renderer>();
+            GluingPieces[selectedPieceIndex].GetComponent<PieceController>().state = PieceControlState.Rotate;
+            Renderer pieceRenderer = GluingPieces[selectedPieceIndex].GetComponent<Renderer>();
             zDistance = pieceRenderer.bounds.extents.magnitude * 2f;
         }
-        else if (selectedPieceTransform.gameObject.tag == "WoodProject")
+        else if (GluingPieces[selectedPieceIndex].tag == "WoodProject")
         {
-            Bounds projectBounds = selectedPieceTransform.gameObject.GetComponent<WoodProject>().GetBounds();
+            Bounds projectBounds = GluingPieces[selectedPieceIndex].GetComponent<WoodProject>().GetBounds();
             zDistance = projectBounds.extents.magnitude * 2f;
         }
-        selectedPieceTransform.position = new Vector3(CameraPosition.position.x, CameraPosition.position.y, CameraPosition.position.z + zDistance);
+        GluingPieces[selectedPieceIndex].transform.position = new Vector3(CameraPosition.position.x, CameraPosition.position.y, CameraPosition.position.z + zDistance);
     }
 
     //Called by main game manager, which is called by the "Apply Glue" button
     //Setups the passed in piece
-    public void ActivateGluing(GameObject pieceToGlue)
+    public void ActivateGluing()
     {
         glue.enabled = true;
-        selectedPieceTransform = pieceToGlue.transform;
-        cameraControl.enabled = false;
+        cameraControl.ChangeAngle(0f, 0f);
+        cameraControl.LookAtPoint = GluingPieces[selectedPieceIndex].transform;
+        previousSelectedPiecePosition = GluingPieces[selectedPieceIndex].transform.position;
         SetupScene();
     }
 
     //Called by main game manager, which is called by the "Connect Pieces" button
-    public void DeactivateGluing()
+    public void DisableGluing()
     {
         glue.enabled = false;
         cameraTransform.position = cameraOrigin;
         cameraControl.enabled = true;
-        selectedPieceTransform = null;
+        GluingPieces[selectedPieceIndex].transform.position = previousSelectedPiecePosition;
     }
 
     public void AddGluingPiece(GameObject pieceToGlue)
@@ -75,9 +77,9 @@ public class GlueManager : MonoBehaviour
         GluingPieces.Add(pieceToGlue);
     }
 
-    public void SwitchPiece(GameObject newPieceToGlue)
+    public void SwitchPiece(int newPieceToGlue)
     {
-        selectedPieceTransform = newPieceToGlue.transform;
+        selectedPieceIndex = newPieceToGlue;
         SetupScene();
     }
 

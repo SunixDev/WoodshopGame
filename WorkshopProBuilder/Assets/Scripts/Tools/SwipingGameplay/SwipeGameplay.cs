@@ -33,6 +33,7 @@ public class SwipeGameplay : MonoBehaviour
     private int BrushIndex = 0;
     private Vector3 PreviousHitLocation = new Vector3(-10.0f, -10.0f, -10.0f);
     private bool CorrectMaterial = false;
+    private bool overUI = false;
 
     public void Setup()
     {
@@ -67,7 +68,7 @@ public class SwipeGameplay : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButton(0) && SwipeEnabled)
+        if (Input.GetMouseButton(0) && SwipeEnabled && !overUI)
         {
             RaycastHit hit;
             Vector3 cursor = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f);
@@ -79,7 +80,7 @@ public class SwipeGameplay : MonoBehaviour
                 Vector3 paintUVPosition = new Vector3(0.0f, uvs.y - RenderCamera.orthographicSize,
                                                             uvs.x - RenderCamera.orthographicSize - 0.05f);
 
-                BrushColor.a = BrushSize * 10.0f; //1.0f;
+                BrushColor.a = BrushSize * 30f; //1f
                 SwipeBrushStrokes[BrushIndex].GetComponent<SpriteRenderer>().enabled = true;
                 SwipeBrushStrokes[BrushIndex].GetComponent<SpriteRenderer>().color = BrushColor;
                 SwipeBrushStrokes[BrushIndex].transform.localPosition = paintUVPosition;
@@ -141,5 +142,35 @@ public class SwipeGameplay : MonoBehaviour
         {
             CorrectMaterial = (type == SwipeGameType.Lacquer && material.Contains("Shining"));
         }
+    }
+
+    public void CheckIfOverUI(Gesture gesture)
+    {
+        overUI = gesture.IsOverUIElement();
+    }
+
+    public void OnRelease(Gesture gesture)
+    {
+        overUI = false;
+    }
+
+
+
+    void OnEnable()
+    {
+        EasyTouch.On_TouchStart += CheckIfOverUI;
+        EasyTouch.On_TouchUp += OnRelease;
+    }
+
+    void OnDisable()
+    {
+        EasyTouch.On_TouchStart -= CheckIfOverUI;
+        EasyTouch.On_TouchUp -= OnRelease;
+    }
+
+    void OnDestory()
+    {
+        EasyTouch.On_TouchStart -= CheckIfOverUI;
+        EasyTouch.On_TouchUp -= OnRelease;
     }
 }

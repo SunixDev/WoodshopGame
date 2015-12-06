@@ -7,6 +7,7 @@ public class DrawerSlide : MonoBehaviour
     public Vector3 HiddenAnchoredPosition;
     public float SlideSpeed = 10.0f;
     public float DestinationOffset = 0.1f;
+    public bool Hiding { get; private set; }
 
     private bool needToHide;
     private bool stillSliding;
@@ -37,7 +38,14 @@ public class DrawerSlide : MonoBehaviour
         if ((Vector3.Distance(rect.anchoredPosition3D, destination) <= DestinationOffset) && stillSliding)
         {
             stillSliding = false;
-            rect.anchoredPosition3D = destination;
+            if (needToHide)
+            {
+                SnapToHidden();
+            }
+            else
+            {
+                SnapToVisible();
+            }
         }
 	}
 
@@ -49,10 +57,15 @@ public class DrawerSlide : MonoBehaviour
     public void SnapToHidden()
     {
         rect.anchoredPosition3D = HiddenAnchoredPosition;
+        Hiding = true;
     }
 
     public void SwitchVisibility()
     {
+        if (Hiding)
+        {
+            Hiding = false;
+        }
         needToHide = !needToHide;
         stillSliding = true;
     }

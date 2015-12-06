@@ -9,16 +9,9 @@ public class PlayerGlue : MonoBehaviour
     public float MaxAmount = 100f;
     public LayerMask pickableLayers;
 
-    private Vector2 currentTouchPosition;
-    private Vector2 previousTouchPosition;
-    private bool applyingGlue;
-
-    void Awake()
-    {
-        currentTouchPosition = new Vector2(-1f, -1f);
-        previousTouchPosition = currentTouchPosition;
-        applyingGlue = false;
-    }
+    private Vector2 currentTouchPosition = new Vector2(-1f, -1f);
+    private Vector2 previousTouchPosition = new Vector2(-1f, -1f);
+    private bool applyingGlue = false;
 
     void Update()
     {
