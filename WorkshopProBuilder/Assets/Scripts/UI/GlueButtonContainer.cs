@@ -8,7 +8,7 @@ public class GlueButtonContainer : ScrollingButtonContainer
 
     private Color PreviousButtonColor;
 
-    public void CreateButton(Sprite iconSprite, string pieceName, SnapPieceGameManager manager)
+    public void CreateButton(Sprite iconSprite, string pieceName, GlueManager manager)
     {
         GameObject button = base.CreateButton(iconSprite, pieceName);
 
@@ -16,7 +16,7 @@ public class GlueButtonContainer : ScrollingButtonContainer
         if (buttonComponent != null)
         {
             int i = AvailableButtonsList.Count - 1;
-            //buttonComponent.onClick.AddListener(() => manager.SwitchPieceToGlue(i));
+            buttonComponent.onClick.AddListener(() => manager.SwitchPiece(i));
             buttonComponent.onClick.AddListener(() => SwitchSelectedButton(button));
         }
 

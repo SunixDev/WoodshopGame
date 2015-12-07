@@ -69,6 +69,10 @@ public class SnapPieceGameManager : MonoBehaviour
 
         WoodProject woodProjectComp = connectedProject.AddComponent<WoodProject>();
         woodProjectComp.AddPieceToConnect(initialPiece);
+
+        GluedPieceController controller = connectedProject.AddComponent<GluedPieceController>();
+        controller.RotateX_Axis = false;
+        controller.RotateY_Axis = false;
     }
 
     private bool SetUpPieces()
@@ -110,7 +114,7 @@ public class SnapPieceGameManager : MonoBehaviour
                 if (PiecesToConnect[i].GetComponent<WoodPiece>().RequiresGlue)
                 {
                     glueManager.AddGluingPiece(PiecesToConnect[i]);
-                    UI_Manager.CreateGluingButton(PiecesToConnect[i], this);
+                    UI_Manager.CreateGluingButton(PiecesToConnect[i], glueManager);
                 }
             }
             if (PiecesToConnect[i].tag == "WoodProject")
@@ -118,7 +122,7 @@ public class SnapPieceGameManager : MonoBehaviour
                 if (PiecesToConnect[i].GetComponent<WoodProject>().RequiresGlue)
                 {
                     glueManager.AddGluingPiece(PiecesToConnect[i]);
-                    UI_Manager.CreateGluingButton(PiecesToConnect[i].GetComponent<WoodProject>(), this);
+                    UI_Manager.CreateGluingButton(PiecesToConnect[i].GetComponent<WoodProject>(), glueManager);
                 }
             }
         }

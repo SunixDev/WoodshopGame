@@ -5,71 +5,63 @@ using System.Collections.Generic;
 public class GlueManager : MonoBehaviour 
 {
     public GameObject GameCamera;
-    public Transform CameraPosition;
+    public Transform CameraStartingPosition;
     public PlayerGlue glue;
 
     private List<GameObject> GluingPieces;
     private int selectedPieceIndex;
-    private Vector3 previousSelectedPiecePosition;
-    private Vector3 cameraOrigin;
+    private Vector3 selectedPiecePreviousPosition;
     private Transform cameraTransform;
     private OrbitCamera cameraControl;
+    private float distancePadding;
 
     void Awake()
     {
         GluingPieces = new List<GameObject>();
         glue.enabled = false;
         selectedPieceIndex = 0;
-        previousSelectedPiecePosition = Vector3.zero;
-        cameraOrigin = Vector3.zero;
+        selectedPiecePreviousPosition = Vector3.zero;
         cameraTransform = GameCamera.transform;
         cameraControl = GameCamera.GetComponent<OrbitCamera>();
+        distancePadding = 2.2f;
     }
-
-    //void LateUpdate()
-    //{
-    //    if (glue.enabled)
-    //    {
-            
-    //    }
-    //}
 
     private void SetupScene()
     {
-        cameraTransform.position = CameraPosition.position;
+        cameraTransform.position = CameraStartingPosition.position;
         float zDistance = 5f;
         if (GluingPieces[selectedPieceIndex].tag == "Piece")
         {
             GluingPieces[selectedPieceIndex].GetComponent<PieceController>().state = PieceControlState.Rotate;
             Renderer pieceRenderer = GluingPieces[selectedPieceIndex].GetComponent<Renderer>();
-            zDistance = pieceRenderer.bounds.extents.magnitude * 2f;
+            zDistance = pieceRenderer.bounds.extents.magnitude * distancePadding;
         }
         else if (GluingPieces[selectedPieceIndex].tag == "WoodProject")
         {
+            GluedPieceController controller = GluingPieces[selectedPieceIndex].GetComponent<GluedPieceController>();
+            controller.RotateX_Axis = true;
+            controller.RotateY_Axis = true;
             Bounds projectBounds = GluingPieces[selectedPieceIndex].GetComponent<WoodProject>().GetBounds();
-            zDistance = projectBounds.extents.magnitude * 2f;
+            zDistance = projectBounds.extents.magnitude * distancePadding;
         }
-        GluingPieces[selectedPieceIndex].transform.position = new Vector3(CameraPosition.position.x, CameraPosition.position.y, CameraPosition.position.z + zDistance);
+        GluingPieces[selectedPieceIndex].transform.position = new Vector3(CameraStartingPosition.position.x, CameraStartingPosition.position.y, CameraStartingPosition.position.z + zDistance);
+        cameraControl.Distance = zDistance;
     }
 
-    //Called by main game manager, which is called by the "Apply Glue" button
-    //Setups the passed in piece
     public void ActivateGluing()
     {
         glue.enabled = true;
+        SetUpPiece(selectedPieceIndex);
         cameraControl.ChangeAngle(0f, 0f);
         cameraControl.LookAtPoint = GluingPieces[selectedPieceIndex].transform;
-        previousSelectedPiecePosition = GluingPieces[selectedPieceIndex].transform.position;
+        cameraControl.EnableZoom = false;
         SetupScene();
     }
 
-    //Called by main game manager, which is called by the "Connect Pieces" button
     public void DisableGluing()
     {
         glue.enabled = false;
-        cameraTransform.position = cameraOrigin;
-        cameraControl.enabled = true;
-        GluingPieces[selectedPieceIndex].transform.position = previousSelectedPiecePosition;
+        ReturnSelectedPiece();
     }
 
     public void AddGluingPiece(GameObject pieceToGlue)
@@ -77,13 +69,30 @@ public class GlueManager : MonoBehaviour
         GluingPieces.Add(pieceToGlue);
     }
 
-    public void SwitchPiece(int newPieceToGlue)
+    public void SwitchPiece(int pieceIndex)
     {
-        selectedPieceIndex = newPieceToGlue;
+        ReturnSelectedPiece();
+        SetUpPiece(pieceIndex);
+        selectedPieceIndex = pieceIndex;
+        cameraControl.LookAtPoint = GluingPieces[selectedPieceIndex].transform;
         SetupScene();
     }
 
+    private void ReturnSelectedPiece()
+    {
+        GluingPieces[selectedPieceIndex].transform.position = selectedPiecePreviousPosition;
+        GluingPieces[selectedPieceIndex].transform.rotation = Quaternion.identity;
+        if (GluingPieces[selectedPieceIndex].tag == "Piece")
+        {
+            GluingPieces[selectedPieceIndex].SetActive(false);
+        }
+    }
 
+    private void SetUpPiece(int index)
+    {
+        GluingPieces[index].SetActive(true);
+        selectedPiecePreviousPosition = GluingPieces[index].transform.position;
+    }
 
     //public void OnDoubleTap(Gesture gesture) 
     //{

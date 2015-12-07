@@ -73,6 +73,11 @@ public class UIDragButton : MonoBehaviour, IDragHandler, IEndDragHandler, IPoint
         ElementToDrag.SetActive(false);
     }
 
+    public Image GetElementImage()
+    {
+        return ElementToDrag.GetComponent<Image>();
+    }
+
 
 
     public void OnPointerDown(PointerEventData eventData)

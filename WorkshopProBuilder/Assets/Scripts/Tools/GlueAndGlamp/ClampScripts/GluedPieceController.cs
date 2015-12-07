@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GluedPieceController : MonoBehaviour 
 {
-    public float RotationSpeed = 5.0f;
+    public float RotationSpeed = 15.0f;
     public bool RotateX_Axis = false;
     public bool RotateY_Axis = true;
 
@@ -29,7 +29,7 @@ public class GluedPieceController : MonoBehaviour
                 }
                 if (RotateX_Axis)
                 {
-                    float xRotation = gesture.deltaPosition.x * RotationSpeed * 0.1f;
+                    float xRotation = gesture.deltaPosition.y * RotationSpeed * 0.1f;
                     objTransform.Rotate(xRotation, 0, 0f, Space.World);
                 }
             }

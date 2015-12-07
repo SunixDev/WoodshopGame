@@ -25,14 +25,14 @@ public class SnapPieceUI : MainUI
         SnapPieceButtonList.CreateButton(icon, pieceToSnap.name);
     }
 
-    public void CreateGluingButton(GameObject pieceToGlue, SnapPieceGameManager manager)
+    public void CreateGluingButton(GameObject pieceToGlue, GlueManager manager)
     {
         WoodPiece woodPiece = pieceToGlue.GetComponent<WoodPiece>();
         Sprite icon = woodPiece.ButtonIcon;
         GluingButtonList.CreateButton(icon, pieceToGlue.name, manager);
     }
 
-    public void CreateGluingButton(WoodProject project, SnapPieceGameManager manager)
+    public void CreateGluingButton(WoodProject project, GlueManager manager)
     {
         GluingButtonList.CreateButton(null, project.name, manager);
     }

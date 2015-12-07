@@ -6,7 +6,7 @@ public class SnapManager : MonoBehaviour
 {
     public GameObject GameCamera;
     public Transform CameraStartingPosition;
-    public Transform CameraLookAtTransform;
+    public Transform CameraLookAt;
     public PlayerPieceSnapping PieceSnapping;
     public DragButtonContainer ButtonContainer;
 
@@ -19,19 +19,21 @@ public class SnapManager : MonoBehaviour
         PieceSnapping.enabled = false;
         cameraTransform = GameCamera.transform;
         cameraControl = GameCamera.GetComponent<OrbitCamera>();
+        ActivatePieceSnapping();
 	}
 
-    public void SetUpPieceSnapping()
+    public void ActivatePieceSnapping()
     {
         GameCamera.transform.position = CameraStartingPosition.position;
-        cameraControl.LookAtPoint = CameraLookAtTransform;
-        cameraControl.enabled = true;
+        cameraControl.LookAtPoint = CameraLookAt;
+        cameraControl.Distance = 1.5f;
+        cameraControl.ChangeAngle(0f, 0f);
+        cameraControl.EnableZoom = true;
         PieceSnapping.enabled = true;
     }
 
     public void PausePieceSnapping()
     {
-        cameraControl.enabled = false;
         PieceSnapping.enabled = false;
     }
 
@@ -40,8 +42,34 @@ public class SnapManager : MonoBehaviour
         return DraggablePieces[index].GetComponent<SnapPiece>();
     }
 
-    internal void AddDragPiece(GameObject gameObject)
+    public void AddDragPiece(GameObject gameObject)
     {
         DraggablePieces.Add(gameObject);
     }
+
+
+    #region Touch Events
+    private void EnableTouchEvents()
+    {
+
+    }
+
+    private void DisableTouchEvents()
+    {
+
+    }
+
+    void OnEnable()
+    {
+        EnableTouchEvents();
+    }
+    void OnDisable()
+    {
+        DisableTouchEvents();
+    }
+    void OnDestroy()
+    {
+        DisableTouchEvents();
+    }
+    #endregion
 }
