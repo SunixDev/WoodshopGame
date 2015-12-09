@@ -35,7 +35,7 @@ public class SnapPiece : MonoBehaviour
                 {
                     if (SnapPoints[i].ActiveInStep)
                     {
-                        valid = SnapPoints[i].ReadyToConnect;
+                        valid = SnapPoints[i].CanConnect;
                     }
                 }
             }
@@ -45,10 +45,29 @@ public class SnapPiece : MonoBehaviour
 
     public void SnapToProject(Transform connectedProject)
     {
-        transform.rotation = Quaternion.identity;
+        gameObject.SetActive(true);
         transform.parent = connectedProject;
+        transform.localRotation = Quaternion.identity;
         transform.localPosition = ConnectedLocalPosition;
         addedToProject = true;
+        if (gameObject.GetComponent<PieceController>() != null)
+        {
+            Destroy(gameObject.GetComponent<PieceController>());
+        }
+    }
+
+    public bool CanConnectAt(SnapPoint otherPoint)
+    {
+        bool valid = false;
+        if (otherPoint != null)
+        {
+            for (int i = 0; i < SnapPoints.Count && !valid; i++)
+            {
+                SnapPoint point = SnapPoints[i];
+                valid = point.CanConnectTo(otherPoint);
+            }
+        }
+        return valid;
     }
 
     public List<SnapPoint> GetAvailableSnapPoints()

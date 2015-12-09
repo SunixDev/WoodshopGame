@@ -153,7 +153,6 @@
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\SnapPieceScripts\PlayerPieceSnapping.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\SnapPieceScripts\SnapManager.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\SnapPieceUI.cs" />
-    <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\SnapTest.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\NewerScripts\WoodPieceCustomButton.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPiece.cs" />
     <Compile Include="Assets\Scripts\Tools\GlueAndGlamp\GluingScripts\SnapPoint.cs" />

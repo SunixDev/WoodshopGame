@@ -7,14 +7,18 @@ public class GlueBox : MonoBehaviour
     public List<GluePlane> GluingPlanes;
     public SnapPoint PointToActivate;
     public bool ActiveInStep = false;
-    public bool MinimumReached { get; set; }
+    public bool MinimumReached { get; private set; }
 
     private float currentGlueAmount;
 
-    void Start()
+    public void Initialize()
     {
         currentGlueAmount = 0.0f;
         PointToActivate.DeactivatePoint();
+        foreach (GluePlane plane in GluingPlanes)
+        {
+            plane.Initialize();
+        }
     }
 
     public void ApplyGlue(PlayerGlue playerGlue)

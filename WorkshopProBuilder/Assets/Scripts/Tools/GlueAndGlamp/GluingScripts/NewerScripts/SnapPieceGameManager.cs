@@ -25,12 +25,11 @@ public class SnapPieceGameManager : MonoBehaviour
     public SnapPieceUI UI_Manager;
     public GlueManager glueManager;
     public SnapManager snapManager;
+    public GameObject connectedProject { get; private set; }
 
-    private int selectedGluePiece = 0;
-    private int selectedSnapPiece = -1;
-    private Vector3 PieceLocation = new Vector3(0f, -20f, 20f);
+    private int totalNumberOfAnchorPoints = 100;
+    private Vector3 HiddenPieceLocation = new Vector3(0f, -20f, 20f);
     private PlayerAction action = PlayerAction.PieceSnapping;
-    private GameObject connectedProject;
 
     void Start()
     {
@@ -40,20 +39,34 @@ public class SnapPieceGameManager : MonoBehaviour
         GenerateButtons(projectFound);
         UI_Manager.DisplayGlueButtonPanel(false);
         UI_Manager.DisplaySnapPieceButtonsPanel(true);
+        snapManager.ConnectedProject = connectedProject.transform;
+        snapManager.SnapPointsToConnect = SnapPoints;
+    }
+
+    void LateUpdate()
+    {
+        if (totalNumberOfAnchorPoints <= 0)
+        {
+            Debug.Log("ALL POINTS CONNECTED");
+        }
     }
 
     #region Set Up Scene Code
     private void SetUpGameplayObjects()
     {
+        totalNumberOfAnchorPoints = SnapPoints.Count;
         foreach (SnapPoint snapPoint in SnapPoints)
         {
             snapPoint.gameObject.SetActive(true);
+            snapPoint.Initialize();
             snapPoint.ActiveInStep = true;
+            snapPoint.CanConnect = true;
         }
 
         foreach (GlueBox glueArea in GlueAreas)
         {
             glueArea.gameObject.SetActive(true);
+            glueArea.Initialize();
             glueArea.ActiveInStep = true;
         }
     }
@@ -71,8 +84,6 @@ public class SnapPieceGameManager : MonoBehaviour
         woodProjectComp.AddPieceToConnect(initialPiece);
 
         GluedPieceController controller = connectedProject.AddComponent<GluedPieceController>();
-        controller.RotateX_Axis = false;
-        controller.RotateY_Axis = false;
     }
 
     private bool SetUpPieces()
@@ -89,7 +100,7 @@ public class SnapPieceGameManager : MonoBehaviour
             }
             else
             {
-                PiecesToConnect[i].transform.position = PieceLocation;
+                PiecesToConnect[i].transform.position = HiddenPieceLocation;
                 PiecesToConnect[i].SetActive(false);
             }
         }
@@ -129,29 +140,10 @@ public class SnapPieceGameManager : MonoBehaviour
     }
     #endregion
 
-    public void SetUpForGluingPieces()
+    public void UpdateConnections()
     {
-        glueManager.ActivateGluing();
-    }
-
-    private void EvaluateAllConnectionsInPiece()
-    {
-        //foreach (SnapPoint currentPoint in CurrentPiece.SnapPoints)
-        //{
-        //    if (!currentPoint.IsConnected)
-        //    {
-        //        foreach (SnapPoint otherPoint in SnapPoints)
-        //        {
-        //            if (currentPoint != otherPoint && currentPoint.CanConnectTo(otherPoint) && 
-        //                currentPoint.DistanceFromPoint(otherPoint) <= ValidConnectionDistance && CurrentPiece.CanConnect &&
-        //                otherPoint.ParentSnapPiece.GetComponent<WoodPiece>().CanConnect)
-        //            {
-        //                currentPoint.ConnectPieceToPoint(otherPoint, Center);
-        //                break;
-        //            }
-        //        }
-        //    }
-        //}
+        totalNumberOfAnchorPoints--;
+        Debug.Log("Anchor points remaining: " + totalNumberOfAnchorPoints);
     }
 
     public void DisplayResults()
@@ -215,24 +207,6 @@ public class SnapPieceGameManager : MonoBehaviour
     //        {
     //            Total_TooMuchGlues++;
     //        }
-    //    }
-    }
-
-    public void SwitchPiece(int index)
-    {
-    //    if (index >= 0 && index < PiecesToConnect.Count && index != currentPieceIndex)
-    //    {
-    //        PiecesToConnect[currentPieceIndex].gameObject.transform.position = Vector3.zero;
-    //        PiecesToConnect[currentPieceIndex].gameObject.SetActive(false);
-    //        PiecesToConnect[index].gameObject.SetActive(true);
-    //        PiecesToConnect[index].transform.position = SpawnPoint.position;
-    //        PiecesToConnect[index].transform.rotation = Quaternion.identity;
-    //        CurrentPiece = PiecesToConnect[index].GetComponent<WoodPiece>();
-    //        currentPieceIndex = index;
-    //    }
-    //    else
-    //    {
-    //        Debug.Log("Index #" + index + " is invalid.");
     //    }
     }
 

@@ -11,7 +11,7 @@ public class WoodPiece : MonoBehaviour
     public List<GlueBox> GlueBoxes;
     public MeshCollider objMeshCollider;
     public Sprite ButtonIcon;
-    public bool CanConnect
+    public bool AllGlueApplied
     {
         get
         {

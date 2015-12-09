@@ -46,8 +46,8 @@ public class PieceController : MonoBehaviour
     {
         if (gesture.pickedObject == gameObject && gesture.touchCount == 1 && isMoving && state == PieceControlState.Rotate)
         {
-            float xRotation = gesture.deltaPosition.x * RotationSpeed *gesture.deltaTime;
-            float yRotation = gesture.deltaPosition.y * RotationSpeed *gesture.deltaTime;
+            float xRotation = gesture.deltaPosition.x * RotationSpeed * 0.1f;
+            float yRotation = gesture.deltaPosition.y * RotationSpeed * 0.1f;
             pieceTransform.Rotate(yRotation, -xRotation, 0f, Space.World);
         }
     }

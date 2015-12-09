@@ -5,8 +5,8 @@ public class SnapPoint : MonoBehaviour
 {
     public SnapPiece ParentSnapPiece;
     public string ConnectionID = "Default";
-    public bool ReadyToConnect { get; private set; }
-    public bool IsConnected { get; private set; }
+    public bool CanConnect = false;
+    public bool IsConnected { get; set; }
     public bool ActiveInStep = false;
     public Vector3 Position
     {
@@ -16,7 +16,7 @@ public class SnapPoint : MonoBehaviour
         }
     }
 
-    void Awake()
+    public void Initialize()
     {
         DeactivatePoint();
         IsConnected = false;
@@ -24,25 +24,18 @@ public class SnapPoint : MonoBehaviour
 
     public bool CanConnectTo(SnapPoint otherPoint)
     {
-        return (otherPoint.ConnectionID == ConnectionID) && ReadyToConnect && otherPoint.ReadyToConnect && !otherPoint.IsConnected && !IsConnected && otherPoint != this;
-    }
-
-    public void ConnectPieceToPoint(SnapPoint otherPoint, Transform center)
-    {
-        IsConnected = true;
-        otherPoint.IsConnected = true;
-        ParentSnapPiece.SnapToProject(center);
+        return (otherPoint.ConnectionID == ConnectionID) && CanConnect && otherPoint.CanConnect && !IsConnected && !otherPoint.IsConnected && otherPoint != this;
     }
 
     public void ActivatePoint()
     {
-        ReadyToConnect = true;
+        CanConnect = true;
         GetComponent<MeshRenderer>().enabled = true;
     }
 
     public void DeactivatePoint()
     {
-        ReadyToConnect = false;
+        CanConnect = false;
         GetComponent<MeshRenderer>().enabled = false;
     }
 }

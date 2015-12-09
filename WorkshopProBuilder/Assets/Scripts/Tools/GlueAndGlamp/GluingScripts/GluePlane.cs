@@ -16,7 +16,7 @@ public class GluePlane : MonoBehaviour
     private IndicationType type = IndicationType.Highlight;
     private float excessiveGluePercentage = 1.1f;
 
-    void OnEnable()
+    public void Initialize()
     {
         glueColor.a = 0.0f;
         objRenderer = GetComponent<Renderer>();

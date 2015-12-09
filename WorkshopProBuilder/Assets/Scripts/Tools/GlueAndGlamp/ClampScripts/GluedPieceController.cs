@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GluedPieceController : MonoBehaviour 
 {
-    public float RotationSpeed = 15.0f;
+    public float RotationSpeed = 10.0f;
     public bool RotateX_Axis = false;
     public bool RotateY_Axis = true;
 
@@ -35,8 +35,7 @@ public class GluedPieceController : MonoBehaviour
             }
             else
             {
-                string pickedObjectTag = gesture.pickedObject.tag;
-                selected = (pickedObjectTag == "Piece" || pickedObjectTag == "WoodProject" || pickedObjectTag == "Tool");
+                selected = PickedObjectIsChildObject(gesture.pickedObject);
             }
         }
     }
@@ -44,6 +43,21 @@ public class GluedPieceController : MonoBehaviour
     public void StopRotatingPiece(Gesture gesture)
     {
         selected = false;
+    }
+
+    private bool PickedObjectIsChildObject(GameObject childObject)
+    {
+        bool valid = false;
+        if (childObject.tag == "Piece" || childObject.tag == "WoodProject" || childObject.tag == "Tool")
+        {
+            Transform childTransform = childObject.transform;
+            for (int i = 0; i < transform.childCount && !valid; i++)
+            {
+                Transform child = transform.GetChild(i);
+                valid = (childTransform == child);
+            }
+        }
+        return valid;
     }
 
 

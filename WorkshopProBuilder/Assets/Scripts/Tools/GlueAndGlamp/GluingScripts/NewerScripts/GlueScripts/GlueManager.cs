@@ -45,6 +45,7 @@ public class GlueManager : MonoBehaviour
             zDistance = projectBounds.extents.magnitude * distancePadding;
         }
         GluingPieces[selectedPieceIndex].transform.position = new Vector3(CameraStartingPosition.position.x, CameraStartingPosition.position.y, CameraStartingPosition.position.z + zDistance);
+        GluingPieces[selectedPieceIndex].transform.rotation = Quaternion.identity;
         cameraControl.Distance = zDistance;
     }
 
@@ -86,6 +87,12 @@ public class GlueManager : MonoBehaviour
         {
             GluingPieces[selectedPieceIndex].SetActive(false);
         }
+        if (GluingPieces[selectedPieceIndex].tag == "WoodProject")
+        {
+            GluedPieceController controller = GluingPieces[selectedPieceIndex].GetComponent<GluedPieceController>();
+            controller.RotateX_Axis = false;
+            controller.RotateY_Axis = true;
+        }
     }
 
     private void SetUpPiece(int index)
@@ -93,48 +100,4 @@ public class GlueManager : MonoBehaviour
         GluingPieces[index].SetActive(true);
         selectedPiecePreviousPosition = GluingPieces[index].transform.position;
     }
-
-    //public void OnDoubleTap(Gesture gesture) 
-    //{
-    //    if (gesture.pickedObject != null)
-    //    {
-    //        if (!PlayerGlue.enabled)
-    //        {
-    //            if (gesture.pickedObject.tag == "Piece")
-    //            {
-    //                SetupGluing(gesture.pickedObject);
-    //            }
-    //        }
-    //        else
-    //        {
-    //            if (gesture.pickedObject.tag == "GlueHitBox")
-    //            {
-
-    //            }
-    //        }
-    //    }
-    //}
-
-    //private void EnableTouchEvents()
-    //{
-    //    EasyTouch.On_DoubleTap += OnDoubleTap;
-    //}
-
-    //private void DisableTouchEvents()
-    //{
-    //    EasyTouch.On_DoubleTap -= OnDoubleTap;
-    //}
-
-    //void OnEnable()
-    //{
-    //    EnableTouchEvents();
-    //}
-    //void OnDisable()
-    //{
-    //    DisableTouchEvents();
-    //}
-    //void OnDestroy()
-    //{
-    //    DisableTouchEvents();
-    //}
 }

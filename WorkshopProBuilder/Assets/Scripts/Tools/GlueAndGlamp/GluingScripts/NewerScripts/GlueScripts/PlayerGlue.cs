@@ -15,70 +15,70 @@ public class PlayerGlue : MonoBehaviour
 
     void Update()
     {
-        //if (previousTouchPosition != currentTouchPosition && applyingGlue)
-        //{
-        //    DetectGluingAreas();
-        //}
+        if (previousTouchPosition != currentTouchPosition && applyingGlue)
+        {
+            DetectGluingAreas();
+        }
     }
 
     private void DetectGluingAreas()
     {
-        //Ray ray = Camera.main.ScreenPointToRay(currentTouchPosition);
-        //RaycastHit hit;
-        //if (Physics.Raycast(ray, out hit, 100f, pickableLayers))
-        //{
-        //    GlueBox glueBox = hit.collider.gameObject.GetComponent<GlueBox>();
-        //    if (glueBox != null)
-        //    {
-        //        glueBox.ApplyGlue(this);
-        //    }
-        //}
-        //previousTouchPosition = currentTouchPosition;
+        Ray ray = Camera.main.ScreenPointToRay(currentTouchPosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 100f, pickableLayers))
+        {
+            GlueBox glueBox = hit.collider.gameObject.GetComponent<GlueBox>();
+            if (glueBox != null)
+            {
+                glueBox.ApplyGlue(this);
+            }
+        }
+        previousTouchPosition = currentTouchPosition;
     }
 
 
 
-    //public void GetTouchPosition(Gesture gesture)
-    //{
-    //    if (gesture.pickedObject != null)
-    //    {
-    //        if (gesture.pickedObject.tag == "GlueHitBox")
-    //        {
-    //            currentTouchPosition = gesture.position;
-    //            applyingGlue = true;
-    //        }
-    //    }
-    //}
+    public void GetTouchPosition(Gesture gesture)
+    {
+        if (gesture.pickedObject != null)
+        {
+            if (gesture.pickedObject.tag == "GlueHitBox")
+            {
+                currentTouchPosition = gesture.position;
+                applyingGlue = true;
+            }
+        }
+    }
 
-    //public void OnTouchRelease(Gesture gesture)
-    //{
-    //    applyingGlue = false;
-    //}
+    public void OnTouchRelease(Gesture gesture)
+    {
+        applyingGlue = false;
+    }
 
 
 
-    //private void EnableTouchEvents()
-    //{
-    //    EasyTouch.On_TouchDown += GetTouchPosition;
-    //    EasyTouch.On_TouchUp += OnTouchRelease;
-    //}
+    private void EnableTouchEvents()
+    {
+        EasyTouch.On_TouchDown += GetTouchPosition;
+        EasyTouch.On_TouchUp += OnTouchRelease;
+    }
 
-    //private void DisableTouchEvents()
-    //{
-    //    EasyTouch.On_TouchDown -= GetTouchPosition;
-    //    EasyTouch.On_TouchUp -= OnTouchRelease;       
-    //}
+    private void DisableTouchEvents()
+    {
+        EasyTouch.On_TouchDown -= GetTouchPosition;
+        EasyTouch.On_TouchUp -= OnTouchRelease;
+    }
 
-    //void OnEnable()
-    //{
-    //    EnableTouchEvents();
-    //}
-    //void OnDisable()
-    //{
-    //    DisableTouchEvents();
-    //}
-    //void OnDestroy()
-    //{
-    //    DisableTouchEvents();
-    //}
+    void OnEnable()
+    {
+        EnableTouchEvents();
+    }
+    void OnDisable()
+    {
+        DisableTouchEvents();
+    }
+    void OnDestroy()
+    {
+        DisableTouchEvents();
+    }
 }
