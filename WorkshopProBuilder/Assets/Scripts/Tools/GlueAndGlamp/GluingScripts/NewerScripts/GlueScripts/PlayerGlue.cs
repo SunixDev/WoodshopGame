@@ -5,7 +5,7 @@ public class PlayerGlue : MonoBehaviour
 {
     public float ApplicationRate = 20f;
     public float AmountToActivateSnapPoints = 75f;
-    public float MinAmountForPerfectScore = 95f;
+    public float MinAmountForPerfectScore = 90f;
     public float MaxAmount = 100f;
     public LayerMask pickableLayers;
 

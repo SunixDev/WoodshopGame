@@ -8,6 +8,7 @@ public class WoodProject : MonoBehaviour
     public bool displayBounds;
 
     private Bounds projectBounds;
+    private SnapPiece snapPieceComponent;
 
     public bool RequiresGlue
     {
@@ -25,6 +26,8 @@ public class WoodProject : MonoBehaviour
     void Awake()
     {
         projectBounds = new Bounds();
+        snapPieceComponent = GetComponent<SnapPiece>();
+
         if (ConnectedPieces == null)
         {
             ConnectedPieces = new List<WoodPiece>();
@@ -42,7 +45,7 @@ public class WoodProject : MonoBehaviour
         }
     }
 
-    public void AddPieceToConnect(GameObject woodPieceObject)
+    public void AddPieceToProject(GameObject woodPieceObject)
     {
         WoodPiece woodPiece = woodPieceObject.GetComponent<WoodPiece>();
         if(woodPiece != null)
@@ -50,6 +53,8 @@ public class WoodProject : MonoBehaviour
             ConnectedPieces.Add(woodPiece);
             woodPiece.transform.SetParent(transform);
             EncapsulateBounds(woodPieceObject.GetComponent<Renderer>());
+            RetrieveSnapPieceData(woodPieceObject.GetComponent<SnapPiece>());
+            Destroy(woodPieceObject.GetComponent<SnapPiece>());
         }
     }
 
@@ -64,6 +69,15 @@ public class WoodProject : MonoBehaviour
         transform.position = Vector3.zero;
         projectBounds.Encapsulate(pieceRenderer.bounds);
         transform.position = previousPosition;
+    }
+
+    private void RetrieveSnapPieceData(SnapPiece snapPiece)
+    {
+        foreach (SnapPoint point in snapPiece.SnapPoints)
+        {
+            snapPieceComponent.SnapPoints.Add(point);
+            point.ParentSnapPiece = snapPieceComponent;
+        }
     }
 
 

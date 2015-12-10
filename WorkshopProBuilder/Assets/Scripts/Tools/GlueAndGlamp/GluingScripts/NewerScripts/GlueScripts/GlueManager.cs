@@ -7,6 +7,7 @@ public class GlueManager : MonoBehaviour
     public GameObject GameCamera;
     public Transform CameraStartingPosition;
     public PlayerGlue glue;
+    public GlueButtonContainer ButtonContainer;
 
     private List<GameObject> GluingPieces;
     private int selectedPieceIndex;
@@ -54,14 +55,15 @@ public class GlueManager : MonoBehaviour
         glue.enabled = true;
         SetUpPiece(selectedPieceIndex);
         cameraControl.ChangeAngle(0f, 0f);
+        cameraControl.MinDistance = 0.2f;
         cameraControl.LookAtPoint = GluingPieces[selectedPieceIndex].transform;
-        cameraControl.EnableZoom = false;
         SetupScene();
     }
 
     public void DisableGluing()
     {
         glue.enabled = false;
+        cameraControl.MinDistance = 0.5f;
         ReturnSelectedPiece();
     }
 
@@ -95,9 +97,49 @@ public class GlueManager : MonoBehaviour
         }
     }
 
+    public void UpdateAvailablePieces(int pieceIndex)
+    {
+        GluingPieces[pieceIndex] = null;
+        ButtonContainer.DisableButton(pieceIndex);
+        ResetSelection();
+    }
+
+    public bool ContainsPiece(GameObject piece)
+    {
+        bool available = false;
+        if (piece != null)
+        {
+            available = GluingPieces.Contains(piece);
+        }
+        return available;
+    }
+
+    public int IndexOfPiece(GameObject piece)
+    {
+        if (piece == null || !ContainsPiece(piece))
+        {
+            return -1;
+        }
+
+        return GluingPieces.IndexOf(piece);
+    }
+
     private void SetUpPiece(int index)
     {
         GluingPieces[index].SetActive(true);
         selectedPiecePreviousPosition = GluingPieces[index].transform.position;
+    }
+
+    private void ResetSelection()
+    {
+        selectedPieceIndex = 0;
+        while (GluingPieces[selectedPieceIndex] == null && selectedPieceIndex < GluingPieces.Count)
+        {
+            selectedPieceIndex++;
+        }
+        if (selectedPieceIndex < GluingPieces.Count)
+        {
+            ButtonContainer.SwitchSelectedButton(selectedPieceIndex);
+        }
     }
 }

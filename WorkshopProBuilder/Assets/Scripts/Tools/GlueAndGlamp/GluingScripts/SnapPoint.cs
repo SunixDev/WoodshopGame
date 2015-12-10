@@ -18,7 +18,7 @@ public class SnapPoint : MonoBehaviour
 
     public void Initialize()
     {
-        DeactivatePoint();
+        ActivatePoint();
         IsConnected = false;
     }
 
@@ -37,5 +37,11 @@ public class SnapPoint : MonoBehaviour
     {
         CanConnect = false;
         GetComponent<MeshRenderer>().enabled = false;
+    }
+
+    public void ConnectPoint()
+    {
+        DeactivatePoint();
+        gameObject.GetComponent<BoxCollider>().enabled = false;
     }
 }

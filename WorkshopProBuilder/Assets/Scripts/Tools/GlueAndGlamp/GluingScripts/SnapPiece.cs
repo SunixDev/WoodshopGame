@@ -43,9 +43,16 @@ public class SnapPiece : MonoBehaviour
         }
     }
 
+    void Awake()
+    {
+        if (SnapPoints == null)
+        {
+            SnapPoints = new List<SnapPoint>();
+        }
+    }
+
     public void SnapToProject(Transform connectedProject)
     {
-        gameObject.SetActive(true);
         transform.parent = connectedProject;
         transform.localRotation = Quaternion.identity;
         transform.localPosition = ConnectedLocalPosition;

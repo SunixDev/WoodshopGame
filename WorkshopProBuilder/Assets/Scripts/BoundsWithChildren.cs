@@ -9,6 +9,8 @@ public class BoundsWithChildren : MonoBehaviour
 	void Start () 
     {
         objBounds = new Bounds();
+        Vector3 previousPosition = transform.position;
+        transform.position = new Vector3();
         for (int i = 0; i < transform.childCount; i++)
         {
             Transform child = transform.GetChild(i);
@@ -18,6 +20,7 @@ public class BoundsWithChildren : MonoBehaviour
                 objBounds.Encapsulate(r.bounds);
             }
         }
+        transform.position = previousPosition;
 	}
 
     void OnDrawGizmos()

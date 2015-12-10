@@ -9,16 +9,17 @@ public class SnapManager : MonoBehaviour
     public Transform CameraLookAt;
     public PlayerPieceSnapping PieceSnapping;
     public DragButtonContainer ButtonContainer;
-    public Transform ConnectedProject;
+    public GameObject ConnectedProject;
     public SnapPieceGameManager MiniGameManager;
 
+    private int DragPieceIndex;
     private List<GameObject> DraggablePieces = new List<GameObject>();
-    public List<SnapPoint> SnapPointsToConnect = new List<SnapPoint>();
     private Transform cameraTransform;
     private OrbitCamera cameraControl;
 
-	void Start () 
+	void Awake () 
     {
+        DragPieceIndex = -1;
         PieceSnapping.enabled = false;
         cameraTransform = GameCamera.transform;
         cameraControl = GameCamera.GetComponent<OrbitCamera>();
@@ -40,24 +41,14 @@ public class SnapManager : MonoBehaviour
         PieceSnapping.enabled = false;
     }
 
-    public SnapPiece GetDraggablePiece(int index)
-    {
-        return DraggablePieces[index].GetComponent<SnapPiece>();
-    }
-
-    public void AddDragPiece(GameObject gameObject)
-    {
-        DraggablePieces.Add(gameObject);
-    }
-
     public void OnDragButtonTouch(Gesture gesture)
     {
         if (ButtonContainer.ContainsButton(gesture.pickedUIElement))
         {
             if (gesture.pickedUIElement.GetComponent<UIDragButton>() != null)
             {
-                int pieceIndex = ButtonContainer.IndexOfButton(gesture.pickedUIElement);
-                PieceSnapping.StartPieceSnapping(DraggablePieces[pieceIndex], gesture.pickedUIElement);
+                DragPieceIndex = ButtonContainer.IndexOfButton(gesture.pickedUIElement);
+                PieceSnapping.StartPieceSnapping(DraggablePieces[DragPieceIndex], gesture.pickedUIElement);
             }
         }
     }
@@ -66,15 +57,20 @@ public class SnapManager : MonoBehaviour
     {
         List<SnapPoint> pointsReadyToConnect;
         bool PieceSnapIsPossible = EvaluateAnchorPoints(draggedPiece, otherPiece, out pointsReadyToConnect);
-        if (PieceSnapIsPossible && pointsReadyToConnect.Count > 0)
+        if (PieceSnapIsPossible && pointsReadyToConnect.Count > 0 && DragPieceIndex >= 0)
         {
-            draggedPiece.SnapToProject(ConnectedProject);
+            draggedPiece.gameObject.SetActive(true);
+            draggedPiece.SnapToProject(ConnectedProject.transform);
+            ConnectedProject.GetComponent<WoodProject>().AddPieceToProject(draggedPiece.gameObject);
             foreach (SnapPoint point in pointsReadyToConnect)
             {
                 point.IsConnected = true;
                 MiniGameManager.UpdateConnections();
             }
+            MiniGameManager.UpdateGame(DraggablePieces[DragPieceIndex]);
+            UpdateAvailablePieces();
         }
+        ResetSelection();
     }
 
     private bool EvaluateAnchorPoints(SnapPiece piece, SnapPiece otherPiece, out List<SnapPoint> pointsReadyToConnect)
@@ -99,12 +95,29 @@ public class SnapManager : MonoBehaviour
                         else
                         {
                             AllPointsCanConnect = false;
+                            pointsReadyToConnect = new List<SnapPoint>();
                         }
                     }
                 }
             }
         }
         return AllPointsCanConnect;
+    }
+
+    public void UpdateAvailablePieces()
+    {
+        DraggablePieces[DragPieceIndex] = null;
+        ButtonContainer.DisableButton(DragPieceIndex);
+    }
+
+    public void AddDragPiece(GameObject gameObject)
+    {
+        DraggablePieces.Add(gameObject);
+    }
+
+    public void ResetSelection()
+    {
+        DragPieceIndex = -1;
     }
 
 

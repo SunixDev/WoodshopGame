@@ -26,16 +26,37 @@ public class GlueBox : MonoBehaviour
         if (currentGlueAmount <= playerGlue.MaxAmount * 2f)
         {
             currentGlueAmount += playerGlue.ApplicationRate * Time.deltaTime;
-            if (currentGlueAmount >= playerGlue.AmountToActivateSnapPoints && !MinimumReached)
-            {
-                MinimumReached = true;
-                PointToActivate.ActivatePoint();
-            }
-            foreach (GluePlane p in GluingPlanes)
-            {
-                p.UpdatePlane(currentGlueAmount, playerGlue.MaxAmount);
-            }
+            CheckSnapPointActivation(playerGlue.AmountToActivateSnapPoints);
+            UpdateGluePlanes(playerGlue.MaxAmount);
         }
+    }
+
+    private void CheckSnapPointActivation(float requiredAmountToActivate)
+    {
+        if (currentGlueAmount >= requiredAmountToActivate && !MinimumReached)
+        {
+            MinimumReached = true;
+            PointToActivate.ActivatePoint();
+        }
+    }
+
+    private void UpdateGluePlanes(float playerGlueMaxAmount)
+    {
+        foreach (GluePlane p in GluingPlanes)
+        {
+            p.UpdatePlane(currentGlueAmount, playerGlueMaxAmount);
+        }
+    }
+
+    public float CalculatePercentage(float maxAmount)
+    {
+        float finalAmount = currentGlueAmount;
+        if(currentGlueAmount > maxAmount)
+        {
+            float excessiveAmount = currentGlueAmount - maxAmount;
+            finalAmount = maxAmount - excessiveAmount;
+        }
+        return finalAmount;
     }
 
     public float GetTotalGlueApplied()
@@ -43,33 +64,3 @@ public class GlueBox : MonoBehaviour
         return currentGlueAmount;
     }
 }
-
-/*In Update*/
-//if (Input.GetMouseButton(0) || Input.touchCount == 1)
-//{
-//    RaycastHit hit;
-//    Ray ray = Camera.main.ScreenPointToRay(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f));
-//    if (Physics.Raycast(ray, out hit) && hit.collider == objCollider && previousHitPoint != hit.point)
-//    {
-//        if(currentGlueAmount <= (MaxGlueAmountBeforeTooMuch * 2.0f))
-//        {
-//            currentGlueAmount += GlueApplicationRate * Time.deltaTime;
-//        }
-//        if (currentGlueAmount >= MinValueToActivatePointAndLowScore && !minimumGlueAmountReached)
-//        {
-//            ReadyToConnect = true;
-//            minimumGlueAmountReached = true;
-//            PointToActivate.CanConnect = true;
-//            PointToActivate.DisplayPoint();
-//        }
-//        if (currentGlueAmount >= MinValueForPerfectScore && !perfectGlueAmountReached)
-//        {
-//            perfectGlueAmountReached = true;
-//        }
-//        foreach (GluePlane p in GluingPlanes)
-//        {
-//            p.UpdatePlane(currentGlueAmount, MaxGlueAmountBeforeTooMuch);
-//        }
-//        previousHitPoint = hit.point;
-//    }
-//}
