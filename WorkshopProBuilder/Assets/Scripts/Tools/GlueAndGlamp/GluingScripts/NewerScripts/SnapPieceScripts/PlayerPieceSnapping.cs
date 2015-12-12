@@ -120,8 +120,11 @@ public class PlayerPieceSnapping : MonoBehaviour
 
     public void GetTouchPosition(Gesture gesture)
     {
-        currentTouchPosition = gesture.position;
-        placingPiece = true;
+        if (gesture.touchCount == 1)
+        {
+            currentTouchPosition = gesture.position;
+            placingPiece = true;
+        }
     }
 
     public void OnTouchRelease(Gesture gesture)

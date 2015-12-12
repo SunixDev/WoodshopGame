@@ -174,7 +174,7 @@ public class ChopSawManager : MonoBehaviour, IToolManager
             }
             else
             {
-                Debug.Log("No GameManager");
+                Debug.Log("Score Applied: " + percentage);
             }
         }
     }

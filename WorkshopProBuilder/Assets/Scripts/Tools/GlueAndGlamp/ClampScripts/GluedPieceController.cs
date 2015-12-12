@@ -18,7 +18,7 @@ public class GluedPieceController : MonoBehaviour
 
     public void RotatePiece(Gesture gesture)
     {
-        if (gesture.pickedObject != null && gesture.touchCount == 1 && !gesture.IsOverUIElement())
+        if (gesture.pickedObject != null && gesture.touchCount == 1 && !gesture.IsOverUIElement() && !gesture.isOverGui)
         {
             if (selected)
             {

@@ -24,7 +24,7 @@ public class PieceController : MonoBehaviour
 
     public void OnPieceTouched(Gesture gesture)
     {
-        if (gesture.pickedObject == gameObject && gesture.touchCount == 1)
+        if (gesture.pickedObject == gameObject && gesture.touchCount == 1 && !gesture.isOverGui && !gesture.IsOverUIElement())
         {
             if (state == PieceControlState.Drag)
             {
@@ -36,7 +36,7 @@ public class PieceController : MonoBehaviour
 
     public void MovePiece(Gesture gesture)
     {
-        if (gesture.pickedObject == gameObject && gesture.touchCount == 1 && isMoving && state == PieceControlState.Drag)
+        if (gesture.pickedObject == gameObject && gesture.touchCount == 1 && isMoving && state == PieceControlState.Drag && !gesture.isOverGui && !gesture.IsOverUIElement())
         {
             pieceTransform.position = gesture.GetTouchToWorldPoint(pieceTransform.position) + offset;
         }
@@ -44,7 +44,7 @@ public class PieceController : MonoBehaviour
 
     public void RotatePiece(Gesture gesture)
     {
-        if (gesture.pickedObject == gameObject && gesture.touchCount == 1 && isMoving && state == PieceControlState.Rotate)
+        if (gesture.pickedObject == gameObject && gesture.touchCount == 1 && isMoving && state == PieceControlState.Rotate && !gesture.isOverGui && !gesture.IsOverUIElement())
         {
             float xRotation = gesture.deltaPosition.x * RotationSpeed * 0.1f;
             float yRotation = gesture.deltaPosition.y * RotationSpeed * 0.1f;

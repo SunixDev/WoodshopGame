@@ -40,7 +40,7 @@ public class PlayerGlue : MonoBehaviour
 
     public void GetTouchPosition(Gesture gesture)
     {
-        if (gesture.pickedObject != null)
+        if (gesture.pickedObject != null && gesture.touchCount == 1 && !gesture.isOverGui && !gesture.IsOverUIElement())
         {
             if (gesture.pickedObject.tag == "GlueHitBox")
             {

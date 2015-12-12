@@ -29,6 +29,7 @@ public class ClampManager : MonoBehaviour
                 UI_Manager.Initialize();
                 foreach (ClampPoint point in ClampPoints)
                 {
+                    point.gameObject.SetActive(true);
                     point.DisplayPoint();
                 }
             }
