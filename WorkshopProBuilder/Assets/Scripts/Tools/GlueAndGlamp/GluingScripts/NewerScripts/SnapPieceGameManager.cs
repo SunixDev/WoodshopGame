@@ -46,16 +46,16 @@ public class SnapPieceGameManager : MonoBehaviour
     {
         if (numberOfActiveAnchorPoints <= 0 && gameInProgress)
         {
-            Debug.Log("ALL POINTS CONNECTED");
+            //Debug.Log("ALL POINTS CONNECTED");
             foreach (GlueBox glue in GlueAreas)
             {
                 EvaluateGlueArea(glue);
             }
-            Debug.Log("Total Glue Applied: " + totalGluePercentage);
-            Debug.Log("Percentage of Overall Glue Applied: " + totalGluePercentage / GlueAreas.Count);
-            Debug.Log("Glue Areas with a Minimal Amount: " + totalMinimumGlues);
-            Debug.Log("Glue Areas with a Perfect Amount: " + totalPerfectGlues);
-            Debug.Log("Glue Areas with a Excessive Amount: " + totalTooMuchGlues);
+            //Debug.Log("Total Glue Applied: " + totalGluePercentage);
+            //Debug.Log("Percentage of Overall Glue Applied: " + totalGluePercentage / GlueAreas.Count);
+            //Debug.Log("Glue Areas with a Minimal Amount: " + totalMinimumGlues);
+            //Debug.Log("Glue Areas with a Perfect Amount: " + totalPerfectGlues);
+            //Debug.Log("Glue Areas with a Excessive Amount: " + totalTooMuchGlues);
             string resultsText = EvaluateResults();
             UI_Manager.DisplayResultsPanel(resultsText, displayNextSceneButton: true);
             gameInProgress = false;
