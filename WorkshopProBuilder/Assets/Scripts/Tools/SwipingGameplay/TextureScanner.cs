@@ -41,15 +41,22 @@ public class TextureScanner : MonoBehaviour {
             {
                 TotalCorrectUVColors++;
             }
-            yield return null;
+            if(i % 5 == 0)
+            {
+                yield return null;
+            }
         }
         scanningComplete = true;
     }
 
     private bool DifferentFromWhite(Color pixelColor)
     {
-        return (ColorToCompare.r != pixelColor.r &&
-                ColorToCompare.g != pixelColor.g &&
-                ColorToCompare.b != pixelColor.b);
+        return (pixelColor.r < ColorToCompare.r &&
+                pixelColor.g < ColorToCompare.g &&
+                pixelColor.b < ColorToCompare.b);
+
+        //return (ColorToCompare.r != pixelColor.r &&
+        //        ColorToCompare.g != pixelColor.g &&
+        //        ColorToCompare.b != pixelColor.b);
     }
 }

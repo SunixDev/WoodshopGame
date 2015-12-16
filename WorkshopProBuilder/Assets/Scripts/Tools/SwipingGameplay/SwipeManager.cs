@@ -121,7 +121,7 @@ public class SwipeManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("Not game manager");
+                    Debug.Log("No game manager");
                 }
                 if (overallScore >= 90.0f)
                 {
@@ -155,7 +155,14 @@ public class SwipeManager : MonoBehaviour
 
     public void GoToNextScene(string nextScene)
     {
-        Application.LoadLevel(nextScene);
+        if (GameManager.instance != null)
+        {
+            Application.LoadLevel(nextScene);
+        }
+        else
+        {
+            Debug.Log("Next Scene: " + nextScene);
+        }
     }
 
     void OnEnable()

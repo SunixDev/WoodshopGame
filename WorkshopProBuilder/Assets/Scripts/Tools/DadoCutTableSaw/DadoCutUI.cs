@@ -75,8 +75,11 @@ public class DadoCutUI : MonoBehaviour
 
     public void UpdateSelectionButtons(int index, int totalWoodMaterial)
     {
-        NextButton.interactable = (index < totalWoodMaterial - 1);
-        PreviousButton.interactable = (index > 0);
+        if (NextButton != null && PreviousButton != null)
+        {
+            NextButton.interactable = (index < totalWoodMaterial - 1);
+            PreviousButton.interactable = (index > 0);
+        }
     }
 
     public void EnableOptions()
