@@ -63,7 +63,7 @@ public class OrbitCamera : MonoBehaviour
 
     public void MoveCamera(Gesture gesture)
     {
-        if (gesture.touchCount == 1 && EnableOrbit && EnableCameraControl && gesture.pickedObject == null && gesture.pickedUIElement == null)
+        if (gesture.touchCount == 1 && EnableOrbit && EnableCameraControl && gesture.pickedObject == null && gesture.pickedUIElement == null && !gesture.IsOverUIElement())
         {
             xMovement += gesture.deltaPosition.x * SensitivityX * 0.1f;
             xMovement = ClampAngle(xMovement, MinRotationX, MaxRotationX);
@@ -75,7 +75,7 @@ public class OrbitCamera : MonoBehaviour
 
     public void ZoomOut(Gesture gesture)
     {
-        if (gesture.touchCount == 2 && EnableZoom && EnableCameraControl && gesture.pickedObject == null && gesture.pickedUIElement == null)
+        if (gesture.touchCount == 2 && EnableZoom && EnableCameraControl && gesture.pickedObject == null && gesture.pickedUIElement == null && !gesture.IsOverUIElement())
         {
             float zoomAmount = gesture.deltaPinch * ZoomSensitivity * 0.01f;
             Distance += zoomAmount;
@@ -85,7 +85,7 @@ public class OrbitCamera : MonoBehaviour
 
     public void ZoomIn(Gesture gesture)
     {
-        if (gesture.touchCount == 2 && EnableZoom && EnableCameraControl && gesture.pickedObject == null)
+        if (gesture.touchCount == 2 && EnableZoom && EnableCameraControl && gesture.pickedObject == null && gesture.pickedUIElement == null && !gesture.IsOverUIElement())
         {
             float zoomAmount = gesture.deltaPinch * ZoomSensitivity * 0.01f;
             Distance -= zoomAmount;

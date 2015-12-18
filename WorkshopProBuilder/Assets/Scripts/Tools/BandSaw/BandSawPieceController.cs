@@ -14,9 +14,9 @@ public class BandSawPieceController : MonoBehaviour
 
     void Start()
     {
-        BeingCut = false;
         objTransform = GetComponent<Transform>();
         WoodObject = GetComponent<WoodMaterialObject>();
+        BeingCut = false;
     }
 
     public void OnTouchStart(Gesture gesture)
@@ -86,14 +86,7 @@ public class BandSawPieceController : MonoBehaviour
         previousPosition = position;
     }
 
-    private bool FingersAreNextToEachOther(Vector3 positionToCompare, Gesture gesture)
-    {
-        Vector3 fingetOnePosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-        fingetOnePosition.z = positionToCompare.y;
-        Vector3 fingetTwoPosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(1).position);
-        fingetTwoPosition.z = positionToCompare.y;
-        return true;
-    }
+
 
     void OnEnable()
     {

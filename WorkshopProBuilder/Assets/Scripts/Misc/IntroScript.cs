@@ -6,7 +6,9 @@ using System;
 public class IntroScript : MonoBehaviour 
 {
     public string FirstScene;
+    public GameObject ModalBackground;
     public GameObject InstructionsPanel;
+    public GameObject CameraControlsPanel;
 
     void Start()
     {
@@ -32,6 +34,13 @@ public class IntroScript : MonoBehaviour
 
     public void ShowInstructions(bool show)
     {
+        ModalBackground.SetActive(show);
         InstructionsPanel.SetActive(show);
+    }
+
+    public void ShowCameraControls(bool show)
+    {
+        ModalBackground.SetActive(show);
+        CameraControlsPanel.SetActive(show);
     }
 }

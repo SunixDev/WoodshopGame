@@ -45,6 +45,11 @@ public class GameManager : MonoBehaviour
         {
             Application.Quit();
         }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            Application.LoadLevel(Application.loadedLevel + 1);
+        }
     }
 
     public void ResetScore()

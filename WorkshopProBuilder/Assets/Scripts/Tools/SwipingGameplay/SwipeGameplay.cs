@@ -37,17 +37,21 @@ public class SwipeGameplay : MonoBehaviour
 
     public void Setup()
     {
-        if (type != SwipeGameType.Paint)
+        BrushColor = Color.black;
+        if (type == SwipeGameType.Paint)
         {
-            BrushColor = Color.black;
-        }
-        else
-        {
-            colorPicker.onValueChanged.AddListener(color =>
+            if (colorPicker != null)
             {
-                BrushColor = color;
-            });
-            BrushColor = colorPicker.currentColor;
+                colorPicker.onValueChanged.AddListener(color =>
+                {
+                    BrushColor = color;
+                });
+                BrushColor = colorPicker.currentColor;
+            }
+            else
+            {
+                Debug.Log("The color picker is missing");
+            }
         }
 
         for (int i = 0; i < NumberOfBrushes; i++)
