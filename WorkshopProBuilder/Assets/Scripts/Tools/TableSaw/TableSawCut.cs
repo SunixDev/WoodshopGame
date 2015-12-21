@@ -34,9 +34,12 @@ public class TableSawCut : MonoBehaviour
     private void SwitchLine()
     {
         CutLine nearestLine = manager.GetNearestLine(SawBlade.transform.position);
-        if (nearestLine.IsMarked)
+        if (nearestLine.IsMarked && nearestLine.LineMark != null)
         {
-            nearestLine.DisplayLine(true, false);
+            if (nearestLine.LineMark.GetComponent<LineMark>().GoodLineMark)
+            {
+                nearestLine.DisplayLine(true, false);
+            }
         }
         if (currentLine != null && currentLine != nearestLine)
         {

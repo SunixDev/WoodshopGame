@@ -13,6 +13,7 @@ public class MainUI : MonoBehaviour
     [Header("Plans to Display For Step")]
     public GameObject PlansPanel;
     public Button HidePlansButton;
+    public GameObject CameraControls;
 
     [Header("Display Results of Tool")]
     public GameObject ResultsPanel;
@@ -29,6 +30,12 @@ public class MainUI : MonoBehaviour
         }
         DisplayPlans(true);
         ResultsPanel.SetActive(false);
+        CameraControls.SetActive(false);
+    }
+
+    public void DisplayCameraInstructions(bool showControls)
+    {
+        CameraControls.SetActive(showControls);
     }
 
     public void DisplayPlans(bool showPlans)

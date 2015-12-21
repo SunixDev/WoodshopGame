@@ -31,6 +31,8 @@ public class PanCamera : MonoBehaviour
     public bool EnablePanning = true;
     public bool EnableCameraControl = true;
     public bool EnableLookAt = true;
+    public bool RestrictHorizontalMovement = false;
+    public bool RestrictVerticalMovement = false;
 
     private Vector3 panOffset = Vector3.zero;
     private bool panning = false;
@@ -64,13 +66,15 @@ public class PanCamera : MonoBehaviour
                 {
                     Vector3 deltaPosition = gesture.deltaPosition * PanSensitivity * 0.01f;//(PanSensitivity * Time.deltaTime);
                     Vector3 movement;
+                    float x = (RestrictHorizontalMovement) ? 0f : -deltaPosition.x;
+                    float y = (RestrictVerticalMovement) ? 0f : -deltaPosition.y;
                     if (MovementPlane == PanDirection.XZ_Plane)
                     {
-                        movement = (Quaternion.Euler(new Vector3(0.0f, Vertical, 0.0f)) * new Vector3(-deltaPosition.x, 0.0f, -deltaPosition.y));
+                        movement = (Quaternion.Euler(new Vector3(0.0f, Vertical, 0.0f)) * new Vector3(x, 0.0f, y));
                     }
                     else
                     {
-                        movement = transform.rotation * new Vector3(-deltaPosition.x, -deltaPosition.y, 0.0f);
+                        movement = transform.rotation * new Vector3(x, y, 0.0f);
                     }
                     panOffset += movement;
                     previousFingerPosition = currentFingerPosition;

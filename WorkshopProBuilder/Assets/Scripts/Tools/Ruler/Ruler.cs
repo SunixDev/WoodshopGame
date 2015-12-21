@@ -4,8 +4,12 @@ using System.Collections;
 public class Ruler : MonoBehaviour 
 {
     public float OffsetFromLine = 0.01f;
+    public Material LineMarkMaterial;
+    public Color GoodLineColor = new Color(0f, 0.6f, 0.01f, 1f);
+    public Color BadLineColor = new Color(0.7f, 0f, 0f, 1f);
+
     private IToolManager manager;
-    private LineRenderer line;
+    private LineRenderer currentLineRenderer;
     private Transform pickedObjectTransform;
     private Vector3 SecondPosition;
     public bool CanMeasure { get; set; }
@@ -33,11 +37,12 @@ public class Ruler : MonoBehaviour
                 {
                     currentLineMark.transform.position = hit.point;
                     currentLineMark.transform.parent = gesture.pickedObject.transform;
-                    line = currentLineMark.AddComponent<LineRenderer>();
-                    line.SetVertexCount(2);
-                    line.SetWidth(0.005f, 0.005f);
-                    line.SetPosition(0, currentLineMark.transform.position + new Vector3(0.0f, 0.001f, 0.0f));
-                    line.SetPosition(1, currentLineMark.transform.position + new Vector3(0.0f, 0.001f, 0.0f));
+                    currentLineRenderer = currentLineMark.AddComponent<LineRenderer>();
+                    currentLineRenderer.material = new Material(LineMarkMaterial);
+                    currentLineRenderer.SetVertexCount(2);
+                    currentLineRenderer.SetWidth(0.005f, 0.005f);
+                    currentLineRenderer.SetPosition(0, currentLineMark.transform.position + new Vector3(0.0f, 0.001f, 0.0f));
+                    currentLineRenderer.SetPosition(1, currentLineMark.transform.position + new Vector3(0.0f, 0.001f, 0.0f));
                     pickedObjectTransform = gesture.pickedObject.transform;
                 }
             }
@@ -56,7 +61,7 @@ public class Ruler : MonoBehaviour
                 {
                     Vector3 position = hit.point;
                     SecondPosition = position + new Vector3(0.0f, 0.001f, 0.0f);
-                    line.SetPosition(1, SecondPosition);
+                    currentLineRenderer.SetPosition(1, SecondPosition);
                 }
             }
         }
@@ -66,10 +71,12 @@ public class Ruler : MonoBehaviour
     {
         if (gesture.pickedObject != null && CanMeasure && gesture.touchCount == 1)
         {
-            if (gesture.pickedObject.tag == "Piece" || gesture.pickedObject.tag == "Leftover")
+            if ((gesture.pickedObject.tag == "Piece" || gesture.pickedObject.tag == "Leftover") && SecondPointIsOnWoodMaterial(gesture.position))
             {
-                CutLine nearestLine = manager.GetNearestLine(line.gameObject.transform.position);
-                Vector3 markedPosition = line.gameObject.transform.position;
+                LineMark markedLine = currentLineRenderer.gameObject.AddComponent<LineMark>();
+                CutLine nearestLine = manager.GetNearestLine(currentLineRenderer.gameObject.transform.position);
+                Vector3 markedPosition = currentLineRenderer.gameObject.transform.position;
+                bool addLine = true;
                 if (MarkIsNearLine(nearestLine, markedPosition))
                 {
                     if (nearestLine.IsMarked)
@@ -78,21 +85,51 @@ public class Ruler : MonoBehaviour
                         nearestLine.LineMark = null;
                         Destroy(previousLine);
                     }
-                    nearestLine.LineMark = line.gameObject;
+                    markedLine.GoodLineMark = true;
                     nearestLine.IsMarked = true;
-                    line.SetColors(Color.green, Color.green);
-                    LineMark markedLine = line.gameObject.AddComponent<LineMark>();
-                    markedLine.StartPoint = line.gameObject.transform;
+                    currentLineRenderer.material.color = GoodLineColor;
+                }
+                else
+                {
+                    if (nearestLine.IsMarked)
+                    {
+                        Destroy(currentLineRenderer.material);
+                        Destroy(currentLineRenderer.gameObject);
+                        addLine = false;
+                    }
+                    else
+                    {
+                        markedLine.GoodLineMark = false;
+                        nearestLine.IsMarked = true;
+                        currentLineRenderer.material.color = BadLineColor;
+                    }
+                }
+                if (addLine)
+                {
+                    nearestLine.LineMark = currentLineRenderer.gameObject;
+                    markedLine.StartPoint = currentLineRenderer.gameObject.transform;
                     GameObject secondPoint = new GameObject();
                     secondPoint.transform.position = SecondPosition;
                     secondPoint.transform.parent = currentLineMark.transform;
                     markedLine.EndPoint = secondPoint.transform;
-                    markedLine.line = line;
+                    markedLine.line = currentLineRenderer;
                 }
-                else
+            }
+            else
+            {
+                if (currentLineRenderer != null)
                 {
-                    Destroy(line.gameObject);
+                    Destroy(currentLineRenderer.material);
+                    Destroy(currentLineRenderer.gameObject);
                 }
+            }
+        }
+        else
+        {
+            if (currentLineRenderer != null)
+            {
+                Destroy(currentLineRenderer.material);
+                Destroy(currentLineRenderer.gameObject);
             }
         }
     }
@@ -115,6 +152,18 @@ public class Ruler : MonoBehaviour
             closeToLine = (Mathf.Abs(projectionOntoLine) < OffsetFromLine);
         }
         return closeToLine;
+    }
+
+    private bool SecondPointIsOnWoodMaterial(Vector2 gesturePosition)
+    {
+        bool valid = false;
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(gesturePosition.x, gesturePosition.y, 0f));
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            valid = (hit.collider.gameObject.tag == "Piece" || hit.collider.gameObject.tag == "Leftover");
+        }
+        return valid;
     }
 
     void OnEnable()

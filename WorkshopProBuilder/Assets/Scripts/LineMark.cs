@@ -6,6 +6,7 @@ public class LineMark : MonoBehaviour
     public LineRenderer line;
     public Transform StartPoint;
     public Transform EndPoint;
+    public bool GoodLineMark { get; set; }
 	
 	void Update () 
     {

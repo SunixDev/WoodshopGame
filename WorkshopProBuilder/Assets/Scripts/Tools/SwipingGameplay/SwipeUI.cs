@@ -16,6 +16,7 @@ public class SwipeUI : MonoBehaviour
     public Text MessagePanelText;
     public GameObject MessagePanelButton;
     public GameObject PlansPanel;
+    public GameObject CameraControls;
 
     void Awake()
     {
@@ -23,6 +24,12 @@ public class SwipeUI : MonoBehaviour
         SelectedButton.GetComponent<Button>().enabled = false;
         MessagePanel.SetActive(false);
         PlansPanel.SetActive(false);
+        CameraControls.SetActive(false);
+    }
+
+    public void DisplayCameraInstructions(bool showControls)
+    {
+        CameraControls.SetActive(showControls);
     }
 
     public void DisplayPlans(bool showPlans)
