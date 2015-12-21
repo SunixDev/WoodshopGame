@@ -71,6 +71,7 @@ public class CameraControl : MonoBehaviour
         xMovement = Vertical;
         yMovement = Horizontal;
         previousCameraPosition = transform.position;
+        yMovement = ClampAngle(yMovement);
 	}
 
     void Update()

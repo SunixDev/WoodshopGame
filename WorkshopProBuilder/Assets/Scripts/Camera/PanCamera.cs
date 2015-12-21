@@ -1,7 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class OrbitCamera : MonoBehaviour 
+public enum PanDirection
+{
+    XY_Plane,
+    XZ_Plane
+}
+
+public class PanCamera : MonoBehaviour
 {
     [Header("Distance Variables")]
     public Transform LookAtPoint;
@@ -9,67 +15,72 @@ public class OrbitCamera : MonoBehaviour
     public float MinDistance = 0.5f;
     public float MaxDistance = 5f;
 
-    [Header("Initial Rotation")]
+    [Header("Viewing Angle")]
     public float Vertical = 0f;
     public float Horizontal = 0f;
 
     [Header("Speed Input")]
-    [Range(1f, 5f)]
-    public float SensitivityX = 2f;
-    [Range(1f, 5f)]
-    public float SensitivityY = 2f;
+    [Range(0.1f, 5.0f)]
+    public float PanSensitivity = 2.0f;
     [Range(0.1f, 5f)]
     public float ZoomSensitivity = 1f;
 
-    [Header("Vertical Rotation Clamp")]
-    public float MinRotationY = 1f;
-    public float MaxRotationY = 179f;
-
-    [Header("Horizontal Rotation Clamp")]
-    public float MinRotationX = -180f;
-    public float MaxRotationX = 180f;
-
     [Header("Movement Toggle")]
+    public PanDirection MovementPlane = PanDirection.XZ_Plane;
     public bool EnableZoom = true;
-    public bool EnableOrbit = true;
+    public bool EnablePanning = true;
     public bool EnableCameraControl = true;
     public bool EnableLookAt = true;
 
-    private float xMovement;
-    private float yMovement;
-
-    void Awake()
-    {
-        xMovement = Vertical;
-        yMovement = Horizontal;
-    }
+    private Vector3 panOffset = Vector3.zero;
+    private bool panning = false;
+    private Vector2 previousFingerPosition = Vector2.zero;
 
     void Update()
     {
+        Vector3 pannedLookAtPosition = LookAtPoint.position + panOffset;
         if (EnableCameraControl)
         {
             float finalDistance = Mathf.Clamp(Distance, MinDistance, MaxDistance);
             Vector3 direction = new Vector3(0.0f, 0.0f, -finalDistance);
-            Quaternion rotation = Quaternion.Euler(yMovement, xMovement, 0.0f);
-            Vector3 finalPosition = LookAtPoint.position + (rotation * direction);
-            //transform.position = Vector3.MoveTowards(transform.position, finalPosition, 0.1f);
+            Quaternion rotation = Quaternion.Euler(Horizontal, Vertical, 0.0f);
+            Vector3 finalPosition = pannedLookAtPosition + (rotation * direction);
             transform.position = finalPosition;
         }
         if (EnableLookAt)
         {
-            transform.LookAt(LookAtPoint.position);
+            transform.LookAt(pannedLookAtPosition);
         }
     }
 
-    public void RotateCamera(Gesture gesture)
+    public void MoveCamera(Gesture gesture)
     {
-        if (gesture.touchCount == 1 && EnableOrbit && EnableCameraControl && gesture.pickedObject == null && gesture.pickedUIElement == null && !gesture.isOverGui)
+        if (gesture.touchCount == 1 && EnableZoom && EnableCameraControl && gesture.pickedObject == null && gesture.pickedUIElement == null && !gesture.isOverGui)
         {
-            xMovement += gesture.deltaPosition.x * SensitivityX * 0.1f;
-            xMovement = ClampAngle(xMovement, MinRotationX, MaxRotationX);
-
-            yMovement -= gesture.deltaPosition.y * SensitivityY * 0.1f;
-            yMovement = ClampAngle(yMovement, MinRotationY, MaxRotationY);
+            if (panning)
+            {
+                Vector2 currentFingerPosition = gesture.position;
+                if (currentFingerPosition != previousFingerPosition)
+                {
+                    Vector3 deltaPosition = gesture.deltaPosition * PanSensitivity * 0.01f;//(PanSensitivity * Time.deltaTime);
+                    Vector3 movement;
+                    if (MovementPlane == PanDirection.XZ_Plane)
+                    {
+                        movement = (Quaternion.Euler(new Vector3(0.0f, Vertical, 0.0f)) * new Vector3(-deltaPosition.x, 0.0f, -deltaPosition.y));
+                    }
+                    else
+                    {
+                        movement = transform.rotation * new Vector3(-deltaPosition.x, -deltaPosition.y, 0.0f);
+                    }
+                    panOffset += movement;
+                    previousFingerPosition = currentFingerPosition;
+                }
+            }
+            else
+            {
+                previousFingerPosition = gesture.position;
+                panning = true;
+            }
         }
     }
 
@@ -93,24 +104,9 @@ public class OrbitCamera : MonoBehaviour
         }
     }
 
-    private float ClampAngle(float amount, float min, float max)
+    public void OnRelease(Gesture gesture)
     {
-        float fullRotation = 360;
-        if (amount < -fullRotation) amount += fullRotation;
-        if (amount > fullRotation) amount -= fullRotation;
-        return Mathf.Clamp(amount, min, max);
-    }
-
-    public void ChangeAngle(float v, float h)
-    {
-        xMovement = v;
-        yMovement = h;
-    }
-
-    public void ChangeDistanceConstraints(float min, float max)
-    {
-        MinDistance = min;
-        MaxDistance = max;
+        panning = false;
     }
 
     public void ChangeDistanceConstraints(float distance, float min, float max)
@@ -120,21 +116,20 @@ public class OrbitCamera : MonoBehaviour
         MaxDistance = max;
     }
 
-    public float GetVerticalAngle()
+    public void ChangeAngle(float v, float h)
     {
-        return xMovement;
+        Vertical = v;
+        Horizontal = h;
     }
 
-    public float GetHorizontalAngle()
-    {
-        return yMovement;
-    }
 
 
     private void SubscribeEvents()
     {
+        EasyTouch.On_TouchUp += OnRelease;
+
         //Orbit Controls
-        EasyTouch.On_Swipe += RotateCamera;
+        EasyTouch.On_Swipe += MoveCamera;
 
         //Zoom Controls
         EasyTouch.On_PinchIn += ZoomOut;
@@ -143,8 +138,10 @@ public class OrbitCamera : MonoBehaviour
 
     private void UnsubscribeEvents()
     {
+        EasyTouch.On_TouchUp -= OnRelease;
+
         //Orbit Controls
-        EasyTouch.On_Swipe -= RotateCamera;
+        EasyTouch.On_Swipe -= MoveCamera;
 
         //Zoom Controls
         EasyTouch.On_PinchIn -= ZoomOut;

@@ -16,6 +16,7 @@ public class TableSawUI : MonoBehaviour
     public Button RotateCounterClockwiseButton;
     public Button ResetRotationButton;
 
+    public GameObject CameraControls;
     public GameObject PlansPanel;
     public GameObject InfoPanel;
     public Text InfoText;
@@ -31,6 +32,12 @@ public class TableSawUI : MonoBehaviour
         SelectedButton.GetComponent<Button>().enabled = false;
         PlansPanel.SetActive(false);
         InfoPanel.SetActive(false);
+        CameraControls.SetActive(false);
+    }
+
+    public void DisplayCameraInstructions(bool showControls)
+    {
+        CameraControls.SetActive(showControls);
     }
 
     public void DisplayPlans(bool showPlans)
@@ -75,8 +82,11 @@ public class TableSawUI : MonoBehaviour
 
     public void UpdateSelectionButtons(int index, int totalWoodMaterial)
     {
-        NextButton.interactable = (index < totalWoodMaterial - 1);
-        PreviousButton.interactable = (index > 0);
+        if (NextButton != null && PreviousButton != null)
+        {
+            NextButton.interactable = (index < totalWoodMaterial - 1);
+            PreviousButton.interactable = (index > 0);
+        }
     }
 
     public void EnableOptions()

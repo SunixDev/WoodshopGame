@@ -62,6 +62,7 @@
      <Compile Include="Assets\Scripts\Camera\CameraControl.cs" />
      <Compile Include="Assets\Scripts\Camera\GameCameraControl.cs" />
      <Compile Include="Assets\Scripts\Camera\OrbitCamera.cs" />
+     <Compile Include="Assets\Scripts\Camera\PanCamera.cs" />
      <Compile Include="Assets\Scripts\CubeBoundary.cs" />
      <Compile Include="Assets\Scripts\Enums\CutLineType.cs" />
      <Compile Include="Assets\Scripts\Enums\CutState.cs" />

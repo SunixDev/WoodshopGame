@@ -17,7 +17,7 @@ public class DadoCutManager : MonoBehaviour
     public Transform FromSawSpawnPoint;
     public Transform CameraSawLookAtPoint;
     public Transform CameraRulerLookAtPoint;
-    public CameraControl GameCamera;
+    public GameObject GameCamera;
     public DadoCutUI UI_Manager;
     public Blade SawBlade;
     public GameObject GameRuler;
@@ -32,9 +32,12 @@ public class DadoCutManager : MonoBehaviour
     private BoardController currentBoardController;
     private float cumulativeLineScore = 0.0f;
     private float numberOfCuts;
+    private OrbitCamera orbitCamera;
 
 	void Start () 
     {
+        orbitCamera = GameCamera.GetComponent<OrbitCamera>();
+
         numberOfCuts = DadosToCut.Count;
         UI_Manager.DisplayPlans(true);
         StillCutting = true;
@@ -224,24 +227,23 @@ public class DadoCutManager : MonoBehaviour
     {
         Application.LoadLevel(level);
     }
+
     public void SetupForCutting()
     {
         currentSpawnPoint = FromSawSpawnPoint;
-        if (previousAction == ActionState.None || (previousAction == ActionState.UsingRuler && currentAction == ActionState.ChangingCamera) || currentAction == ActionState.UsingRuler)
+        if (previousAction == ActionState.None || previousAction == ActionState.UsingRuler || currentAction == ActionState.UsingRuler)
         {
             AvailableWoodMaterial[currentPieceIndex].transform.rotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
             PlacePiece();
-            GameCamera.ChangeLookAtPoint(CameraSawLookAtPoint);
-            GameCamera.ChangeDistanceVariables(1.5f, 0.5f, 5.0f);
-            GameCamera.ChangeVerticalRotationLimit(10.0f, 80.0f);
-            GameCamera.ChangeAngle(0.0f, 45.0f);
+
+            orbitCamera.EnableZoom = true;
+            orbitCamera.EnableOrbit = true;
+            orbitCamera.LookAtPoint = CameraSawLookAtPoint;
+            orbitCamera.ChangeAngle(0.0f, 45.0f);
+            orbitCamera.ChangeDistanceConstraints(1.5f, 0.5f, 5.0f);
         }
-        if (currentAction != ActionState.ChangingCamera)
-        {
-            SawBlade.TurnOff();
-        }
-        GameCamera.EnableRotation(true);
-        GameCamera.EnableMovement(false);
+        SawBlade.TurnOff();
+        SawBlade.BladeCollider.convex = true;
         EnableCurrentBoardMovement(true);
         RestrictCurrentBoardMovement(false, false);
         SwitchAction(ActionState.OnSaw);
@@ -253,30 +255,25 @@ public class DadoCutManager : MonoBehaviour
 
     public void SetupForMeasuring()
     {
-        if (previousAction == ActionState.None || (previousAction == ActionState.OnSaw && currentAction == ActionState.ChangingCamera) || currentAction == ActionState.OnSaw)
+        if (previousAction == ActionState.None || previousAction == ActionState.OnSaw || currentAction == ActionState.OnSaw)
         {
-            GameCamera.ChangeLookAtPoint(CameraRulerLookAtPoint);
-            GameCamera.ChangeDistanceVariables(0.1f, 0.1f, 0.2f);
-            GameCamera.ChangeVerticalRotationLimit(0.0f, 180.0f);
-            GameCamera.ChangeAngle(90.0f, 0.0f);
+            orbitCamera.EnableZoom = false;
+            orbitCamera.EnableOrbit = false;
+            orbitCamera.LookAtPoint = CameraRulerLookAtPoint;
+            orbitCamera.ChangeDistanceConstraints(0.1f, 0.1f, 0.5f);
+            orbitCamera.ChangeAngle(90.0f, 0.0f);
         }
-        GameCamera.EnableRotation(false);
-        GameCamera.EnableMovement(false);
         EnableCurrentBoardMovement(false);
         SwitchAction(ActionState.UsingRuler);
         SawBlade.TurnOff();
+        SawBlade.BarrierCollider.enabled = false;
+        SawBlade.BladeCollider.convex = false;
         UI_Manager.ChangeSawButtons(false);
+        UI_Manager.StartSawButton.interactable = false;
+        UI_Manager.StopSawButton.interactable = false;
         GameRuler.SetActive(true);
         CutGameplay.enabled = false;
         BladeControl.Moveable = true;
-    }
-
-    public void SetupForCameraControl()
-    {
-        SwitchAction(ActionState.ChangingCamera);
-        GameCamera.EnableMovement(true);
-        EnableCurrentBoardMovement(false);
-        BladeControl.Moveable = false;
     }
 
     public DadoBlock GetNearestDadoBlock(Vector3 fromPosition)

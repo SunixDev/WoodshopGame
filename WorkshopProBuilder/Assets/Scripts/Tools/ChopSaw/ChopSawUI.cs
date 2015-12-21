@@ -16,6 +16,7 @@ public class ChopSawUI : MonoBehaviour {
     public Button RotateCounterClockwiseButton;
     public Button ResetRotationButton;
 
+    public GameObject CameraControlsPanel;
     public GameObject PlansPanel;
     public GameObject InfoPanel;
     public Text InfoText;
@@ -30,6 +31,13 @@ public class ChopSawUI : MonoBehaviour {
         SelectedButton.GetComponent<Image>().color = SelectedButtonColor;
         SelectedButton.GetComponent<Button>().enabled = false;
         PlansPanel.SetActive(false);
+        InfoPanel.SetActive(false);
+        CameraControlsPanel.SetActive(false);
+    }
+
+    public void DisplayCameraInstructions(bool showControls)
+    {
+        CameraControlsPanel.SetActive(showControls);
     }
 
     public void DisplayPlans(bool showPlans)
@@ -74,8 +82,11 @@ public class ChopSawUI : MonoBehaviour {
 
     public void UpdateSelectionButtons(int index, int totalWoodMaterial)
     {
-        NextButton.interactable = (index < totalWoodMaterial - 1);
-        PreviousButton.interactable = (index > 0);
+        if (NextButton != null && PreviousButton != null)
+        {
+            NextButton.interactable = (index < totalWoodMaterial - 1);
+            PreviousButton.interactable = (index > 0);
+        }
     }
 
     public void EnableOptions()

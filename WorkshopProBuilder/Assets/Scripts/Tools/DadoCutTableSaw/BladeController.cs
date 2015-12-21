@@ -15,7 +15,7 @@ public class BladeController : MonoBehaviour
     {
         if (gesture.pickedObject != null)
         {
-            if (Moveable && gesture.pickedObject == gameObject)
+            if (Moveable && gesture.pickedObject == gameObject && gesture.touchCount == 1)
             {
                 selected = true;
                 previousCursorPosition = gesture.position;
@@ -25,18 +25,18 @@ public class BladeController : MonoBehaviour
 
     public void MoveBlade(Gesture gesture)
     {
-        if (Moveable && selected)
+        if (Moveable && selected && gesture.touchCount == 1)
         {
             Vector2 currentCursorPosition = gesture.position;
             if (currentCursorPosition != previousCursorPosition)
             {
                 Vector2 delta = currentCursorPosition - previousCursorPosition;
                 float speed = MovementSpeed;
-                if (delta.y < 0)
-                {
-                    speed = speed * -1;
-                }
-                gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + (speed * Time.deltaTime), gameObject.transform.position.z);
+                //if (delta.y < 0)
+                //{
+                //    speed *= -1;
+                //}
+                gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + (delta.y * speed * Time.deltaTime), gameObject.transform.position.z);
                 if (gameObject.transform.position.y > MaxHeight)
                 {
                     gameObject.transform.position = new Vector3(gameObject.transform.position.x, MaxHeight, gameObject.transform.position.z);

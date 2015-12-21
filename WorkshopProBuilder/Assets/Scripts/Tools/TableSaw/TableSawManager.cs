@@ -18,7 +18,7 @@ public class TableSawManager : MonoBehaviour, IToolManager
     public Transform CameraSawLookAtPoint;
     public Transform FromRulerSpawnPoint;
     public Transform CameraRulerLookAtPoint;
-    public CameraControl GameCamera;
+    public GameObject GameCamera;
     public TableSawUI UI_Manager;
     public Blade SawBlade;
     public Ruler GameRuler;
@@ -32,9 +32,14 @@ public class TableSawManager : MonoBehaviour, IToolManager
     private BoardController currentBoardController;
     private float cumulativeLineScore = 0.0f;
     private float numberOfCuts;
+    private OrbitCamera orbitCamera;
+    private PanCamera panCamera;
 
 	void Start ()
     {
+        orbitCamera = GameCamera.GetComponent<OrbitCamera>();
+        panCamera = GameCamera.GetComponent<PanCamera>();
+
         numberOfCuts = LinesToCut.Count;
         UI_Manager.DisplayPlans(true);
         StillCutting = true;
@@ -166,7 +171,7 @@ public class TableSawManager : MonoBehaviour, IToolManager
             }
             else
             {
-                Debug.Log("Not game manager");
+                Debug.Log("No game manager");
             }
         }
     }
@@ -270,22 +275,16 @@ public class TableSawManager : MonoBehaviour, IToolManager
     public void SetupForCutting()
     {
         currentSpawnPoint = FromSawSpawnPoint;
-        if (previousAction == ActionState.None || (previousAction == ActionState.UsingRuler && currentAction == ActionState.ChangingCamera) || currentAction == ActionState.UsingRuler)
+        if (previousAction == ActionState.None || previousAction == ActionState.UsingRuler || currentAction == ActionState.UsingRuler)
         {
             AvailableWoodMaterial[currentPieceIndex].transform.rotation = Quaternion.identity;
             PlacePiece();
-            GameCamera.ChangeLookAtPoint(CameraSawLookAtPoint);
-            GameCamera.ChangeDistanceVariables(1.5f, 0.8f, 3.0f);
-            GameCamera.ChangeVerticalRotationLimit(60.0f, 80.0f);
-            GameCamera.ChangeAngle(0.0f, 60.0f);
-            GameCamera.PanSensitivity = 1.0f;
+            orbitCamera.enabled = true;
+            panCamera.enabled = false;
+            orbitCamera.ChangeAngle(0f, 50f);
+            orbitCamera.ChangeDistanceConstraints(1.5f, 0.8f, 3.0f);
         }
-        if (currentAction != ActionState.ChangingCamera)
-        {
-            SawBlade.TurnOff();
-        }
-        GameCamera.EnableRotation(true);
-        GameCamera.EnableMovement(false);
+        SawBlade.TurnOff();
         EnableCurrentBoardMovement(true);
         RestrictCurrentBoardMovement(false, false);
         SwitchAction(ActionState.OnSaw);
@@ -298,18 +297,15 @@ public class TableSawManager : MonoBehaviour, IToolManager
     public void SetupForMeasuring()
     {
         currentSpawnPoint = FromRulerSpawnPoint;
-        if (previousAction == ActionState.None || (previousAction == ActionState.OnSaw && currentAction == ActionState.ChangingCamera) || currentAction == ActionState.OnSaw)
+        if (previousAction == ActionState.None || previousAction == ActionState.OnSaw || currentAction == ActionState.OnSaw)
         {
             AvailableWoodMaterial[currentPieceIndex].transform.rotation = Quaternion.identity;
             PlacePiece();
-            GameCamera.ChangeLookAtPoint(CameraRulerLookAtPoint);
-            GameCamera.ChangeDistanceVariables(1.0f, 0.1f, 2.0f);
-            GameCamera.ChangeVerticalRotationLimit(0.0f, 180.0f);
-            GameCamera.ChangeAngle(0.0f, 89.5f);
-            GameCamera.PanSensitivity = 0.2f;
+            orbitCamera.enabled = false;
+            panCamera.enabled = true;
+            panCamera.ChangeDistanceConstraints(1.0f, 0.1f, 2.0f);
+            panCamera.ChangeAngle(0.0f, 89.5f);
         }
-        GameCamera.EnableRotation(false);
-        GameCamera.EnableMovement(false);
         EnableCurrentBoardMovement(false);
         SwitchAction(ActionState.UsingRuler);
         SawBlade.TurnOff();
@@ -318,14 +314,6 @@ public class TableSawManager : MonoBehaviour, IToolManager
         GameRuler.gameObject.SetActive(true);
         GameRuler.CanMeasure = true;
         CutGameplay.enabled = false;
-    }
-
-    public void SetupForCameraControl()
-    {
-        SwitchAction(ActionState.ChangingCamera);
-        GameCamera.EnableMovement(true);
-        EnableCurrentBoardMovement(false);
-        GameRuler.CanMeasure = false;
     }
 
     public void EnableUI(bool enable)

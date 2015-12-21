@@ -13,6 +13,7 @@ public class BandSawUI : MonoBehaviour
     public Button HideButton;
     public Button StartOverButton;
     public Button NextSceneButton;
+    public GameObject CameraControls;
 
 
     private bool SawButtonsActive = true;
@@ -20,6 +21,12 @@ public class BandSawUI : MonoBehaviour
     void Awake()
     {
         PlansPanel.SetActive(false);
+        CameraControls.SetActive(false);
+    }
+
+    public void DisplayCameraInstructions(bool showControls)
+    {
+        CameraControls.SetActive(showControls);
     }
 
     public void DisplayPlans(bool showPlans)

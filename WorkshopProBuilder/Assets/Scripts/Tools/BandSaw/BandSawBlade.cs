@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class BandSawBlade : MonoBehaviour 
 {
     public bool SawActive = false;
-    public Collider WhileOffBladeCollider;
     public Color ActivatedColor;
     public Color DeactivatedColor;
 
@@ -62,14 +61,12 @@ public class BandSawBlade : MonoBehaviour
     public void TurnOn()
     {
         SawActive = true;
-        WhileOffBladeCollider.enabled = false;
         GetComponent<Renderer>().material.color = ActivatedColor;
     }
 
     public void TurnOff()
     {
         SawActive = false;
-        WhileOffBladeCollider.enabled = true;
         GetComponent<Renderer>().material.color = DeactivatedColor;
     }
 

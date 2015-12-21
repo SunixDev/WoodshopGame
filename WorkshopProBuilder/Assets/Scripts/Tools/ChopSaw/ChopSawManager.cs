@@ -10,7 +10,7 @@ public class ChopSawManager : MonoBehaviour, IToolManager
     public Transform CameraSawLookAtPoint;
     public Transform FromRulerSpawnPoint;
     public Transform CameraRulerLookAtPoint;
-    public CameraControl GameCamera;
+    public GameObject GameCamera;
     public ChopSawUI UI_Manager;
     public Blade SawBlade;
     public Ruler GameRuler;
@@ -25,9 +25,14 @@ public class ChopSawManager : MonoBehaviour, IToolManager
     private BoardController currentBoardController;
     private float cumulativeLineScore = 0.0f;
     private float numberOfCuts;
+    private OrbitCamera orbitCamera;
+    private PanCamera panCamera;
 
 	void Start () 
     {
+        orbitCamera = GameCamera.GetComponent<OrbitCamera>();
+        panCamera = GameCamera.GetComponent<PanCamera>();
+
         numberOfCuts = LinesToCut.Count;
         UI_Manager.DisplayPlans(true);
         StillCutting = true;
@@ -296,23 +301,18 @@ public class ChopSawManager : MonoBehaviour, IToolManager
     public void SetupForCutting()
     {
         currentSpawnPoint = FromSawSpawnPoint;
-        if (previousAction == ActionState.None || (previousAction == ActionState.UsingRuler && currentAction == ActionState.ChangingCamera) || currentAction == ActionState.UsingRuler)
+        if (previousAction == ActionState.None || previousAction == ActionState.UsingRuler || currentAction == ActionState.UsingRuler)
         {
             AvailableWoodMaterial[currentPieceIndex].transform.rotation = Quaternion.identity;
             PlacePieceAtSpawnPoint(new Vector3(0.0f, 0.0f, -3.0f));
-            GameCamera.ChangeLookAtPoint(CameraSawLookAtPoint);
-            GameCamera.ChangeDistanceVariables(1.5f, 0.8f, 2.0f);
-            GameCamera.ChangeVerticalRotationLimit(50.0f, 70.0f);
-            GameCamera.ChangeAngle(90.0f, 45.0f);
-            GameCamera.PanSensitivity = 1.0f;
+
+            orbitCamera.enabled = true;
+            panCamera.enabled = false;
+            orbitCamera.ChangeAngle(90.0f, 45.0f);
+            orbitCamera.ChangeDistanceConstraints(1.5f, 0.8f, 2.0f);
         }
-        if (currentAction != ActionState.ChangingCamera)
-        {
-            SawBlade.TurnOff();
-            SawController.EnableMovement(false);
-        }
-        GameCamera.EnableRotation(true);
-        GameCamera.EnableMovement(false);
+        SawBlade.TurnOff();
+        SawController.EnableMovement(false);
         EnableCurrentBoardMovement(true);
         RestrictCurrentBoardMovement(false, false);
         SwitchAction(ActionState.OnSaw);
@@ -325,18 +325,16 @@ public class ChopSawManager : MonoBehaviour, IToolManager
     public void SetupForMeasuring()
     {
         currentSpawnPoint = FromRulerSpawnPoint;
-        if (previousAction == ActionState.None || (previousAction == ActionState.OnSaw && currentAction == ActionState.ChangingCamera) || currentAction == ActionState.OnSaw)
+        if (previousAction == ActionState.None || previousAction == ActionState.OnSaw || currentAction == ActionState.OnSaw)
         {
             AvailableWoodMaterial[currentPieceIndex].transform.rotation = Quaternion.identity;
             PlacePieceAtSpawnPoint(new Vector3(-3.0f, 0.0f, 0.0f));
-            GameCamera.ChangeLookAtPoint(CameraRulerLookAtPoint);
-            GameCamera.ChangeDistanceVariables(1.0f, 0.1f, 2.0f);
-            GameCamera.ChangeVerticalRotationLimit(0.0f, 180.0f);
-            GameCamera.ChangeAngle(90.0f, 89.9f);
-            GameCamera.PanSensitivity = 0.5f;
+
+            orbitCamera.enabled = false;
+            panCamera.enabled = true;
+            panCamera.ChangeDistanceConstraints(1.0f, 0.1f, 2.0f);
+            panCamera.ChangeAngle(90.0f, 89.9f);
         }
-        GameCamera.EnableRotation(false);
-        GameCamera.EnableMovement(false);
         EnableCurrentBoardMovement(false);
         SwitchAction(ActionState.UsingRuler);
         SawBlade.TurnOff();
@@ -346,14 +344,6 @@ public class ChopSawManager : MonoBehaviour, IToolManager
         GameRuler.CanMeasure = true;
         CutGameplay.enabled = false;
         SawController.EnableMovement(false);
-    }
-
-    public void SetupForCameraControl()
-    {
-        SwitchAction(ActionState.ChangingCamera);
-        GameCamera.EnableMovement(true);
-        EnableCurrentBoardMovement(false);
-        GameRuler.CanMeasure = false;
     }
 
     public void EnableUI(bool enable)

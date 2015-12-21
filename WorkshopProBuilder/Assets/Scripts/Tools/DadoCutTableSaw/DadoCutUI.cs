@@ -16,6 +16,7 @@ public class DadoCutUI : MonoBehaviour
     public Button RotateButton;
     public Button ResetRotationButton;
 
+    public GameObject CameraControls;
     public GameObject PlansPanel;
     public GameObject InfoPanel;
     public Text InfoText;
@@ -31,6 +32,12 @@ public class DadoCutUI : MonoBehaviour
         SelectedButton.GetComponent<Button>().enabled = false;
         PlansPanel.SetActive(false);
         InfoPanel.SetActive(false);
+        CameraControls.SetActive(false);
+    }
+
+    public void DisplayCameraInstructions(bool showControls)
+    {
+        CameraControls.SetActive(showControls);
     }
 
     public void DisplayPlans(bool showPlans)
