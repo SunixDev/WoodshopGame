@@ -332,7 +332,7 @@ public class ChopSawManager : MonoBehaviour, IToolManager
 
             orbitCamera.enabled = false;
             panCamera.enabled = true;
-            panCamera.ChangeDistanceConstraints(1.0f, 0.1f, 2.0f);
+            panCamera.ChangeDistanceConstraints(0.5f, 0.1f, 2.0f);
             panCamera.ChangeAngle(90.0f, 89.9f);
         }
         EnableCurrentBoardMovement(false);

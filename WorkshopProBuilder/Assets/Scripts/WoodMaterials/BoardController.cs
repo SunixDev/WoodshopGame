@@ -35,7 +35,7 @@ public class BoardController : MonoBehaviour
 
     public void OnTouchStart(Gesture gesture)
     {
-        if (gesture.pickedObject != null)
+        if (gesture.pickedObject != null && gesture.touchCount == 1)
         {
             if (Moveable && WoodObject.ContainsPiece(gesture.pickedObject))
             {

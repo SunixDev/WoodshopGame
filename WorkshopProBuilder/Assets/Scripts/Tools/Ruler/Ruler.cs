@@ -76,44 +76,32 @@ public class Ruler : MonoBehaviour
                 LineMark markedLine = currentLineRenderer.gameObject.AddComponent<LineMark>();
                 CutLine nearestLine = manager.GetNearestLine(currentLineRenderer.gameObject.transform.position);
                 Vector3 markedPosition = currentLineRenderer.gameObject.transform.position;
-                bool addLine = true;
+                if (nearestLine.IsMarked)
+                {
+                    GameObject previousLine = nearestLine.LineMark;
+                    nearestLine.LineMark = null;
+                    Destroy(previousLine);
+                }
                 if (MarkIsNearLine(nearestLine, markedPosition))
                 {
-                    if (nearestLine.IsMarked)
-                    {
-                        GameObject previousLine = nearestLine.LineMark;
-                        nearestLine.LineMark = null;
-                        Destroy(previousLine);
-                    }
                     markedLine.GoodLineMark = true;
                     nearestLine.IsMarked = true;
                     currentLineRenderer.material.color = GoodLineColor;
                 }
                 else
                 {
-                    if (nearestLine.IsMarked)
-                    {
-                        Destroy(currentLineRenderer.material);
-                        Destroy(currentLineRenderer.gameObject);
-                        addLine = false;
-                    }
-                    else
-                    {
-                        markedLine.GoodLineMark = false;
-                        nearestLine.IsMarked = true;
-                        currentLineRenderer.material.color = BadLineColor;
-                    }
+                    markedLine.GoodLineMark = false;
+                    nearestLine.IsMarked = true;
+                    currentLineRenderer.material.color = BadLineColor;
                 }
-                if (addLine)
-                {
-                    nearestLine.LineMark = currentLineRenderer.gameObject;
-                    markedLine.StartPoint = currentLineRenderer.gameObject.transform;
-                    GameObject secondPoint = new GameObject();
-                    secondPoint.transform.position = SecondPosition;
-                    secondPoint.transform.parent = currentLineMark.transform;
-                    markedLine.EndPoint = secondPoint.transform;
-                    markedLine.line = currentLineRenderer;
-                }
+                nearestLine.LineMark = currentLineRenderer.gameObject;
+                markedLine.StartPoint = currentLineRenderer.gameObject.transform;
+                GameObject secondPoint = new GameObject();
+                secondPoint.transform.position = SecondPosition;
+                secondPoint.transform.parent = currentLineMark.transform;
+                markedLine.EndPoint = secondPoint.transform;
+                markedLine.line = currentLineRenderer;
+
             }
             else
             {

@@ -13,7 +13,8 @@ public class GlueManager : MonoBehaviour
     private int selectedPieceIndex;
     private Vector3 selectedPiecePreviousPosition;
     private Transform cameraTransform;
-    private OrbitCamera cameraControl;
+    private OrbitCamera orbitCameraControl;
+    private PanCamera panCameraControl;
     private float distancePadding;
 
     void Awake()
@@ -23,7 +24,8 @@ public class GlueManager : MonoBehaviour
         selectedPieceIndex = 0;
         selectedPiecePreviousPosition = Vector3.zero;
         cameraTransform = GameCamera.transform;
-        cameraControl = GameCamera.GetComponent<OrbitCamera>();
+        orbitCameraControl = GameCamera.GetComponent<OrbitCamera>();
+        panCameraControl = GameCamera.GetComponent<PanCamera>();
         distancePadding = 2.2f;
     }
 
@@ -47,23 +49,27 @@ public class GlueManager : MonoBehaviour
         }
         GluingPieces[selectedPieceIndex].transform.position = new Vector3(CameraStartingPosition.position.x, CameraStartingPosition.position.y, CameraStartingPosition.position.z + zDistance);
         GluingPieces[selectedPieceIndex].transform.rotation = Quaternion.identity;
-        cameraControl.Distance = zDistance;
+        panCameraControl.Distance = zDistance;
+        panCameraControl.bounds.ApplyBounds(zDistance / distancePadding);
     }
 
     public void ActivateGluing()
     {
         glue.enabled = true;
         SetUpPiece(selectedPieceIndex);
-        cameraControl.ChangeAngle(0f, 0f);
-        cameraControl.MinDistance = 0.2f;
-        cameraControl.LookAtPoint = GluingPieces[selectedPieceIndex].transform;
+        orbitCameraControl.enabled = false;
+        panCameraControl.ChangeAngle(0f, 0f);
+        panCameraControl.LookAtPoint = GluingPieces[selectedPieceIndex].transform;
+        panCameraControl.enabled = true;
         SetupScene();
     }
 
     public void DisableGluing()
     {
+        panCameraControl.ResetPanMovement();
         glue.enabled = false;
-        cameraControl.MinDistance = 0.5f;
+        orbitCameraControl.enabled = true;
+        panCameraControl.enabled = false;
         ReturnSelectedPiece();
     }
 
@@ -77,7 +83,8 @@ public class GlueManager : MonoBehaviour
         ReturnSelectedPiece();
         SetUpPiece(pieceIndex);
         selectedPieceIndex = pieceIndex;
-        cameraControl.LookAtPoint = GluingPieces[selectedPieceIndex].transform;
+        panCameraControl.LookAtPoint = GluingPieces[selectedPieceIndex].transform;
+        panCameraControl.ResetPanMovement();
         SetupScene();
     }
 

@@ -7,6 +7,75 @@ public enum PanDirection
     XZ_Plane
 }
 
+[System.Serializable]
+public class CameraBoundary
+{
+    public float MaxVerticalBounds;
+    public float MinVerticalBounds;
+    public float MaxHorizontalBounds;
+    public float MinHorizontalBounds;
+
+    public void ApplyBounds(float bounds)
+    {
+        MaxVerticalBounds = bounds;
+        MinVerticalBounds = -bounds;
+        MaxHorizontalBounds = bounds;
+        MinHorizontalBounds = -bounds;
+    }
+
+    public void ApplyVerticalBounds(float bounds)
+    {
+        if (bounds > 0)
+        {
+            MaxVerticalBounds = bounds;
+            MinVerticalBounds = -bounds;
+        }
+        else
+        {
+            Debug.Log("Cannot apply negative vertical boundaries to camera");
+        }
+    }
+
+    public void ApplyVerticalBounds(float min, float max)
+    {
+        if (max <= min)
+        {
+            Debug.LogError("The vertical max is less than the minimum");
+        }
+        else
+        {
+            MaxVerticalBounds = max;
+            MinVerticalBounds = min;
+        }
+    }
+
+    public void ApplyHorizontalBounds(float bounds)
+    {
+        if (bounds > 0)
+        {
+            MaxHorizontalBounds = bounds;
+            MinHorizontalBounds = -bounds;
+        }
+        else
+        {
+            Debug.Log("Cannot apply negative horizontal boundaries to camera");
+        }
+    }
+
+    public void ApplyHorizontalBounds(float min, float max)
+    {
+        if (max <= min)
+        {
+            Debug.LogError("The horizontal max is less than the minimum");
+        }
+        else
+        {
+            MaxHorizontalBounds = max;
+            MinHorizontalBounds = min;
+        }
+    }
+}
+
 public class PanCamera : MonoBehaviour
 {
     [Header("Distance Variables")]
@@ -14,6 +83,8 @@ public class PanCamera : MonoBehaviour
     public float Distance = 2f;
     public float MinDistance = 0.5f;
     public float MaxDistance = 5f;
+    public bool BoundaryEnabled = false;
+    public CameraBoundary bounds;
 
     [Header("Viewing Angle")]
     public float Vertical = 0f;
@@ -55,6 +126,21 @@ public class PanCamera : MonoBehaviour
         }
     }
 
+    private Vector3 AdjustToBoundary(Vector3 position)
+    {
+        Vector3 adjustedPosition = position;
+        if (MovementPlane == PanDirection.XY_Plane)
+        {
+            adjustedPosition.y = Mathf.Clamp(position.y, bounds.MinVerticalBounds, bounds.MaxVerticalBounds);
+        }
+        else if (MovementPlane == PanDirection.XZ_Plane)
+        {
+            adjustedPosition.z = Mathf.Clamp(position.z, bounds.MinVerticalBounds, bounds.MaxVerticalBounds);
+        }
+        adjustedPosition.x = Mathf.Clamp(position.x, bounds.MinHorizontalBounds, bounds.MaxHorizontalBounds);
+        return adjustedPosition;
+    }
+
     public void MoveCamera(Gesture gesture)
     {
         if (gesture.touchCount == 1 && EnableZoom && EnableCameraControl && gesture.pickedObject == null && gesture.pickedUIElement == null && !gesture.isOverGui)
@@ -77,6 +163,10 @@ public class PanCamera : MonoBehaviour
                         movement = transform.rotation * new Vector3(x, y, 0.0f);
                     }
                     panOffset += movement;
+                    if (BoundaryEnabled)
+                    {
+                        panOffset = AdjustToBoundary(panOffset);
+                    }
                     previousFingerPosition = currentFingerPosition;
                 }
             }
@@ -124,6 +214,11 @@ public class PanCamera : MonoBehaviour
     {
         Vertical = v;
         Horizontal = h;
+    }
+
+    public void ResetPanMovement()
+    {
+        panOffset = Vector3.zero;
     }
 
 
