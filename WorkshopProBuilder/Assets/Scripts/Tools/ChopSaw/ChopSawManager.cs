@@ -63,7 +63,9 @@ public class ChopSawManager : MonoBehaviour, IToolManager
         UI_Manager.InfoPanel.SetActive(true);
         float lineScore = rateTracker.GetLineScore();
         cumulativeLineScore += lineScore;
-        string result = lineScore + ": ";
+        Debug.Log("Chop Saw Cut Score: " + lineScore);
+        //string result = lineScore + ": ";
+        string result = "";
         if (lineScore >= 90.0f)
         {
             result += "Excellent! That was a perfect cut.";

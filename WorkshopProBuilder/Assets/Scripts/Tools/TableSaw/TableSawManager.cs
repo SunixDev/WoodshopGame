@@ -69,6 +69,7 @@ public class TableSawManager : MonoBehaviour, IToolManager
         UI_Manager.InfoPanel.SetActive(true);
         float lineScore = rateTracker.GetLineScore();
         cumulativeLineScore += lineScore;
+        Debug.Log("Table Saw Cut Score: " + lineScore);
         string result = "";
         if (lineScore >= 90.0f)
         {

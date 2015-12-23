@@ -49,6 +49,7 @@ public class BandSawManager : MonoBehaviour
     {
         UI_Manager.InfoPanel.SetActive(true);
         cumulativeLineScore += lineScore;
+        Debug.Log("Band Saw Cut Score: " + lineScore);
         string result = "";
         if (lineScore >= 90.0f)
         {

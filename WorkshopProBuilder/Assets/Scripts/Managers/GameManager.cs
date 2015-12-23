@@ -62,6 +62,11 @@ public class GameManager : MonoBehaviour
     {
         totalScorePercentage += percentageScore;
         numberOfSteps++;
+        Debug.Log("Applied Score: " + percentageScore);
+        Debug.Log("Total Score: " + totalScorePercentage);
+        Debug.Log("Number of Completed Steps: " + numberOfSteps);
+        Debug.Log("Percentage Score: " + (totalScorePercentage / numberOfSteps));
+        Debug.Log("Current Project Value: " + CalculateCurrentValue());
     }
 
     public float CalculateCurrentValue()

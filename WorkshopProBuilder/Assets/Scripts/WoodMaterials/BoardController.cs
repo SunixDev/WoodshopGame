@@ -44,6 +44,17 @@ public class BoardController : MonoBehaviour
         }
     }
 
+    public void OnTouchStart_2Fingers(Gesture gesture)
+    {
+        if (gesture.pickedObject != null && gesture.touchCount == 2)
+        {
+            if (Moveable && WoodObject.ContainsPiece(gesture.pickedObject))
+            {
+                selected = true;
+            }
+        }
+    }
+
     public void OnDragStart(Gesture gesture)
     {
         if (Moveable && selected && gesture.touchCount == 1)
@@ -192,6 +203,7 @@ public class BoardController : MonoBehaviour
     private void SubscribeAll()
     {
         EasyTouch.On_TouchStart += OnTouchStart;
+        EasyTouch.On_TouchStart2Fingers += OnTouchStart_2Fingers;
         EasyTouch.On_DoubleTap += ResetRotationWithDoubleTap;
 
         EasyTouch.On_DragStart += OnDragStart;
