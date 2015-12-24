@@ -283,7 +283,7 @@ public class TableSawManager : MonoBehaviour, IToolManager
             orbitCamera.enabled = true;
             panCamera.enabled = false;
             orbitCamera.ChangeAngle(0f, 50f);
-            orbitCamera.ChangeDistanceConstraints(1.5f, 0.8f, 3.0f);
+            orbitCamera.Distance = 1.5f;
         }
         SawBlade.TurnOff();
         EnableCurrentBoardMovement(true);
@@ -304,7 +304,7 @@ public class TableSawManager : MonoBehaviour, IToolManager
             PlacePiece();
             orbitCamera.enabled = false;
             panCamera.enabled = true;
-            panCamera.ChangeDistanceConstraints(1.0f, 0.1f, 2.0f);
+            panCamera.Distance = 0.5f;
             panCamera.ChangeAngle(0.0f, 89.5f);
         }
         EnableCurrentBoardMovement(false);

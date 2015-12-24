@@ -23,7 +23,7 @@ public class BandSawPieceController : MonoBehaviour
     {
         if (gesture.pickedObject != null)
         {
-            if (Moveable && WoodObject.ContainsPiece(gesture.pickedObject) && gesture.touchCount == 2)
+            if (Moveable && WoodObject.ContainsPiece(gesture.pickedObject))
             {
                 selected = true;
             }
@@ -31,6 +31,15 @@ public class BandSawPieceController : MonoBehaviour
     }
 
     public void OnDragStart(Gesture gesture)
+    {
+        if (Moveable && selected && gesture.touchCount == 1)
+        {
+            Vector3 position = gesture.GetTouchToWorldPoint(transform.position);
+            previousPosition = position;
+        }
+    }
+
+    public void OnDragStart_2Fingers(Gesture gesture)
     {
         if (Moveable && selected && gesture.touchCount == 2)
         {
@@ -40,6 +49,14 @@ public class BandSawPieceController : MonoBehaviour
     }
 
     public void MoveObject(Gesture gesture)
+    {
+        if (Moveable && selected && gesture.touchCount == 1)
+        {
+            Move(gesture);
+        }
+    }
+
+    public void MoveObject_2Fingers(Gesture gesture)
     {
         if (Moveable && selected && gesture.touchCount == 2)
         {
@@ -106,10 +123,13 @@ public class BandSawPieceController : MonoBehaviour
     private void SubscribeAll()
     {
         EasyTouch.On_TouchStart2Fingers += OnTouchStart;
+        EasyTouch.On_TouchStart += OnTouchStart;
 
-        EasyTouch.On_DragStart2Fingers += OnDragStart;
+        EasyTouch.On_DragStart2Fingers += OnDragStart_2Fingers;
+        EasyTouch.On_DragStart += OnDragStart;
 
-        EasyTouch.On_Drag2Fingers += MoveObject;
+        EasyTouch.On_Drag2Fingers += MoveObject_2Fingers;
+        EasyTouch.On_Drag += MoveObject;
 
         EasyTouch.On_Twist += RotateAroundPoint;
         EasyTouch.On_DragEnd2Fingers += OnDragRelease;
@@ -119,10 +139,13 @@ public class BandSawPieceController : MonoBehaviour
     private void UnsubscribeAll()
     {
         EasyTouch.On_TouchStart2Fingers -= OnTouchStart;
+        EasyTouch.On_TouchStart -= OnTouchStart;
 
-        EasyTouch.On_DragStart2Fingers -= OnDragStart;
+        EasyTouch.On_DragStart2Fingers -= OnDragStart_2Fingers;
+        EasyTouch.On_DragStart -= OnDragStart;
 
-        EasyTouch.On_Drag2Fingers -= MoveObject;
+        EasyTouch.On_Drag2Fingers -= MoveObject_2Fingers;
+        EasyTouch.On_Drag -= MoveObject;
 
         EasyTouch.On_Twist -= RotateAroundPoint;
         EasyTouch.On_DragEnd2Fingers -= OnDragRelease;

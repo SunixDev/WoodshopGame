@@ -34,6 +34,8 @@ public class SwipeGameplay : MonoBehaviour
     private Vector3 PreviousHitLocation = new Vector3(-10.0f, -10.0f, -10.0f);
     private bool CorrectMaterial = false;
     private bool overUI = false;
+    private bool touchCountEqualsOne = false;
+    private bool pieceSelected = false;
 
     public void Setup()
     {
@@ -72,7 +74,7 @@ public class SwipeGameplay : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButton(0) && SwipeEnabled && !overUI)
+        if (Input.GetMouseButton(0) && SwipeEnabled && !overUI && touchCountEqualsOne && pieceSelected)
         {
             RaycastHit hit;
             Vector3 cursor = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f);
@@ -151,11 +153,15 @@ public class SwipeGameplay : MonoBehaviour
     public void CheckIfOverUI(Gesture gesture)
     {
         overUI = gesture.IsOverUIElement();
+        touchCountEqualsOne = (gesture.touchCount == 1);
+        pieceSelected = (gesture.pickedObject != null && (gesture.pickedObject == CurrentPiece || gesture.pickedObject == CurrentPiece.transform.parent));
     }
 
     public void OnRelease(Gesture gesture)
     {
-        overUI = false;
+        overUI = true;
+        touchCountEqualsOne = false;
+        pieceSelected = false;
     }
 
 
