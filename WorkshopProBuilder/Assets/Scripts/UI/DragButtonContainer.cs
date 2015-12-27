@@ -7,6 +7,7 @@ public class DragButtonContainer : ScrollingButtonContainer
     public Transform canvas;
     public GameObject dragIconObject;
     public Color DisabledDragButtonColor = new Color(0.4f, 0.4f, 1f, 0.6f);
+    public Vector2 DragIconOffset = new Vector2(0f, 0f);
 
     public void CreateButton(Sprite iconSprite, string pieceName)
     {
@@ -32,6 +33,7 @@ public class DragButtonContainer : ScrollingButtonContainer
         UIDragButton dragButton = button.GetComponent<UIDragButton>();
         dragButton.SetElementToDrag(dragIcon);
         dragIcon.SetActive(false);
+        dragButton.DragOffset = DragIconOffset;
     }
 
     public bool ContainsButton(GameObject button)

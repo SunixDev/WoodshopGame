@@ -91,7 +91,7 @@ public class PanCamera : MonoBehaviour
     public float Horizontal = 0f;
 
     [Header("Speed Input")]
-    [Range(0.1f, 5.0f)]
+    [Range(0.01f, 5.0f)]
     public float PanSensitivity = 2.0f;
     [Range(0.1f, 5f)]
     public float ZoomSensitivity = 1f;

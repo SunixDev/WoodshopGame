@@ -68,12 +68,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="UnityVS.WorkshopProBuilder.CSharp.Plugins.csproj">
-      <Project>{15709EF1-4F8C-408A-BDC8-BC7E1661EEFB}</Project>
-      <Name>UnityVS.WorkshopProBuilder.CSharp.Plugins</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\BaseFinger.cs" />
+    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Component\EasyTouchTrigger.cs" />
+    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\ECamera.cs" />
+    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\EasyTouch.cs" />
+    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\EasyTouchInput.cs" />
+    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Finger.cs" />
+    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\Gesture.cs" />
+    <Compile Include="Assets\EasyTouchBundle\EasyTouch\Plugins\TwoFingerGesture.cs" />
     <Compile Include="Assets\HSVPicker\BoxSlider.cs" />
     <Compile Include="Assets\HSVPicker\ColorPickerTester.cs" />
     <Compile Include="Assets\HSVPicker\HSVDragger.cs" />
@@ -106,6 +108,7 @@
     <Compile Include="Assets\Scripts\Managers\Inventory.cs" />
     <Compile Include="Assets\Scripts\Managers\Project.cs" />
     <Compile Include="Assets\Scripts\Managers\Requirements.cs" />
+    <Compile Include="Assets\Scripts\Managers\ScoreManager.cs" />
     <Compile Include="Assets\Scripts\Managers\Step.cs" />
     <Compile Include="Assets\Scripts\Managers\WoodContainer.cs" />
     <Compile Include="Assets\Scripts\Managers\WoodManagerHelper.cs" />
@@ -182,8 +185,8 @@
     <Compile Include="Assets\Scripts\WoodMaterials\WoodProject.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Plugins\EasyTouchBundle\EasyTouch\RealseNotes.txt" />
-    <None Include="Assets\Plugins\EasyTouchBundle\Readme.txt" />
+    <None Include="Assets\EasyTouchBundle\EasyTouch\RealseNotes.txt" />
+    <None Include="Assets\EasyTouchBundle\Readme.txt" />
     <None Include="Assets\Shaders\PaintingShader.shader" />
     <None Include="Assets\Shaders\SandingShader.shader" />
     <None Include="Assets\Shaders\ShiningShader.shader" />

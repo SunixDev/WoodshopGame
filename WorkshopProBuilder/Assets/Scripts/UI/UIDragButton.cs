@@ -10,6 +10,7 @@ public class UIDragButton : MonoBehaviour, IDragHandler, IEndDragHandler, IPoint
     public bool MoveToFront = false;
     public Color NeutralColor = new Color(1f, 1f, 1f, 1f);
     public Color ActiveColor = new Color(0.5f, 0.5f, 0.5f, 0.8f);
+    public Vector2 DragOffset = new Vector2(0f, 0f);
 
     private RectTransform objRectTransform;
     private Image buttonImage;
@@ -34,7 +35,7 @@ public class UIDragButton : MonoBehaviour, IDragHandler, IEndDragHandler, IPoint
         ElementToDrag.SetActive(true);
         if (ElementToDrag != null)
         {
-            objRectTransform.position = pointerPosition;
+            objRectTransform.position = pointerPosition + DragOffset;
             if (MoveToFront)
             {
                 Transform canvas = objRectTransform;
@@ -52,7 +53,7 @@ public class UIDragButton : MonoBehaviour, IDragHandler, IEndDragHandler, IPoint
     {
         if (ElementToDrag != null)
         {
-            objRectTransform.position = pointerPosition;
+            objRectTransform.position = pointerPosition + DragOffset;
         }
     }
 
